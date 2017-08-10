@@ -1,0 +1,169 @@
+\chapter{Cifras Clássicas}
+\label{cha:cifras-classicas}
+
+Como argumntamos no primeiro capítulo, a internet é um meio de comunicação promíscuo.
+As partes que se comunicam pela rede não tem controle sobre por quais caminhos sua comunicação irá trafegar.
+Essa característica, porém, não se restringe a esse meio.
+Durante o século XVIII, por exemplo, toda correspondência que passava pelo serviço de correios de Viena na Austria era encaminhada para um escritório -- {\em black chamber} -- que derretia o selo, copiava seu conteúdo, recolocava o selo e reincaminhava para o destinatário.
+Todo esse processo durava cerca de três horas para não atrasar a entrega.
+Como a Áustria, todas as potências européias desse período operavam suas {\em back-chambers}.
+As invenções do telegrafo e do rádio só facilitaram a capacidade de criar grampos, no primeiro caso, ou simplesmente captar a comunicação no segundo.
+
+Partiremos, portanto, do seguinte modelo de comunicação.
+Duas partes, o remetente e o destinatário, buscam se comunicar.
+Tradicionalmente denominaremos o remetente de Alice e o destinatário de Bob.
+Nossa suposição principal é que o canal de comunicação entre as partes é inseguro.
+Ou seja, assumiremos que terceiros, que denominaremos de Eva, são capazes de observar as mensagens que trafegam pelo canal de comunicação.
+Essa suposição é conhecida em alguns meios como ``hipótese da comunicação hacker''.
+Para efeitos deste curso, sempre assumiremos essa hipótese.
+
+A {\em criptografia} (do grego ``escrita secreta'') é a pratica e o estudo de técnicas de comunicação segura na presença de terceiros chamados de {\em adversários}.
+A {\em criptoanálise}, por sua vez, é o estudo e a análise dos sistemas de informação com a intenção de desvelar seus segredos.
+Nosso primeiro desafio no curso é apresentar sistemas de comunicação que garantam a {\em confidencialidade}.
+Ou seja, toda mensagem enviada de Alice para Bob deve ser compreensível apenas para Alice e Bob e deve ser incompreensível para Eva:
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+\node (alice) {Alice};
+\node (bob) at (10,0) {Bob};
+\node (eva) at (5,2) {Eva};
+\draw[->] (alice) -> node[above]{mensagem} (bob);
+\path[->] (eva) edge (5,.5);
+\end{tikzpicture}
+\end{center}
+
+Se a importância da comunicação confidencial entre civis tem se tornado cada vez mais urgente, no meio militar é difícil remontar suas origens. 
+Suetônio (69 - 141) por volta de dois mil anos atrás descreveu como o imperador Júlio César (100 a.c. - 44 a.c.) escrevia mensagens confidenciais:
+
+
+\begin{quote}
+  ``Se ele tinha qualquer coisa confidencial a dizer, ele escrevia cifrado, isto é, mudando a ordem das letras do alfabeto, para que nenhuma palavra pudesse ser compreendida. 
+  Se alguém deseja decifrar a mensagem e entender seu significado, deve substituir a quarta letra do alfabeto, a saber 'D', por 'A', e assim por diante com as outras.''
+\end{quote}
+
+O esquema que chamaremos de cifra de César é ilustrado pelo seguinte exemplo:
+
+\begin{verbatim}
+Mensagem: transparenciapublicaopacidadeprivada
+Cifra:    XUDQVSDUHQFLDSXEOLFDRSDFLGDGHSULYDGD
+\end{verbatim}
+
+Como descrito Suetônio, a regra para encriptar uma mensagem consiste em substituir cada letra da mensagem por aquela que está três posições a sua frente na ordem alfabética.
+Para descriptografar a cifra, substituir cada letra por aquela que está três posições atrás.
+O problema com este tipo de sistema é que basta conhecer a regra de criptografia para decifrá-lo.
+Em outras palavras, o segredo da cifra é sua própria regra.
+ 
+Embora técnicas de criptografia e criptoanálise existam desde o império romano, foi com o advento do teléfgrafo e sua capacidade de comunicação eficiente, que o campo se estruturou.
+No fim do século XIX Auguste Kerckhoff estabeleceu seis princípios que as cifras militares deveriam satisfazer:
+\begin{enumerate}
+\item O sistema deve ser indecifrável, se não matematicamente, pelo menos na prática.
+\item O aparato não deve requerer sigilo e não deve ser um problema se ele cair nas mãos dos inimigos.
+\item Deve ser possível memorizar uma chave sem ter que anotá-la e deve ser possível modificá-la se necessário.
+\item Deve ser possível aplicar a sistemas telegráficos.
+\item O aparato deve ser portátil e não deve necessitar de muitas pessoas para manipulá-lo e operá-lo.
+\item Por fim, dadas ascircunstâcias em que ele será usado, o sistema deve ser fácil de usar e não deve ser estressante usá-lo e não deve exigir que o usuário conheça e siga uma longa lista de regras.
+\end{enumerate}
+
+O segundo princípio ficou conhecido como {\em princípio de Kerckhoff}.
+Ele estabelece que a regra usada para criptografar uma mensagem, mesmo que essa regra esteja codificada em um mecanismo, não deve ser um segredo e não deve ser um problema caso ela caia nas mãos do adversário.
+Nas palavras de Claude Shannon: ``o inimigo conhece o sistema''.
+Whitfield Diffie coloca o debate nos seguintes termos:
+
+\begin{quote}
+``Um segredo que não pode ser rapidamente modificado deve ser interpretado como uma vulnerabilidade''
+\end{quote}
+
+Ou seja, em uma comunicação confidencial as partes devem compartilhar algo que deve ser ``possível de modificar caso necessário''.
+Esse segredo compartilhado é o que chamaremos de {\em chave} da comunicação e assumiremos que ela é a única parte sigilosa do sistema.
+Trazendo o debate para uma discução mais moderna, o sigilo do código-fonte de um sistema não deve em hipótese alguma ser aquilo que garanta sua segurança.
+
+O modelo de {\em criptografia simétrica}, portanto, pode ser descrito da seguite maneira:
+o remetente usa um algoritmo público ($E$) que, dada uma chave ($k$), transforma uma mensagem ($m$) em um texto incompreensível chamado de {\em cifra} ($c$), a cifra é enviada para o destinatário por um meio assumidamente inseguro (hipótese da comunicação hacker) e o destinatário utiliza a mesma chave em um algoritmo ($D$) que recupera a mensagem a partir da cifra.
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+\node (alice) at (0, 2){Alice};
+\node (bob) at (10, 2) {Bob};
+\node (eva) at (5, 2) {Eva};
+
+\node (m1) at (0,1) {$m$};
+\node (k1) at (0,-1) {$k$};
+\node (E)  at (2,0) {$E(k,m) = c$};
+\node (D)  at (8,0) {$D(k,c) = m$};
+\node (k2) at (10,-1) {$k$};
+\node (m2) at (10,1) {$m$};
+
+\path[->] (eva) edge (5,1);
+\draw[->] (m1) -> (E);
+\draw[->] (k1) -> (E);
+\draw[->] (D) -> (m2);
+\draw[->] (k2) -> (D);
+\draw[->] (E) -> node[above]{$c$} (D);
+\end{tikzpicture}
+\end{center}
+
+\section{Cifra de Deslocamento}
+\label{sec:cifra-deslocamento}
+
+O que chamamos na seção anterior como ``cifra de César'' não deve ser propriamente considerado uma cifra, pois não possui uma chave.
+Porém, é possível e simples adaptar esse esquema para incorporar uma chave.
+Para tanto faremos a seguinte alteração no esquema.
+Ao invés de deslocar as letras sempre três casas para frente vamos assumir que foi sorteado previamente um número $k$ entre $0$ e $23$.
+Esse número será a chave da comunicação e, portanto, assumiremos que as partes a compartilham.
+O mecanismo para criptografar uma mensagem será o de deslocar cada letra $k$ posições para a direita e para descriptografá-la basta deslocar cada letra as mesmas $k$ posições para a esquerda.
+
+Para formalizar este mecanismo vamos assumir que cada letra do alfabeto seja representada por um número: a letra {\tt a} será representada pelo $0$, a letra {\tt b} pelo $1$ e assim por diante.
+O universo de todas as chaves possíveis é o conjunto $K = \{0 ... 23\}$ (chamaremos este conjunto de $\mathbb{Z}_{24}$ ou de maneira mais genérica $\mathbb{Z}_n = \{0, 1, \dots, n - 1\}$) e o universo de todas as mensagens possíveis é representado pelo conjunto $M = {\mathbb{Z}_{24}}^\star$, ou seja, todas as sequências de números entre $0$ e $23$.
+Além disso, o conjunto das possíveis cifras é $C = M$.
+Precisamos descrever três algorítmos:
+\begin{itemize}
+\item $Gen$ que gera a chave $k \in K$,
+\item $E$ que recebe uma chave $k \in K$ e uma mensagem $m \in M$ e produz uma cifra $c \in C$ (i.e.: $E: K \times M \to C$) e
+\item $D$ que recebe uma chave $k \in K$ e uma cifra $c \in C$ e produz uma mensagem $m \in M$ (i.e.; $D: K \times C \to M$).
+\end{itemize}
+
+Um sistema de criptografia simétrica $\Pi$ é formado por essa tripla de algoritmos $\Pi = \langle Gen, E, D \rangle$.
+Além disso, precisamos garantir que quem possui a chave seja capaz de descriptografar a cifra.
+Ou seja, precisamos garantir que:
+\begin{displaymath}
+  D(k, E(k, m)) = m
+\end{displaymath}
+
+O mecanismo que gera uma chave na cifra de substituição é bastante simples, ele simplesmente sorteia com uma distribuição de probabilidade uniforme um número entre $0$ e $23$.
+Escreveremos da seguinte forma:
+\begin{displaymath}
+Gen := k \leftarrow \mathbb{Z}_{24}  
+\end{displaymath}
+
+Utilizaremos a partir daqui a convenção de usar uma seta da direita para esquerda indicando que será escolhido um elemento do conjunto com probabilidade uniforme.
+
+O algoritmo para criptografar uma mensagem traz um pequeno problema.
+Escreveremos $m = m_0 m_1 m_2 \dots m_n$ uma mensagem $m$ com $n + 1$ letras cuja primeira letra é $m_0$, a segunda é $m_1$ e assim por diante.
+Nossa primeira tentativa de formalizar $E$ seria somar $k$ a cada uma das letras $m_i$.
+O problema é que esta soma pode resultar em um valor que não corresponde a nenhuma letra i.e. $m_i + k > 23$.
+Para evitar este problema utilizaremos não a aritmética convencional, mas a {\em aritmética modular}.
+
+Dizemos que um número $a$ divide $b$ (escrevemos $a|b$) se existe um número inteiro $n$ tal que $a.n = b$.
+Dois números são equivalentes módulo $n$ (escrevemos $a \equiv b (mod n)$) se $n|(b-a)$.
+Em outras palavras, dois números são equivalentes módulo $n$ se o resto da divisão de cada um por $n$ for o mesmo reultado.
+O conjunto de todos os números equivalentes módulo $n$ forma uma classe de equivalência que representaremos como $[a mod n] = \{b \in \mathbb{Z} : a \equiv (b mod n)\}$.
+Por exemplo $[5 + 7 mod 10] = [2 mod 10]$ pois $5 + 7 = 12$ e o resto de $12$ por $10$ é $2$.
+
+Estamos finalmente em condições de formalizar o sistema da cifra de deslocamento $\Pi = \langle Gen, E, D\rangle$:
+\begin{itemize}
+\item $Gen := k \leftarrow \mathbb{Z}_{24}$
+\item $E(k, m) = [m_0 + k mod 24] \dots [m_n + k mod 24]$
+\item $D(k, c) = [c_0 - k mod 24] \dots [c_n - k mod 24]$ 
+\end{itemize}
+
+
+\section{Cifra de Substituição}
+\label{sec:cifra-monoalfabetica}
+
+
+
+
+% Cifra de Substituição (Monoalfabética)
+% desaparecido do Acre - manual do escoteiro
+% Formalização da Cifra Monoalfabética
+% Cifra de Vigenere
+% Ataque força bruta
