@@ -112,7 +112,7 @@ Esse número será a chave da comunicação e, portanto, assumiremos que as part
 O mecanismo para criptografar uma mensagem será o de deslocar cada letra $k$ posições para a direita e para descriptografá-la basta deslocar cada letra as mesmas $k$ posições para a esquerda.
 
 Para formalizar este mecanismo vamos assumir que cada letra do alfabeto seja representada por um número: a letra {\tt a} será representada pelo $0$, a letra {\tt b} pelo $1$ e assim por diante.
-O universo de todas as chaves possíveis é o conjunto $K = \{0 ... 23\}$ (chamaremos este conjunto de $\mathbb{Z}_{24}$ ou de maneira mais genérica $\mathbb{Z}_n = \{0, 1, \dots, n - 1\}$) e o universo de todas as mensagens possíveis é representado pelo conjunto $M = {\mathbb{Z}_{24}}^\star$, ou seja, todas as sequências de números entre $0$ e $23$.
+O universo de todas as chaves possíveis é o conjunto $K = \{0 ... 23\}$ (chamaremos este conjunto de $\mathbb{Z}_{26}$ ou de maneira mais genérica $\mathbb{Z}_n = \{0, 1, \dots, n - 1\}$) e o universo de todas as mensagens possíveis é representado pelo conjunto $M = {\mathbb{Z}_{26}}^\star$, ou seja, todas as sequências de números entre $0$ e $23$.
 Além disso, o conjunto das possíveis cifras é $C = M$.
 Precisamos descrever três algorítmos:
 \begin{itemize}
@@ -131,7 +131,7 @@ Ou seja, precisamos garantir que:
 O mecanismo que gera uma chave na cifra de substituição é bastante simples, ele simplesmente sorteia com uma distribuição de probabilidade uniforme um número entre $0$ e $23$.
 Escreveremos da seguinte forma:
 \begin{displaymath}
-Gen := k \leftarrow \mathbb{Z}_{24}  
+Gen := k \leftarrow \mathbb{Z}_{26}  
 \end{displaymath}
 
 Utilizaremos a partir daqui a convenção de usar uma seta da direita para esquerda indicando que será escolhido um elemento do conjunto com probabilidade uniforme.
@@ -143,27 +143,128 @@ O problema é que esta soma pode resultar em um valor que não corresponde a nen
 Para evitar este problema utilizaremos não a aritmética convencional, mas a {\em aritmética modular}.
 
 Dizemos que um número $a$ divide $b$ (escrevemos $a|b$) se existe um número inteiro $n$ tal que $a.n = b$.
-Dois números são equivalentes módulo $n$ (escrevemos $a \equiv b (mod n)$) se $n|(b-a)$.
+Dois números são equivalentes módulo $n$ (escrevemos $a \equiv b\ (mod\ n)$) se $n|(b-a)$.
 Em outras palavras, dois números são equivalentes módulo $n$ se o resto da divisão de cada um por $n$ for o mesmo reultado.
-O conjunto de todos os números equivalentes módulo $n$ forma uma classe de equivalência que representaremos como $[a mod n] = \{b \in \mathbb{Z} : a \equiv (b mod n)\}$.
-Por exemplo $[5 + 7 mod 10] = [2 mod 10]$ pois $5 + 7 = 12$ e o resto de $12$ por $10$ é $2$.
+O conjunto de todos os números equivalentes módulo $n$ forma uma classe de equivalência que representaremos como $[a\ mod\ n] = \{b \in \mathbb{Z} : a \equiv (b\ mod\ n)\}$.
+Por exemplo $[5 + 7\ mod\ 10] = [2\ mod\ 10]$ pois $5 + 7 = 12$ e o resto de $12$ por $10$ é $2$.
 
 Estamos finalmente em condições de formalizar o sistema da cifra de deslocamento $\Pi = \langle Gen, E, D\rangle$:
 \begin{itemize}
-\item $Gen := k \leftarrow \mathbb{Z}_{24}$
-\item $E(k, m) = [m_0 + k mod 24] \dots [m_n + k mod 24]$
-\item $D(k, c) = [c_0 - k mod 24] \dots [c_n - k mod 24]$ 
+\item $Gen := k \leftarrow \mathbb{Z}_{26}$
+\item $E(k, m) = [m_0 + k\ mod\ 26] \dots [m_n + k\ mod\ 26]$
+\item $D(k, c) = [c_0 - k\ mod\ 26] \dots [c_n - k\ mod\ 26]$ 
 \end{itemize}
+
+
+\begin{example}
+  Considere a palavra {\tt XUXA}.
+  Usando a cifra de César com chave $k = 3$ obtemos a cifra {\tt BZBD}.
+
+  \begin{itemize}
+  \item $E(3, \textrm{\tt 24 21 24 0}) = [1\ mod\ 26] [21\ mod\ 26] [1\ mod\ 26] [3\ mod\ 26]$  
+  \item $D(3, \textrm{\tt 1 21 1 3}) = [24\ mod\ 26] [21\ mod\ 26] [24\ mod\ 26] [0\ mod\ 26]$
+  \end{itemize}
+
+  Note que $[27\ mod\ 26] = [1\ mod\ 26]$ e que $[-2\ mod\ 26] = [24\ mod\ 26]$.
+\end{example}
+
 
 
 \section{Cifra de Substituição}
 \label{sec:cifra-monoalfabetica}
 
+Em 1567 a residência da rainha da Mary da Escócia foi destruída por uma explosão que levou a morte do então rei, primo de Mary.
+O principal suspeito do assinato foi dispensado da pena e se casou com Mary no mês seguinte.
+O episódio levou-a a prisão na Inglaterra.
+Neste tempo, para a maioria dos católicos, Mary era a legítima herdeira do trono inglês - ocupado pela protestante Elizabeth I.
+Durante o tempo na prisão Mary consiporou com aliados pela morte de Elizabeth.
+Em 1587 Mary foi executada pelo que ficou conhecido como a conspiração de Babington.
+A principal prova utilizada para a condenação foi uma troca de cartas cifradas interceptadas e decifradas.
+
+A cifra usada pelos conspiradores é conhecida hoje como {\em cifra de substituição} ou {\em cifra monoalfabética}.
+Neste tipo de criptografia, cada letra ou par de letras é substituída por um símbolo, que pode ser inclusive uma outra letra.
+Assim, a chave desse tipo de cifra é um alfabeto.
 
 
+\begin{example}
+  Considere a seguinte chave de uma cifra monoalfabética.
+  Neste caso os símbolos utilizados letras do mesmo alfabeto em ordem embaralhada:
+  \begin{verbatim}
+    Alfabeto:   abcdefghijklmnopqrstuvwxyz
+    Permutação: ZEBRASCDFGHIJKLMNOPQTUVWXY
+  \end{verbatim}
 
-% Cifra de Substituição (Monoalfabética)
-% desaparecido do Acre - manual do escoteiro
-% Formalização da Cifra Monoalfabética
-% Cifra de Vigenere
-% Ataque força bruta
+  A partir desta chave podemos produzir textos substituindo cada letra pela letra correspondente na chave.
+  Para descriptografar, basta fazer o processo inverso, a saber, substituir a letra da cifra pela do alfabeto.
+  
+  \begin{verbatim}
+    Mensagem: transparenciapublicaopacidadeprivada
+    Cifra:    QOZKPMZOAKBFZMTEIFBZLMZBFRZRAMOFUZRZ
+  \end{verbatim}
+\end{example}
+
+O desfecho da história da conspiração de Babington sugere que a cifra monoalfabética não é muito segura.
+De fato, no próximo capítulo discutiremos melhor as técnicas de criptonálise para este tipo de cifra.
+Não obstante, até o desenvolvimento das primeiras máquinas de criptografar, versões das cifras monoalfabéticas foram eram as cifras mais populares no mundo todo.
+Nos anos 70 a editora abril publicou no Brasil o famoso Manual do Escoteiro Mirim da Disney que apresentava uma cifra monoalfabética.
+Mais recentemente, o curioso caso do desaparecimento de um rapaz no Acre viralizou quando seus familiares revelaram que no seu quarto havia uma coleção de livros que ele havia escrito de maneira criptografada.
+Mais tarde foi descoberto que o rapaz usara uma cifra de substituição cuja chave foi eventualmente encontrada.
+
+Para fechar esta seção buscaremos formalizar o sistema de cifra de substituição simples.
+Uma {\em permutação} sobre um conjunto $\Sigma$ qualquer é uma {\em função bijetora} $p: \Sigma \to \Sigma$.
+Funções bijetoras possuem a característica de serem inversíveis, ou seja, existe $q: \Sigma \to \Sigma$ tal que $p(q(x)) = q(p(x)) = x$.
+A função $q$ é chamada de {\em inversa} de $p$, é única e será representada como $p^{-1}$.
+O conjunto de todas as permutações, todas as funções bijetoras, de $\Sigma$ será representado como $Perm(\Sigma)$.
+A chave de uma cifra de substituição é uma permutação do alfabeto $\mathbb{Z}_{26}$ escolhida aleatoriamente.
+Para encriptar uma mensagem basta aplicar essa permutação a cada uma das mensagens e para descriptografá-la basta aplicar a função inversa.
+
+Formalmente temos que $\Pi = \langle Gen, E, D \rangle$ em que:
+\begin{itemize}
+\item $Gen := k \leftarrow Perm(\mathbb{Z}_{26})$
+\item $E(k, m) = k(m_0) \dots k(m_n)$
+\item $D(k, c) = k^{-1}(c_0) \dots k^{-1}(c_n)$
+\end{itemize}
+
+\section{Cifra de Vigenère}
+\label{sec:cifra-de-vigenere}
+
+A cifra de Vigènere foi criada no século XV e ainda no começo do século XX era considerada inquebrável -- em 1868 o matemático e autor de Alice no País das Maravilhas, descreveu a cifra como ``inquebrável'' e um artigo da Scientific American de 1917 a descrevia como ``impossível de traduzir''.
+Veremos no próximo capítulo que há um exagero nessas descrições, porém, a sofisticação desse tipo de cifra chamado de {\em polialfabética} tornava sua criptoanálise muito mais sofisticado.
+
+Em poucas palavras, a cifra de Vigenère consiste em deslocar as letras do texto original em distâncias diferentes.
+Em sua versão mais simples, sua chave consiste de uma palavra cuja primeira letra indica quantas casas devemos deslocar a primeira letra da mensagem, a segunda letra da chave indica quantas casa devemos deslocar a segunda letra e assim por diante.
+Quando a mensagem ultrapassa o tamanho da chave, repetimos a chave e continuamos o processo.
+
+Para facilitar a conta na hora de criptografar e descriptografar, podemos usar uma tabela que indica para cada letra da mensagem e cada letra da chave qual é a letra correspondente na cifra.
+Essa tabela é chamada de {\em tabula recta} e está representada na Figura \ref{fig:tabula-recta}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.8\textwidth]{imagens/tabula-recta.png}
+  \caption{Tabula Recta}
+  \label{fig:tabula-recta}
+\end{figure}
+
+
+\begin{example}
+  Considere a seguinte mensagem criptografada com a chave {\tt senha} usando a cifra de Vigenère:
+
+\begin{verbatim}
+Mensagem: transparenciapublicaopacidadeprivada
+Chave:    senhasenhasenhasenhasenhasenhasenhas
+Cifra:    LVNUSHEELNUMNWUTHVJAGTNJIVEQKPJMIHDS
+\end{verbatim}  
+\end{example}
+
+Para fechar o capítulo vamos fazer o exercício de formalizar a cifra de Vigenère.
+A chave consiste em uma sequência de letras, tipicamente escolhidas em um dicionário, mas vamos aqui supor que a escolha seja aleatória e com um tamanho fixado $l$.
+A partir dessa semente, podemos gerar uma chave auxiliar $k'$ obtida repetindo $k$ quantas vezes forem necessárias até que $|k'| = |m| = n$.
+Para criptografar basta desolcar $m_i$ por $k_i'$ posições.
+Formalmente temos que $\Pi = \langle Gen, E, D \rangle$
+
+\begin{itemize}
+\item $Gen := k \leftarrow \mathbb{Z}_{26}^l$
+\item $E(k, m) = [m_0 + {k_0}'\ mod\ 26] \dots [m_n + {k_n}'\ mod\ 26]$
+\item $D(k, c) = [c_0 - {k_0}'\ mod\ 26] \dots [c_n - {k_n}'\ mod\ 26]$
+\end{itemize}
+
