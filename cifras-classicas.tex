@@ -7,7 +7,7 @@ Essa característica, porém, não se restringe a esse meio.
 Durante o século XVIII, por exemplo, toda correspondência que passava pelo serviço de correios de Viena na Austria era encaminhada para um escritório -- {\em black chamber} -- que derretia o selo, copiava seu conteúdo, recolocava o selo e reincaminhava para o destinatário.
 Todo esse processo durava cerca de três horas para não atrasar a entrega.
 Como a Áustria, todas as potências européias desse período operavam suas {\em back-chambers}.
-As invenções do telegrafo e do rádio só facilitaram a capacidade de criar grampos, no primeiro caso, ou simplesmente captar a comunicação no segundo.
+As invenções do telegrafo e do rádio só facilitaram a capacidade de criar grampos, no primeiro caso, ou simplesmente captar a comunicação no segundo \cite{Kahn96}.
 
 Partiremos, portanto, do seguinte modelo de comunicação.
 Duas partes, o remetente e o destinatário, buscam se comunicar.
@@ -179,7 +179,7 @@ O episódio levou-a a prisão na Inglaterra.
 Neste tempo, para a maioria dos católicos, Mary era a legítima herdeira do trono inglês - ocupado pela protestante Elizabeth I.
 Durante o tempo na prisão Mary consiporou com aliados pela morte de Elizabeth.
 Em 1587 Mary foi executada pelo que ficou conhecido como a conspiração de Babington.
-A principal prova utilizada para a condenação foi uma troca de cartas cifradas interceptadas e decifradas.
+A principal prova utilizada para a condenação foi uma troca de cartas cifradas interceptadas e decifradas \cite{Singh04}.
 
 A cifra usada pelos conspiradores é conhecida hoje como {\em cifra de substituição} ou {\em cifra monoalfabética}.
 Neste tipo de criptografia, cada letra ou par de letras é substituída por um símbolo, que pode ser inclusive uma outra letra.
@@ -268,3 +268,36 @@ Formalmente temos que $\Pi = \langle Gen, E, D \rangle$
 \item $D(k, c) = [c_0 - {k_0}'\ mod\ 26] \dots [c_n - {k_n}'\ mod\ 26]$
 \end{itemize}
 
+\section{Maquinas de Criptografar}
+\label{sec:maquinas}
+
+No final da primeira década do século XX foram inventadas as primeiras máquinas de criptografar.
+A componente principal dessas {\em maquinas eletromecânicas} é um conjunto de {\em rotores}.
+A configuração inicial dos rotores contém a chave da criptografia.
+Cada vez que o operador pressiona uma tecla o rotor embaralha as letras.
+Dessa forma, essas {\em máquinas rotoras} se comportam como uma sofisticada cifra polialfabética.
+Para descriptografar a mensagem, o operador precisa ajustar a máquina em modo de descriptografia, ajustar a configuração inicial com a chave secreta e digitar o texto cifrado.
+A máquina então irá se rearrajar para produzir o texto original quando digitado.
+
+As máquinas rotora mais conhecida são da série {\em Enigma}.
+Elas foram criadas por um inventor alemão no final da primeira guerra mundial e versões mais modernas foram extensamente usadas durante a segunda guerra pelo exército nazista.
+As versões mais simples da máquina possuiam três rotores capazes de gerar $26^3$, ou cerca de $175$ mil possíveis configurações iniciais.
+Além disso, era possível trocar a ordem dos rotores multiplicando por $6$ o número de combinações possíveis e chegando a um total de cerca de $105$ mil possibilidades.
+A versão utilizada pelo exercito nazista, porém, permitia cerca de $150$ trilhões de possibilidades.
+Em 1939 Alan Turing desenvolveu uma máquina eletromecânica chamada {\em Bombe} capaz de decifrar algumas cifras de máquinas Enigma com 3 rotores e, posterioirmente foi melhorada para decifrar mensagens de máquinas Enigma mais sofisticadas.
+
+A história da computação esbarra na história da criptografia neste ponto.
+Poucos anos antes da guerra, Alan Turing demonstrara que a satisfatibilidade da lógica de primeira ordem é um {\em problema indecidível}.
+Para tanto ele propôs um {\em modelo computacional} que hoje chamamos de {\em Máquinas de Turing}.
+Diferente dos modelos computacionais anteriores como o {\em cálculo lambda} de Church ou as {\em funções recursivas} de Gödel, o modelo de Turing era intuitivo.
+Além disso, Turing mostrou que era possível construir com seu modelo uma {\em Máquina Universal} capaz de simular qualquer outra Máquina de Turing.
+Esse resultado magnífico é o que dá origem a computação.
+O primeiro modelo de computador desenvolvido por Turing e sua equipe em Bechley Park foi batizado de {\em Colossus} e tinha como principal propósito quebrar outra cifra usada pelos nazistas durante a guerra, a {\em cifra de Lorenz}.
+A cifra de Lorenz é uma versão do que estudaremos com o nome de {\em cifra de fluxo}.
+Para decifrar os códigos das máquinas Enigma e da cifra de Lorenz os ingleses tiveram que contar, não apenas com o texto criptografado que interceptavam sem grandes dificuldades, mas também com uma série cifras cujas mensagens eles conheciam previamente.
+Veremos mais pra frente a importância desta informação. 
+A capacidade dos aliados de decifrar as mensagens de seus adversários foi central para sua vitória. 
+
+O começo do século XX marcou o surgimento das primeiras máquinas de criptografar, as primeiras máquinas de criptoanálise. 
+Na metade do século começaram a surgir os primeiros computadores.
+Nos anos 70 a comunicação seria revolucionada pelo advento da internet, mas antes disso já ficara claro que era necessário compreender melhor o que faz uma cifra ser segura. 
