@@ -304,14 +304,46 @@ Nos anos 70 a comunicação seria revolucionada pelo advento da internet, mas an
 \section{Exercício}
 \label{sec:exercicio}
 
-
-%\begin{exercicio}
- % Dá um texto e três chaves e pede para criptografar usando cada uma das cifras 
-%\end{exercicio}
+\begin{exercicio}
+  Considere a seguinte mensagem:
+  \begin{verbatim}
+    privacidadepublicatranparenciaprivada
+  \end{verbatim}
+  \begin{itemize}
+  \item Criptografe essa mensagem utilizando a cifra de deslocamento com $k = 3$.
+  \item Criptografe essa mensagem utilizando a cifra de substituição com a seguinte permutação de letras: {\tt ZEBRASCDFGHIJKLMNOPQTUVWXY}
+  \item Criptografe essa mensagem utilizando a cifra de Vigenère com chave {\tt senha}.
+  \end{itemize}
+\end{exercicio}
 
 %\begin{exercicio}
   % Dá uma cifra e três chaves e pede para descriptografar?
 %\end{exercicio}
 
+\begin{exercicio}
+  Mostre que a operação de adição $+$ modulo $n$ é um {\em anel} para qualquer valor de $n$.
+Ou seja, para qualquer $a, b, c, n \in \mathbb{Z}$ temos que:
+\begin{itemize}
+\item {\em associatividade}: $(a+b)+c \equiv a+(b+c)\ mod\ n$ e $(ab)c \equiv a(bc)\ mod\ n$
+\item {\em elemento neutro}: $a + 0 \equiv a\ mod\ n$ e $a.1 \equiv a\ mod\ n$
+\item {\em inverso}: existe $-a$ tal que $a + (-a) \equiv 0\ mod\ n$
+\item {\em distributividade}: $a(b + c) \equiv ab + ac\ mod\ n$
+\end{itemize}
+\end{exercicio}
 
+\begin{exercicio}
+  Mostre que se $n|a$ e $n|b$ então $n|(ra + sb)$ para quaisquer $r, s \in \mathbb{Z}$.
+\end{exercicio}
+
+\begin{exercicio}
+  Dizemos que $a$ é o {\em inverso multiplicativo} de $b$ em $\mathbb{Z}_n$ sse $ab \equiv 1\ mod\ n$.
+\begin{itemize}
+\item Mostre que $2$ é o inverso multiplicativo de $5$ em $\mathbb{Z}_9$.
+\item Mostre que $6$ não possui inverso multiplicativo em $\mathbb{Z}_{12}$
+\end{itemize}
+\end{exercicio}
+
+\begin{exercicio}
+  Proponhe um sistema de criptografia simétrica e argumento porque ele é mais seguro do que os sistemas que vimos até aqui.
+\end{exercicio}
 
