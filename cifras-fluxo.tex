@@ -51,12 +51,67 @@ Esse teste é eficaz pois $Pr[D(G(s)) = \frac{1}{2^n}] = 1$, mas $Pr[D(r) = 1] =
 Porém, o teste não é eficiente.
 De fato $D$ não é polinomial, mas exponencial, pois o tempo esperado para testar todos os valores de $s$ é $2^{n-1}$. 
 
-% FALAR DE GERADORES PESUDOALEATORIOS USADOS NA PRÁTICA
-% PRECISO FALAR QUE O RAND DO C NÃO É SEGURO!!!
+\section{Linear-Feedback Shift Registers}
+\label{sec:lfsr}
 
 A existência de PRGs não foi demonstrada matematicamente.
 No capítulo \ref{} mostraremos que a dificuldade associada a este tipo de problema.
 A abordagem utilizada em relação a PRG é empírica, ou seja, os candidatos a PRG são empiricamente validados a cada tentativa frustrada de construir um distinguidor empírico para eles.
+
+Assim, na prática utilizamos um par de algoritmos $\langle Init, GenGits \rangle$.
+O primeiro algoritmo recebe a semente $s$ como entrada e opcionalmente um vetor inicial $IV$ e devolve um estado inicial $st_0$.
+O segundo algoritmo recebe como entrada o estado atual $st_i$, devolve um bit $y$ e atualiza o estado para $st_{i+1}$.
+Assim para cada semente, o algoritmo produz um {\em fluxo} infinito de bits -- sendo os $l(n)$ primeiros bits geram $G(s)$.
+
+Um exemplo deste tipo de algoritmo são os chamados {\em Linear-Feedback Shift Registers} (LFSRs).
+Um LFSR consiste de um vetor de registradores $s_{n-1} \dots s_0$, que guardam exatamente um bit cada, e uma escolha de um subconjunto desses chamados {\em coeficientes de feedback}.
+A cada passo o estado é atualizado deslocando todo vetor uma posição para a direita e produzindo um novo bit que é calculado como o ou esclusivo de todos os registros contidos no coeficiente de feedback.
+Para simplificar a notação, podemos imaginar que os coeficientes de feedback são bits $c_{n-1} \dots c_0$ de forma que $c_k = 1$ se a posiação $k$ deve ser usada para gerar o novo bit e $0$ caso contrário.
+Assim, o novo bit no registrador $s_{n-1}$ pode ser calculado como $s_{n-1} := \bigoplus_{i=0}^{n-1}c_is_i$.
+
+
+\begin{example}
+  Considere um LFSR com quatro registradores sendo o primeiro e o terceiro parte do coeficiete de feedback.
+Se a configuração inicial dos registradores é $\langle 0,0,1,1 \rangle$ os próximos passos são os seguintes:
+\begin{displaymath}
+  \langle 0,0,1,1 \rangle \vdash
+  \langle 1,0,0,1 \rangle \vdash 
+  \langle 1,1,0,0 \rangle \vdash
+  \langle 1,1,1,0 \rangle \vdash
+  \langle 1,1,1,1 \rangle
+\end{displaymath}
+\end{example}
+
+Um LSFR com $n$ registradores é capaz de gerar no máximo $2^n$ bits até começar a repetir sua sequência.
+
+O único segredo do LFSR são os coeficientes de feedback $c_{n-1} \dots c_0$.
+Um ataque relativamente simples a um LFSR consiste em observar os $n$ primeiros bits gerados $y_{n+1} \dots y_{2n}$ e resolver o seguinte sistema linear:
+
+\begin{eqnarray*}
+  y_{n+1} &    =   & c_{n-1}y_n \xor \dots \xor c_0 y_1\\
+         & \vdots &  \\
+  y_{2n}  &    =   & c_{n-1}y_{2n-1} \xor \dots \xor c_0 y_n\\      
+\end{eqnarray*}
+
+É possível mostrar que essas equações são linearmente independentes e, portanto, elas determinam unicamente os coefientes.
+Uma vez determinados os coeficientes, podemos prever cada novo bit o que torna simples a tarefa de construir um distinguidor para o gerador.
+
+Resumindo, o LFSR não é seguro pois a operação que gera novos bits é linear o que permite que ela seja previsível.
+LFSRs não são PRG seguros, mas muitos PRGs nada mais são do que versões alteradas deste esquema geral.
+Tipicamente os PRGs usados na prática substituem a operação de ou exclusivo por alguma operação não linear.
+
+Em um concurso científico de 2008 para produção de cifras de fluxo seguras, uma série de algoritmos foram apresentados como alternativas seguras e eficientes para este problema.
+Um dos algoritmos selecionados pelo projeto eSTREAM é o {\em Trivium}.
+Este algoritmo recebe dois valores como entrada ambos com 80 bits, a semente e o vetor incial.
+Um estado no Tivium é um vetor com 288 bits, portanto, seu ciclo tem tamanho máximo $2^{288}$.
+Até a escrita destas notas, não existem ataques conhecidos ao algoritmo mais eficientes do que o ataque de força-bruta.
+
+A escolha de um bom gerador de números pseudo-aleatórios é central para a segurança de uma cifra de fluxo.
+Um erro típico é utilizar funções padrão, como a função {\tt rand} da biblioteca padrão do {\tt C}, que não são adequadas para aplicações de segurança.
+A orientação geral é buscar os geradores selecionados pelo projeto eSTREAM como o Trivium mencionado nesta seção ou o SALSA20.
+
+\section{Segurança das Cifras de Fluxo}
+\label{sec:streamcipher-sec}
 
 Como adiantamos no capítulo anterior, uma vez definida claramente a suposição que estamos fazendo podemos tentar provar que com essa suposição somos capazes de construir um sistema seguro.
 A abordagem para este tipo de prova é uma redução aos moldes das reduções que vimos em Teoria da Computação.
@@ -64,7 +119,7 @@ Neste caso vamos reduzir o problema de construir um sistema seguro contra ataque
 
 
 \begin{theorem}
-  Se $G$ é um gerador de números pseudo-aleatórios então o seguinte sistema $\Pi = \langle Gen, E, D \rangle$ é seguro contra ataques {\em ciphertext only}.
+  Se $G$ é um gerador de números pseudo-aleatórios com fator de expansão $l$ então o seguinte sistema $\Pi = \langle Gen, E, D \rangle$ é seguro contra ataques {\em ciphertext only} para mensagens de tamanho fixo $m \in \{0,1\}^{l(n)}$:
 \begin{itemize}
 \item $Gen(1^n) := k \leftarrow \{0,1\}^n$
 \item $E(k,m) = G(k) \xor m$
@@ -102,8 +157,23 @@ Ou equivalentemente:
 \end{displaymath}
 \end{proof}
 
-% FALAR DE REPETIÇÃO DE CHAVES E DO WEP!!
-% FALAR DE NONCE
+Algoritmos validados empiricamente como bons PRG podem ser usados portanto para gerar cifras seguras, ao menos contra ataques {\em ciphertext-only}.
+Nos próximos capítulos exploraremos definições mais fortes de segurança e suas respectivas suposições.
+Para fechar este capítulo lembramos que as cifras de fluxo sofrem do mesmo problema do OTP quanto à repetição do uso de uma mesma chave.
+
+% CITAR OS ARTIGOS QUE APRESENTAM O TRIVIUM, O RC4 E O ATAQUE CONTRA O WEP
+
+\begin{example}
+O Wired Equivalent Privacy (WEP), padrão para segurança em conexões WiFi desde 97, é essencialmene uma cifra de fluxo.
+Para gerar um fluxo de bits pseudo-aleatórios o WEP utiliza o RC4 -- um PRG proposto por Ron Rivest em 87 -- que recebe como entrada a semente e um vetor inicial de 24 bits.
+Para cada pacote transimitido, o WEP gera um novo $IV$ e utiliza a mesma chave para criptografar seu conteúdo.
+Acontece que 24 bits é um tamanho consideravelmente pequeno e se repete com 50\% de chance a cada 5000 pacotes tornando-o completamente inseguro.
+
+Hoje em dia, um script que implementa este tipo de ataque chamado {\tt aircrack-ng} é capaz de quebrar uma senha WEP usando uma computador pessoal em questão de minutos.
+Esse tipo de vulnerabilidade do protocolo WEP levou-o a ser substituído em pelo protocolo WPA e em seguida pelo WPA2 entre 2004 e 2006.
+\end{example}
+
+Exatamente para evitar problemas como o do WEP que implementações modernas de PRGs recebem, além da semente, um vetor inicial -- as vezes chamado de {\em nonce} -- cujo papel é garantir que a chave não seja repetida.
 
 \section{Exercicios}
 \label{sec:exercicios}
@@ -112,3 +182,11 @@ Ou equivalentemente:
 Mostre que o gerador $G$ com fator de expansão $l(n) = n + 1$ que recebe $s \in \{0,1\}^n$ e devolve $s$ concatenado com $\bigoplus_{i=0}^ns_i$ não é um PRG.  
 \end{exercicio}
 
+\begin{exercicio}
+  Construa um dintinguidor eficiente $D$ para o LFSR simples.
+\end{exercicio}
+
+
+\begin{exercicio}
+  Por que em uma cifra de fluxo não podemos criptografar duas mensagens distintas com a mesma chave?
+\end{exercicio}
