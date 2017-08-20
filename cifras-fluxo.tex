@@ -1,0 +1,114 @@
+\chapter{Cifras de Fluxo}
+\label{cha:cifras-de-fluxo}
+
+No capítulo anterior apresentamos uma definição formal para segurança contra ataques em que o adversário tem acesso apenas ao texto cifrado.
+Neste capítulo vamos apresentar uma forma de construir um sistema que satisfaz essa definição.
+A ideia geral da construação é a seguinte: partimos de uma sequência aleatória de bits chamado de {\em semente} e a partir dela geramos uma sequência maior de bits a ser usada para encriptar a mensagem usando o ou exclusivo como no OTP.
+Apesar desta sequência ser gerada de maneira determinística, a segurança do sistema depende do fato de que ela se pareça aleatória.
+Informalmente, um {\em gerador de números pseudoaleatórios} (PRG) é essa função que recebe uma semente aleatória e a expande em uma sequência com cara de aleatória.
+
+Sistemas de cifra de fluxo foram estudados extensamente nos anos 80.
+A abordagem para verificar se o gerador de números pseudoaleatórios é suficientemente forte consistia em aplicar uma série de testes estatísticos na sequência gerada para tentar distinguí-lo de uma sequência aleatória.
+Assim, por exemplo, um teste pode verificar se a probabilidade de o primeiro bit da sequência ser igual $1$ é $\frac{1}{2}$ ou que a probabilidade de ocorrência de pelos menos três $0$s em qualquer subsequência de tamanho $4$ deve ser $\frac{5}{16}$ -- existem uma sequência em que o $0$ ocorre quatro vezes e mais quatro sequências possíveis em que ele ocorre três vezes.
+Um teste como recebe uma sequencia produzida por um PRG e deve retornar $1$ se o teste passou e $0$ caso contrário.
+O objetivo do teste é distinguir as sequências de bits produzidas por um PRG de uma sequência realmente aleatória.
+Por este motivo, esses testes são chamados {\em distinguidores}.
+
+Uma bateria de distinguidores pode ser usada para verificar a qualidade de um PRG.
+Idealmente nenhum teste eficiente deveria ser capaz de distinguir o PRG de uma sequência aleatória, ou pelo menos incapaz de fazê-lo com probabilidade considerável.
+Definiremos um gerador de números pseudo-aleatórios como um algoritmo $G$ que recebe uma semente $s$ de tamanho $n$ e produz $G(s)$ de tamanho $l(n)$ onde $l$ é um polinômio que define o {\em fator de expansão} do PRG -- quão maior é a sequência produzida em relação a semente -- e tal que nenhum algoritmo polinomial $D$ é capaz de distinguir $G(s)$ de um sequencia $r$ escolhida aleatóriamente em $\{0,1\}^{l(n)}$ com probabilidade não desprezível.
+Formalmente temos o seguinte:
+
+
+\begin{definition}
+  Seja $l$ um polinômio e $G$ um algoritmo determinístico polinomial que recebe $s \in \{0,1\}^n$ e retorna $G(s) \in \{0,1\}^{l(n)}$ e seja $r \leftarrow \{0,1\}^{l(n)}$.
+  O algoritmo $G$ é um {\em gerador de números pseudo-aleatórios} se:
+\begin{enumerate}
+\item $l(n) > n$ para todo $n$ e
+\item para todo algoritmo polinomial $D$ existe uma função desprezível $\varepsilon$ tal que:
+\begin{displaymath}
+  |Pr[D(r) = 1] - Pr[D(G(s)) = 1]| \leq \varepsilon(n)  
+\end{displaymath}
+\end{enumerate}
+\end{definition}
+
+
+\begin{example}
+  Considere um algoritmo $G$ que recebe $s \in \{0,1\}^n$ e devolve $0^{l(n)}$.
+  Certamente $G$ não é um PRG e podemos mostrar isso com um distinguidor $D$ que recebe $w \in \{0,1\}^{l(n)}$ e devolve $1$ se $w = 0^{l(n)}$ e $0$ caso contrário.
+  É fácil ver que para $r \leftarrow \{0,1\}^{l(n)}$ e $s \leftarrow \{0,1\}^n$ temos que $Pr[D(r) = 1] = \frac{1}{2^{l(n)}}$ e $Pr[D(G(s)) = 1] = 1$ e, portanto, temos que:
+\begin{displaymath}
+  |Pr[D(r) = 1] - Pr[D(G(s)) = 1]| = 1 - \frac{1}{2^{l(n)}}
+\end{displaymath}
+
+\end{example}
+
+
+A restrição de que o distinguidor seja eficiente é extritamente necessária.
+Em particular é sempre possível construir um distinguidor usando uma espécie de ataque de força bruta.
+Dado uma sequência $w$, o algoritmo $D$ testa todos as possíveis sementes $s$ e verifica se $G(s) = w$ e devolve $1$ caso exista e $0$ caso contrário.
+Esse teste é eficaz pois $Pr[D(G(s)) = \frac{1}{2^n}] = 1$, mas $Pr[D(r) = 1] = \frac{1}{2^{l(n)}}$.
+Porém, o teste não é eficiente.
+De fato $D$ não é polinomial, mas exponencial, pois o tempo esperado para testar todos os valores de $s$ é $2^{n-1}$. 
+
+% FALAR DE GERADORES PESUDOALEATORIOS USADOS NA PRÁTICA
+% PRECISO FALAR QUE O RAND DO C NÃO É SEGURO!!!
+
+A existência de PRGs não foi demonstrada matematicamente.
+No capítulo \ref{} mostraremos que a dificuldade associada a este tipo de problema.
+A abordagem utilizada em relação a PRG é empírica, ou seja, os candidatos a PRG são empiricamente validados a cada tentativa frustrada de construir um distinguidor empírico para eles.
+
+Como adiantamos no capítulo anterior, uma vez definida claramente a suposição que estamos fazendo podemos tentar provar que com essa suposição somos capazes de construir um sistema seguro.
+A abordagem para este tipo de prova é uma redução aos moldes das reduções que vimos em Teoria da Computação.
+Neste caso vamos reduzir o problema de construir um sistema seguro contra ataques {\em ciphertext only} ao problema de construir um PRG.
+
+
+\begin{theorem}
+  Se $G$ é um gerador de números pseudo-aleatórios então o seguinte sistema $\Pi = \langle Gen, E, D \rangle$ é seguro contra ataques {\em ciphertext only}.
+\begin{itemize}
+\item $Gen(1^n) := k \leftarrow \{0,1\}^n$
+\item $E(k,m) = G(k) \xor m$
+\item $D(k,c) = G(k) \xor c$
+\end{itemize}
+\end{theorem}
+\begin{proof}
+Seja $\mathcal{A}$ um algoritmo polinomial.
+Construiremos um distinguidor $D$ que recebe um string $w \in \{0,1\}^{l(n)}$ e faz o seguinte:
+\begin{itemize}
+\item Roda $\mathcal{A}(1^n)$ para obter o par de mensagens $m_0, m_1 \in \{0,1\}^{l(n)}$
+\item Escolhe $b \leftarrow \{0,1\}$ e computa $c = w \xor m_b$.
+\item Entrega $c$ para $\mathcal{A}$ e devolve $1$ se o resultado for igual a $b$ e $0$ caso contrário.
+\end{itemize}
+
+Pela definição, $D$ devolve $1$ exatamente nas mesmas situações em que $\mathcal{A}$ vence o desafio.
+Portanto temos que:
+\begin{displaymath}
+Pr[D(G(k)) = 1] = Pr[PrivK^{eav}_{\Pi, \mathcal{A}}(n) = 1]  
+\end{displaymath}
+
+Além disso, sendo $\Pi'$ o sistema do OTP e $w \leftarrow \{0,1\}^{l(n)}$ temos que:
+\begin{displaymath}
+Pr[D(w) = 1] = Pr[PrivK^{eav}_{\Pi', \mathcal{A}}(n)] = \frac{1}{2}  
+\end{displaymath}
+ 
+Como $G$ é um PRG temos que existe uma função desprezível $\varepsilon$ tal que $|Pr[D(G(k)) = 1] - Pr[D(w) = 1]| \leq \varepsilon(n)$ e, portanto:
+\begin{displaymath}
+  |Pr[PrivK^{eav}_{\Pi, \mathcal{A}}(n) = 1] - \frac{1}{2}| \leq \varepsilon(n)
+\end{displaymath}
+
+Ou equivalentemente: 
+\begin{displaymath}
+   Pr[PrivK^{eav}_{\Pi, \mathcal{A}}(n) = 1] \leq \frac{1}{2} + \varepsilon(n)
+\end{displaymath}
+\end{proof}
+
+% FALAR DE REPETIÇÃO DE CHAVES E DO WEP!!
+% FALAR DE NONCE
+
+\section{Exercicios}
+\label{sec:exercicios}
+
+\begin{exercicio}
+Mostre que o gerador $G$ com fator de expansão $l(n) = n + 1$ que recebe $s \in \{0,1\}^n$ e devolve $s$ concatenado com $\bigoplus_{i=0}^ns_i$ não é um PRG.  
+\end{exercicio}
+
