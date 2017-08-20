@@ -1,0 +1,94 @@
+\chapter{Criptografia Moderna}
+\label{cha:criptografia-moderna}
+
+No capítulo anterior apresentamos uma primeira tentativa de definir formalmente segurança de sistemas de criptografia.
+A definição, proposta por Shannon, estabelece que um sistema garante o {\em sigilo perfeito} se a cifra não guarda nenhuma informação da mensagem que a produziu.
+No final do capítulo, porém, vimos que esta definição não é muito útil na prática, pois obriga o universo de chaves ser pelo menos tão grande quanto o universo das mensagens.
+
+Apesar do fracasso desta primeira tentativa de formalizar o conceito de segurança, não abandonaremos a ideia geral.
+A abordagem da {\em criptografia moderna}, que utilizaremos nesta apostila, segue três princípios básicos:
+\begin{enumerate}
+\item {\em definições formais:} As noções de segurança utilizadas serão apresentadas de maneira formal por meio de definições. 
+As definições prévias nos ajudam a comparar sistemas e avaliar sua segurança a partir de critérios estabelecidos previamente.
+\item {\em suposições precisas:} Na maioria dos casos seremos forçados a fazer suposições sobre os sistemas de criptografia que não seremos capazes de demonstrar.
+Ainda assim, é imprescindível explicitar essas suposições de maneira clara e formal.
+Nossa incapassidade de provar tais suposições não nos impede de validá-las empiricamente.
+Grande parte do trabalho envolvido na criptografia moderna consiste em validar testar as suposições sobre um sistema e buscar suposições mais simples e básicas.
+\item {\em demonstrações formais:} Quando somos capazes de formalizar nossas suposições e a definição de segurança desejada, eventualmente podemos demonstrar que um sistema que satisfaz as suposições garante determinada noção de segurança.
+Esse tipo de demonstração reduz o problema da segurança às suposições do sistema que devem ser mais simples e mais fáceis de validar empiricamente.
+Esta redução permite que se substitua um sistema cuja suposição foi falseada antes que ele seja quebrado.
+\end{enumerate}
+
+As definições de segurança em geral possuem dois componentes: uma garantia de segurança -- o que pode ser considerado um ataque bem sucedido -- e um modelo de ameaças.
+Por exemplo, na definição de {\em sigilo perfeito} a garantia de segurança é que nenhuma informação sobre a mensagem esteja contida na cifra -- ou como formulamos, a probabilidade de ocorrência da cifra deve ser independente da probabilidade de ocorrência da mensagem -- e o modelo de ameaça assume que o adversário tem acesso apenas ao texto cifrado e nada mais. 
+Os modelos de ameaças que estudaremos no livros incluem:
+\begin{itemize}
+\item {\em ataque ciphertext-only:} Este é o modelo assumido na definição de sigilo perfeito.
+Nele assumimos que o adversário tem acesso apenas a um texto cifrado de tamanho arbitrário.
+\item {\em ataque chosen-plaintext:} Neste modelo, além de assumir que o adversário tem acesso à cifra, assumimos que ele é capaz de escolher uma quantidade de mensagens e verificar como elas seriam cifradas pelo sistema.
+\item {\em ataque chosen-ciphertext:} Neste modelo assumimos que o adversário é também capaz de escolher certas cifras e verificar como elas seriam decifras pelo sistema.
+\end{itemize}
+
+Essas definições são progressivamente mais fortes, ou seja, assumem progressivamente maior capacidade de ataque do adversário.
+Note que nossos modelos de ataque não fazem qualquer suposição sobre a estratégia utilizada pelo adversário.
+Em geral, a definição mais adequada depende das necessidades do problema em mãos -- eventualmente pode ser desejável um sistema mais fraco e mais eficiente.
+
+Nossa primeira tentativa de definir segurança esbarrou na limitação inconveniente expressa pelo teorema de Shannon.
+Afirmamos no capítulo anterior que o sigilo perfeito pode ser definido por meio de um jogo.
+O sigilo perfeito é garantido se nenhum adversário for capaz de distinguir qual mensagem foi encriptada pelo sistema.
+Para contornar as limitações expressas pelo teorema de Shannon, enfraqueceremos este tipo de definição de duas formas:
+\begin{itemize}
+\item O adversário deve ser {\em eficiente} e usar sua estratégia em um tempo razoável.
+  Ou seja, eventualmente um adversário pode derrotar o sistema desde que seja dado a ele tempo suficiente.
+  A existência de um adversário como este não violará nossa definição de segurança, pois não traz uma real ameaça na prática.
+\item O adversário pode eventualmente derrotar o sistema, mas com uma {\em probabilidade muito pequena}.
+Colocado de outra maneira, a cifra pode guardar alguma informação sobre a mensagem desde que seja muito pouca. 
+\end{itemize}
+
+\section{Abordagem Assintótica}
+\label{sec:abord-assint}
+
+Em termos práticos o que buscamos uma noção de segurança em que para um adversário ter sucesso ele precisaria rodar seu algoritmo em uma máquina excelente por um intervalo bem grande de tempo.
+Alternativamente esperamos que eventualmente o adversário derrote o sistema em pouco tempo, mas com uma probabilidade muito baixa.
+O problema com essa abordagem é como definir o que seria uma ``máquina excelente'', uma ``intervalo bem grande de tempo'' e uma ``probabilidade muito baixa''.
+Essas questões são particularmente complicados em um contexto em que a capacidade computacional evolui de maneira acelerada.
+
+Ao invés de estabelecer valores fixos para definir esses limites, partiremos de uma {\em abordagem assintótica}.
+Suporemos que o algoritmo de geração de chaves $Gen$ recebe um {\em parâmetro de segurança} $n$ e estabeleceremos nossos limites em função deste parâmetro -- tipicamente denotaremos esse valor usando a notação unária $1^n$, pois a tempo de execução costuma ser calculado como uma função do tamanho da entrada.
+Para os efeitos desta apostila podemos assumir que o parâmetro está relacionado ao tamanho da chave a ser gerada e que é de conhecimento público.
+O parâmetro de segurânça permite que as partes ajustem seu sistema para o nível desejado de segurança -- aumentar seu tamanho costuma refletir em um aumento no tempo de processamento do sistema e em um aumento no tamanho da chave, portanto, quem projeta o sistema tem um incentivo para querer minimizá-lo as custas de diminuir sua segurança.
+A capacidade de ajustar o parâmetro de segurânça possui grandes vantagens práticas, pois permite se defender de adversários com poder computacional mais forte com o passar do tempo. 
+
+Vamos estabelecer que o adversário buscará quebrar a cifra usando um algorítmo randomizado polinomial em $n$ e que ele pode vencer com uma probabilidade desprezível em $n$.
+A suposição de que o adversário usa um algoritmos randomizado é forte, significa que ele é capaz de acessar uma quantidade arbitrária de bits aleatórios.
+Isso certamente não é possível na prática, mas serve bem aos propósitos de uma análise de pior caso.
+Já a probabilidade ser desprezível significa que ela cresce assintoticamente mais devagar do que o inverso de qualquer polinômio.
+Formalmente, $\varepsilon: \mathbb{N} \to \mathbb{N}$ é {\em desprezível} se para todo polinômio $p$ existe um número positivo $N$ tal que para todo $n > N$ temos que $\varepsilon(n) < \frac{1}{n}$.
+
+Estamos agora em condições de reescrever a definição de segurança formalmente incorporando os enfraquecimentos descritos neste capítulo.
+
+\begin{definition}
+  Considere o jogo apresentado no Capítulo \ref{cha:sigilo-perfeito}, um sistema $\Pi = \langle Gen, E, D \rangle$ é seguro contra ataques {\em ciphertext-only} se para todo adversário polinomial $\mathcal{A}$ existe uma função desprezível $\varepsilon$ tal que para todo $n$:
+\begin{displaymath}
+  Pr[PrivK^{eav}_{\Pi, \mathcal{A}}(n) = 1] \leq \frac{1}{n} + \varepsilon(n)
+\end{displaymath}
+\end{definition}
+
+Lembrando que agora o algoritmo $Gen$ recebe como o parâmetro de segurança $n$ em notação unária para gerar a chave de tamanho apropriado.
+Em palavras, a definição estabelece que um sistema é seguro contra ataques {\em ciphertext-only} se nenhum algoritmo eficiente é capaz de derrotá-lo com probabilidade consideravelmente maior do que $\frac{1}{2}$.
+Resta mostrar um sistema que satisfaça essa definição.
+
+
+\section{Exercícios}
+\label{sec:exercicios}
+
+
+\begin{exercicio}
+  Sejam $\varepsilon_1$ e $\varepsilon_2$ duas funções desprezíveis. 
+  Mostre que $\varepsilon_1 + \varepsilon_2$ é desprezível.
+\end{exercicio}
+
+\begin{exercicio}
+  Seja $\varepsilon$ uma função desprezível e $p$ um polinômio. 
+  Mostre que $p\varepsilon$ é desprezível.
+\end{exercicio}
