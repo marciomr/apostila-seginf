@@ -103,8 +103,8 @@ Algoritmos validados empiricamente como bons PRG podem ser usados portanto para 
 Nos próximos capítulos exploraremos definições mais fortes de segurança e suas respectivas suposições.
 Para fechar este capítulo lembramos que as cifras de fluxo sofrem do mesmo problema do OTP quanto à repetição do uso de uma mesma chave.
 
-\section{Linear-Feedback Shift Registers}
-\label{sec:lfsr}
+\section{Construções Práticas}
+\label{sec:construcoes-praticas}
 
 A existência de PRGs não foi demonstrada matematicamente.
 No capítulo \ref{} mostraremos porque é tão difícil encontrar uma PRG demonstradamente seguro.
@@ -115,6 +115,9 @@ Assim, na prática utilizamos um par de algoritmos $\langle Init, GenGits \rangl
 O primeiro algoritmo recebe a semente $s$ como entrada e opcionalmente um vetor inicial $IV$ (ver seção seguinte) e devolve um estado inicial $st_0$.
 O segundo algoritmo recebe como entrada o estado atual $st_i$, devolve um bit $y$ e atualiza o estado para $st_{i+1}$.
 Assim para cada semente, o algoritmo produz um {\em fluxo} infinito de bits -- sendo os $l(n)$ primeiros bits geram $G(s)$.
+
+\subsection{Linear-Feedback Shift Registers}
+\label{sec:lfsr}
 
 Um exemplo deste tipo de algoritmo são os chamados {\em Linear-Feedback Shift Registers} (LFSRs).
 Um LFSR consiste de um vetor de registradores $s_{n-1} \dots s_0$, que guardam exatamente um bit cada, e uma sequência de bits $c_{n-1} \dots c_0$ chamada {\em coeficientes de feedback}.
@@ -153,11 +156,30 @@ Resumindo, o LFSR não é seguro pois a operação que gera novos bits é linear
 LFSRs não são PRG seguros, mas muitos PRGs nada mais são do que versões alteradas deste esquema geral.
 Tipicamente os PRGs usados na prática substituem a operação de ou exclusivo por alguma operação não linear.
 
+\subsection{Trivium}
+\label{sec:trivium}
+
 Em um concurso científico de 2008 para produção de cifras de fluxo seguras, uma série de algoritmos foram apresentados como alternativas seguras e eficientes para este problema.
 Um dos algoritmos selecionados pelo projeto eSTREAM é o {\em Trivium}.
 Este algoritmo recebe dois valores como entrada ambos com 80 bits, a semente e o vetor incial.
 Um estado no Tivium é um vetor com 288 bits e seu ciclo tem tamanho $2^{64}$, ou seja, $Triv: \{0,1\}^{80}\times \{0,1\}^{80} \to \{0,1\}^{2^{64}}$.
 Até a escrita destas notas, não existem ataques conhecidos ao algoritmo mais eficientes do que o ataque de força-bruta.
+
+O Trivium possui três registradores A, B e C de tamanhos de 93, 84 e 111 respectivamente, somando 288 bits.
+Em cada passo cada registrador:
+\begin{enumerate}
+\item calcula o AND do penúltimo com o ante-penúltimo bit e calcula o XOR do bit resultante com o último bit e com mais um bit de uma certa posição fixa chamado {\em feedfoward bit} para produzir um bit chamado {\em bit de saída},
+\item o bit de saída é enviado para o registrador adjacente -- A envia para B, B para C e C para A,
+\item cada registrador move seus bits uma posição para a direita, como no LFSR,
+\item cada registrador aplica o XOR do bit que recebeu com um bit de uma certa posição fixa, chamado {\em feedbackward bit}, e insere bit resultante na primeira posição e, por fim,
+\item calcula-se o XOR dos três bits de saída para produzir um bit do fluxo.
+\end{enumerate}
+
+A chave do Trivium é inserida nas primeiras posições do registrador A, e o vetor inicial nas úlitmas posições do registrador B.
+As demais posições são preenchidas com $0$ excetos as últimas três do registrador C que são preenchidas com $1$.
+Antes de começar a produzir o fluxo de bits, o processo roda $4 \times 288 = 1152$ no que é chamado de {\em fase de aquecimento}. 
+
+% INSERIR A FIGURA DA INTERNET
 
 A escolha de um bom gerador de números pseudo-aleatórios é central para a segurança de uma cifra de fluxo.
 Um erro típico é utilizar funções padrão, como a função {\tt rand} da biblioteca padrão do {\tt C}, que não são adequadas para aplicações de segurança.
@@ -192,8 +214,6 @@ Esse tipo de vulnerabilidade do protocolo WEP levou-o a ser substituído em pelo
 \end{example}
 
 
-
-
 \section{Exercicios}
 \label{sec:exercicios}
 
@@ -205,7 +225,6 @@ Mostre que o gerador $G$ com fator de expansão $l(n) = n + 1$ que recebe $s \in
   Construa um dintinguidor eficiente $D$ para o LFSR simples.
 \end{exercicio}
 
-
 \begin{exercicio}
   Por que em uma cifra de fluxo não podemos criptografar duas mensagens distintas com a mesma chave?
 \end{exercicio}
@@ -214,4 +233,16 @@ Mostre que o gerador $G$ com fator de expansão $l(n) = n + 1$ que recebe $s \in
  Sejam $y_0, y_1, y_2 \dots$ os bits gerados pelo algoritmo RC4.
 É possível mostrar que para uma distribuição uniforme de sementes e vetores iniciais, a probabilidade dos bits $y_9, \dots, y_{16}$ serem todos iguais a $0$ é $\frac{2}{256}$.
 Mostre como construir um algoritmo eficiente $D$ capaz de distinguir as sequências de bits produzidas pelo RC4 de uma sequência realmente aleatória.
+\end{exercicio}
+
+\begin{exercicio}
+  Considere a seguinte implementação de uma cifra de fluxo:
+\begin{enumerate}
+\item Utilizamos o número de segundos desde primeiro de janeiro de 1970 até o momento atual para gerar uma semente $s$ que armazenamos em um local seguro.
+\item Utilizamos, então, a implementação {\tt rand} da biblioteca padrão do {\tt C} para gerar uma sequência de $n$ bits $G(s)$.
+\item Produzimos a cifra $c = G(s) \xor m$ supondo que $|m| = n$.
+\item Para descriptografar recuperamos $s$, aplicamos $G(s) \xor c$.
+\end{enumerate}
+
+  Descreva duas vulnerabilidades deste protocolo.
 \end{exercicio}
