@@ -285,3 +285,14 @@ Mostre que a operação $R_i \xor f_i(R_{i-1})$ na rede de Feistel de fato recup
 \begin{exercicio}
   Mostre a corretude dos modos CBC e Ctr, ou seja, que em ambos os casos $D(k, E(k,m)) = m$;
 \end{exercicio}
+
+\begin{exercicio}
+Suponha que um bit em uma cifra tenha sido alterado por um erro.
+Qual o efeito disso na mensagem descriptografada caso a cifra tenha sido produzida usando o modo Ctr? E no caso de ter sido produzida usando o modo CBC?  
+\end{exercicio}
+
+
+\begin{exercicio}
+  Considere a definição de segurança contra CPA em que consideramos qualquer adversário $\mathcal{A}$ -- não apenas os eficientes -- e exigimos que $Pr[PrivK^{cpa}_{\Pi,\mathcal{A}}(n) = 1] = \frac{1}{2}$.
+  Mostre que é impossível construir um sistema que satisfaça essa definição de segurança.
+\end{exercicio}
