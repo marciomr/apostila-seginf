@@ -181,7 +181,7 @@ Para descriptografar precisamos aplicar $D(k,c) := m_0 \dots m_l$ da seguinte fo
 
 % Figura do CBC
 
-A principal limitação do modo CBC é que os blocos precisam ser processados em sequência, ou seja, não é possível paralelizar esse processo.
+A principal limitação do modo CBC é que os blocos precisam ser processados em sequência, ou seja, o algoritmo não é paralelizável.
 O {\em modo contador} (Ctr), por outro lado, não tem essa limitação.
 Este modo opera de maneira muito similar a uma cifra de fluxo.
 Como no modo CBC o primeiro bloco é uma sequência de bits aleatória ($IV$).
@@ -205,9 +205,24 @@ A segurança do modo contador exige apenas uma função pseudoaleatória que nã
 \end{theorem}
 \begin{proof}
   Seja $\Pi$ o sistema de criptografia usando uma função pseudoaleatória em modo Ctr e $\Pi'$ o mesmo sistema, mas usando uma função realmente aleatória.
-Se $\mathcal{A}$ derrota o sistema $\Pi$ então podemos construir um distinguidor $D^{f}$ e $D^{f_k}$ tal que:
+Usamos o adversário $\mathcal{A}$ para construir um distinguidor $D$ que recebe uma entrada $1^n$ e acesso a um oráculo $O:\{0,1\}^n \to \{0,1\}^n$ da seguinte forma:
+\begin{enumerate}
+\item Sempre que $\mathcal{A}$ fizer uma consulta a seu oráculo em um mensagem $m$, fazemos o seguinte:
+\begin{enumerate}
+\item Geramos $IV \leftarrow \{0,1\}^n$.
+\item Consultamos $O(IV + i)$ para cada $i \in 0, \dots, l$ para receber $y_0, \dots, y_l$ como resposta.
+\item Devolvemos $y_0 \xor m_0 \dots y_l \xor m_l$ para $\mathcal{A}$
+\end{enumerate}
+\item Quando $\mathcal{A}$ envia $m_0$ e $m_1$ para o sistema, escolhemos $b \leftarrow \{0,1\}$ e:
+\begin{enumerate}
+\item Geramos $IV \leftarrow \{0,1\}^n$.
+\item Consultamos $O(IV + i)$ para cada $i \in 0, \dots, l$ para receber $y_0, \dots, y_l$ como resposta.
+\item Devolvemos $y_0 \xor m_{b0} \dots y_l \xor m_{bl}$ para $\mathcal{A}$
+\end{enumerate}
+\item Quando $\mathcal{A}$ devolve o bit $b'$ devolvemos $1$ se $b = b'$ e $0$ caso contrário.
+\end{enumerate}
 
-% FALTA MOSTRAR ESSA CONSTRUÇÃO
+$D$ opera em tempo polinomial, pois $\mathcal{A}$ também opera em tempo polinomial e conforme ambos operam da maneira idêntica, temos que:
 
 \begin{eqnarray*}
   Pr_{k \leftarrow \{0,1\}^n}[D^{f_k}(1^n) = 1] & = & Pr[PrivK^{cpa}_{\mathcal{A},\Pi}(n) = 1]\\
@@ -253,12 +268,12 @@ Concluímos que:
 \begin{displaymath}
 Pr[PrivK^{cpa}_{\mathcal{A},\Pi'}(n) = 1] < \frac{1}{2} + \frac{2q(n) - 1}{2^n}
 \end{displaymath}
-
-
-
 \end{proof}
 
-% Falar sobre o tamanho dos blocos.
+A demonstração indica que o tamanho dos blocos também influencia em sua segurança.
+Isso ocorre, pois quanto menos os blocos maior a chance de gerar vetores inciais idênticos, e portanto, de criptografar duas mensagens distintas com a mesma chave.
+Como exemplo, tomando o caso concreto do DES, seu bloco tem tamanho $64$ e,portanto, esperamos uma colisão depois de $2^{32}$ blocos (ver Capítulo \ref{}), ou cerca de 4Gb.
+No momento em que estas notas são escritas, este valor é alto, mas plausível em muitas aplicações práticas.
 
 \section{Exercícios}
 \label{sec:exercicios}
