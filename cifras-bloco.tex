@@ -204,7 +204,58 @@ A segurança do modo contador exige apenas uma função pseudoaleatória que nã
   Seja $f$ uma função pseudoaleatória, o sistema $\Pi$ tal qual apresentado acima, modo Ctr, é segura contra CPA.
 \end{theorem}
 \begin{proof}
-  
+  Seja $\Pi$ o sistema de criptografia usando uma função pseudoaleatória em modo Ctr e $\Pi'$ o mesmo sistema, mas usando uma função realmente aleatória.
+Se $\mathcal{A}$ derrota o sistema $\Pi$ então podemos construir um distinguidor $D^{f}$ e $D^{f_k}$ tal que:
+
+% FALTA MOSTRAR ESSA CONSTRUÇÃO
+
+\begin{eqnarray*}
+  Pr_{k \leftarrow \{0,1\}^n}[D^{f_k}(1^n) = 1] & = & Pr[PrivK^{cpa}_{\mathcal{A},\Pi}(n) = 1]\\
+  Pr_{f \leftarrow Func_n}[D^{f}(1^n) = 1] & = & Pr[PrivK^{cpa}_{\mathcal{A},\Pi'}(n) = 1]
+\end{eqnarray*}
+ 
+Como $f$ é uma função pseudoaleatória, por definição, temos que existe $\varepsilon$ desprezível tal que:
+\begin{displaymath}
+  |Pr_{k \leftarrow \{0,1\}^n}[D^{f_k}(1^n) = 1] - Pr_{f \leftarrow Func_n}[D^{f}(1^n) = 1]| \leq \varepsilon(n)
+\end{displaymath}
+
+Juntando tudo temos que:
+
+\begin{displaymath}
+  |Pr[PrivK^{cpa}_{\mathcal{A},\Pi}(n) = 1] - Pr[PrivK^{cpa}_{\mathcal{A},\Pi'}(n) = 1]| \leq \varepsilon(n)
+\end{displaymath}
+
+Se conseguirmos mostrar que $Pr[PrivK^{cpa}_{\mathcal{A},\Pi'}(n) = 1] < \frac{1}{2} + \varepsilon'(n)$ para um $\varepsilon'$ desprezível, então resolvemos o problema, pois teremos:
+\begin{displaymath}
+  Pr[PrivK^{cpa}_{\mathcal{A},\Pi}(n) = 1] < \frac{1}{2} + \varepsilon(n) + \varepsilon'(n)
+\end{displaymath}
+
+Vamos chamar de $IV$ o primeiro bloco da cifra $c$ produzida pelo sistema $\Pi'$ e $IV_i$ o primeiro bloco de cada cifra $c_i$ resultado das consultas de $\mathcal{A}$ ao oráculo.
+\begin{enumerate}
+\item Se para nenhuma $IV + j$ usado para encriptar algum bloco $j$ de $m_b$ coincidir com nenhum $IV_i + j'$ de algum bloco $j'$ de uma consulta então $\Pi'$ se comporta exatamente como um OTP e temos que $Pr[PrivK^{cpa}_{\mathcal{A},\Pi'}(n) = 1] = \frac{1}{2}$.
+\item Caso contrário é possível que o $\mathcal{A}$ seja capaz de distinguir as mensagens.
+\end{enumerate}
+
+Resta, portanto, calcular a probabilidade de uma coincidência como essa ocorrer.
+Como $\mathcal{A}$ tem que ser polinomial, o número de consultas máximo que ele pode fazer está limitado a $q(n)$ onde $q$ é um polinômio.
+Seja $l$ o número de blocos de $c$ e $l_i'$ o número de blocos da $i$-ésima consulta.
+Essa coincidência quando $IV + 1 \dots IV + l$ intersecciona $IV_i + 1 \dots IV_i + l'$, ou seja, quando:
+\begin{displaymath}
+  IV - l' + 1 \leq IV_i \leq IV + l -1
+\end{displaymath}
+
+Ou seja, existem $l + l' - 1$ casos em que ocorre uma intersecção, num universo de $2^n$ valores.
+Assim, a probabilidade dessa coincidência é $\frac{l + l' -1}{2^n}$.
+Essa probabilidade é maximizada para os maiores valores possíveis de $l$ e $l'$, a saber, $q(n)$.
+Portanto a maior probabilidade possível para essa intersecção é $\frac{2q(n) - 1}{2^n}$ que é desprezível.
+Concluímos que:
+
+\begin{displaymath}
+Pr[PrivK^{cpa}_{\mathcal{A},\Pi'}(n) = 1] < \frac{1}{2} + \frac{2q(n) - 1}{2^n}
+\end{displaymath}
+
+
+
 \end{proof}
 
 % Falar sobre o tamanho dos blocos.
