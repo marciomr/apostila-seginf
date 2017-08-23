@@ -1,0 +1,221 @@
+\chapter{Cifras de Bloco}
+\label{cha:cifras-de-bloco}
+
+No capítulo anterior mostramos que somos capazes de construir um sistema seguro contra ataques do tipo {\em ciphertext only}.
+Para isso precisamos supor a existência um gerador de números pseudo-aleatórios, ou seja, um algoritmo capaz de gerar uma sequência de bits indintinguível, para todos efeitos práticos, de uma sequência aleatória.
+Nossa definição de ataque é um pouco mais fraca do que a apresentada no Capítulo \ref{}, mas nosso sistema não requer chaves tão grandes.
+As cifras de fluxo, porém, compartilham com o OTP dois problemas: são totalmente inseguras caso haja repetição de chaves e não apresentam qualquer garantia de segurança caso o adversário conheça partes do mensagem.
+
+O modelo das cifras de fluxo é adequado para descrever as Máquinas Enigma utilizadas pelo exército nazista nos anos 40.
+Sua cifra, porém, foi derrotada não apenas pelo desenvolvimento tecnológico que levou a contrução da máquina Bombe e do Colossus, mas porque os aliados tiveram acesso a trechos de mensagens descriptografas.
+Com a teoria da criptografia moderna, diríamos hoje que o tipo de ataque que os ingleses fizeram foi do tipo {\em known plaintext}.
+
+Neste capítulo nos voltaremos para um modelo de ataque ainda mais poderoso.
+Ataques do tipo {\em chosen plaintext} (CPA) supõe que o adversário, além de acessar o texto cifrado, é capaz de fazer com que o sistema produza as cifras de mensagens produzidas por ele.
+É evidente que ataques do tipo {\em known plaintext} são um caso particular deste, mas existem situações em que devemos assumir esse poder maior por parte do adversário.
+
+Vamos formalizar segurança contra ataques CPA de forma análoga à segurança contra ataques {\em ciphertext only}.
+Considere o seguinte jogo.
+\begin{enumerate}
+\item O adversário $\mathcal{A}$ escolhe duas mensagens $m_0$ e $m_1$ com o mesmo tamanho ($|m_0| = |m_1|$) e envia para o sistema $\Pi$.
+\item O sistema gera uma chave $k$ usando o algoritmo $Gen$ e sorteia aleatoriamente uma das mensagens para criptografar ($\Pi$ sorteia $b \leftarrow \{0, 1\}$ e criptografa $m_b$).
+\item Durante todo o processo $\mathcal{A}$ possui acesso a um {\em oráculo} $E_k$ que ele pode usar para verificar como seria criptografadas qualquer mensagem $m$.
+\item A cifra produzida $E(k, m_b) = c$ e enviada de volta para o adversário.
+\end{enumerate}
+
+O desafio de $\mathcal{A}$ é acertar qual das duas mensagens foi encriptada.
+Chamamos o experimento de $PrivK^{cpa}_{\Pi, \mathcal{A}}$:
+\begin{displaymath}
+  PrivK^{cpa}_{\Pi, \mathcal{A}}(n) = \left\{
+    \begin{array}{lcl}
+      1 & \textrm{se} & b = b'\\
+      0 & \textrm{c.c.} &\\
+    \end{array}
+    \right.
+\end{displaymath}
+
+Um sistema $\Pi$ é {\em seguro contra CPA} se para todo adversário polinomial $\mathcal{A}$ temos que existe uma função desprezível $\varepsilon$ tal que:
+\begin{displaymath}
+  Pr[PrivK^{cap}_{\Pi, \mathcal{A}} = 1] = \frac{1}{2} + \varepsilon(n)
+\end{displaymath}
+
+Para construir um sistema seguro contra CPA assumiremos a existência de {\em funções pseudoaleatórias}.
+Considere o conjunto de todas as funções $f: \{0,1\}^n \to \{0,1\}^n$.
+Chamaremos esse conjunto de $Func_n$ e não é difícil calcular que $|Func_n| = 2^{n2^n}$.
+Gostaríamos de escolher aleatoriamente uma função $f \leftarrow Func_n$, mas isso não é possível, o melhor que podemos fazer é escolher uma chave $k \leftarrow \{0,1\}^n$ e tentar produzir uma função $f_k: \{0,1\}^n \to \{0,1\}^n$ que se pareça com uma função escolhida aleatoriamente.
+Assim, como um PRG, uma {\em função pseudoaleatória} (PRF) é tal que não existe algoritmo efeciente capaz de distingui-la de uma função aleatória com probabilidade considerável.
+
+Uma {\em cifra de bloco} é uma {\em permutação pseudoaleatória} (PRP), uma função bijetora $p_k: \{0,1\}^n \to \{0,1\}^n$ (permutação), cuja inversa $p_k^{-1}$ pode ser calculado de maneira eficiente e não existe algoritmo polinomial capaz de distinguir $p_k$ de uma permutação aleatória com probabilidade não desprezível.
+
+Uma {\em cifra de bloco} é capaz de criptografar uma mensagem de tamanho fixo $m \in \{0,1\}^n$, chamado de {\em bloco}, de maneira trivial $p_k(m) = c$ e decifrar usando sua inversa $p_k^{-1}(p_k(m)) = m$.
+Na Seção \ref{sec:modos-de-operacao-bloco} mostraremos como combinar os blocos para criptografar um mensagem de tamanho arbitrário e provaremos a segurança desses sistemas.
+Antes disso, porém, vamos apresentar algumas construções usadas na prática.
+
+\section{Construções Práticas}
+\label{sec:construcoes-praticas}
+Como explicitamos na seção anterior, um PRP é uma permutação $p: \{0,1\}^n \times \{0,1\}^l \to \{0,1\}^l$ em que $n$ é o tamanho da chave e $l$ o tamanho do bloco.
+Assim, dado $k \leftarrow \{0,1\}^n$ construímos $p_k$ que deve ser indistinguível na prática de $p \leftarrow Perm(\{0,1\}^l)$.
+Não conhecemos um sistema demonstradamente pseudoaleatório, mas os sistemas que apresentaremos, especialmente o AES, tem sido validado na prática.
+
+Nosso desafio será construir um algoritmo em que a mudança de um único bit, seja na mensagem ou na chave, afeta -- mas não necessarimante altera -- todos os bits da cifra.
+Para essa tarefa partiremos do paradigma proposto por Shannon chamado de {\em confusão e difusão}.
+
+A ideia da {\em confusão} é dividir o bloco em partes menores, digamos de 8 bits cada, e aplicar uma tabela que indique para cada sequência de 8 bits da entrada qual seria a saída.
+Apenas a confusão não é suficiente para nosso objetivo, pois a alteração do primeiro bit, por exemplo, afetaria apenas os 8 primeiros bits da cifra.
+A {\em difusão} então seria responsável por embaralhar os bits, espalhando a mudança de uma partes nas demais partes.
+Nas cifras de bloco fases de confusão e difusão são repetidas um número de vezes.
+
+\subsection{Data Encryption Standard (DES)}
+\label{sec:des}
+
+O Data Encryption Standard (DES) foi o padrão para a cifras de bloco do fim dos anos 70 até o fim dos anos 90.
+Projetado pela IBM o algoritmos sofreu importantes alterações pela NSA antes de se tornar um padrão internacional.
+
+O DES utiliza uma técnica chamada {\em rede de Feistel} que utiliza uma serie de funções $f_i:\{0,1\}^{l/2} \to \{0,1\}^{l/2}$ para produzir umafunção eficientemente inversível.
+A entrada $m \in \{0,1\}^l$ da rede é dividia ao meio $L := m_0 \dots m_{(l/2)-1}$ e $R := m_{l/2} \dots m_l$ e em cada rodada $i$ é produzido $L_iR_i$ da seguinte forma:
+\begin{displaymath}
+  L_i := R_{i-1} \textrm{ e } R_i := L_{i-1} \xor f_i(R_{i-1})
+\end{displaymath}
+
+Dada a saída $\langle L_i, R_i \rangle$ da $i$-ésima rodada de uma rede de Feistel, podemos recuperar o valor de $\langle L_{i-1}, R_{i-1} \rangle$ primeiro fazendo $R_{i-1} := L_i$ e em seguinda calculando:
+\begin{displaymath}
+  L_{i-1} := R_i \xor f_i(R_{i-1})
+\end{displaymath}
+
+Esse procedimento pode ser repetido para todas as rodadas da rede para inverter a função.
+
+O DES é uma rede de Feistel com 16 rodadas.
+Ela recebe uma chave de 64 e prontamente descarta 8, portanto, e criptografa blocos de 64 bits, ou seja, $DES: \{0,1\}^{56} \times \{0,1\}^{64} \to \{0,1\}^{64}$.
+A chave de 56 passa por um processo chamado {\em key schedule} que produz 16 subchaves de 48 bits.
+As funções em cada rodada do DES são identicas, recebem uma subchave de 48 bits e um bloco de 32 bits (metade do bloco total) e produz um bloco de 32 bits $f: \{0,1\}^{48} \times \{0,1\}^{32} \to \{0,1\}^{32}$.
+Resta, portanto, apresentar a função $f$:
+\begin{enumerate}
+\item o bloco é expandido para uma sequência de 48 bits,
+\item aplica-se o XOR do bloco expandido com a subchave,
+\item o resultado é dividido em 8 pedaços de 6 bits cada,
+\item aplica-se uma substituição (S-Box) diferentes para cada um desses pedaços (fase de confusão),
+\item o resultado é reduzido para uma sequência de 32 bits e, por fim,
+\item os bits são misturados (fase de difusão).
+\end{enumerate}
+
+A adoção do padrão DES foi cheia de controvérsias.
+Não foi esclarecido o motivo do descarte do 8 bits da chave.
+Uma chave de 56 bits é hoje considerada insegura contra um ataque de força bruta e estava no limite da segurança nos anos 70.
+Além disso, e mais suspeito, os S-Boxes foram alterados pela NSA sem grandes explicações antes do algoritmos ser adotado como padrão.
+Anos mais tarde pesquisadores apresentaram uma técnica chamada criptoanálise diferencial.
+Diversas cifras se tornaram inseguras com o anúncio desta técnica, mas supreendentemente o DES não.
+Desconfia-se que os pesquisadores da NSA conheciam a técnica e alteraram a cifra de forma que ela se torna-se segura contra este tipo de ataque.
+
+% Figura da rede de Feistel e da função do DES
+
+\subsection{Advanced Encryption Standard (AES)}
+\label{sec:aes}
+
+As desconfianças em torno do DES e o ataque força bruta iminete contra sua chave levaram o orgão estadunidense responsável pela estabelecimento de padrões internacionais (NIST) a propor um concurso acadêmico em 1997 para elaboração de um novo padrão.
+Cada concorrente, além de propor o algoritmo tinha a tarefa de encontrar vulnerabilidades nos demais algoritmos propostos.
+Cinco finalistas foram considerados adequados e em abril de 2000 o algoritmos {\em Rijndael} foi anunciado como vencedor e passou a ser chamado de AES.
+
+O AES criptografa blocos de 128 bits possui três versões: uma com chaves de 128 bits e 10 rodadas, uma com chaves de 196 bits e 12 rodadas e uma com chaves de 256 bits e 14 rodadas.
+Diferente do DES, o AES não usa uma rede de Feistel, mas uma técnica que chama-se {\em rede de substituição e permutação}.
+
+O bloco no AES é dividido em 8 sequência de 16 bits que é tratada com um quadrado de 4 por 4 chamado de {\em estado}.
+Em cada rodada o algoritmo repete os seguintes passos:
+\begin{enumerate}
+\item {\em AddRoundKey:} O {\em key schedule} do AES produz uma subchave de 128 bits para cada rodada e aplicamos o XOR dessa subchave com o estado.
+\item {\em SubBytes:} Cada byte do estado é substituído por um novo byte definido por um SBox único que é bijetor (fase de confusão).
+\item {\em ShiftRow:} Rotacionamos a segunda linha do estado em uma posição, a terceira em duas posições e a quarta e três posições para a direita.
+\item {\em MixColumns:} As quatro linhas do estado são interpretados com um vetor que é multiplicado por uma matriz específica e fixa. Essa transformação é de tal forma que garante que cada byte de entrada influencie quatro bytes de saída (fase de difusão). 
+\end{enumerate}
+
+Na última rodada a fase {\em MixColumn} é substituída pela {\em AddRoundKey}.
+O AES é construído cuidadosamente de forma ser efecientemente inversível na presença da chave.
+Até a escrita destas notas não se conhece um ataque contra o AES mais eficiente do que o ataque força bruta.
+% Figra do AES
+
+\section{Modos de Operação}
+\label{sec:modos-de-operacao-bloco}
+
+Uma cifra de bloco é usada para criptografar um bloco de tamanho fixo, por exemplo 128 bits no caso do AES e 64 bits no caso do DES.
+Tipicamente, porém, desejamos criptografar uma mensagem de tamanho arbitrário $m \in \{0,1\}^*$.
+Para tanto temos que combinar de alguma forma os blocos criptografados pelas cifra de bloco.
+A forma mais natural, e insegura, de fazer isso é chamada {\em Eletronic Code Book} (ECB).
+Neste {\em modo de operação} dividimos a mensagem $m$ em pedaços do tamanho do bloco ($m = m_0 m_1 \dots m_l$ onde $|m_i| = n$), usamos a cifra de bloco $p_k$ para criptografar cada bloco e contatenos eles, ou seja, $c = p_k(m_0) \dots p_k(m_l)$.
+Este modo de operação não garante a segurança contra ataques {\em ciphertext only} porque blocos iguais são criptografados de maneira igual.
+Considere o seguinte adversário $\mathcal{A}$ que derrota esta cifra:
+\begin{enumerate}
+\item $\mathcal{A}$ envia $m_0 = mm$ e $m_1=mm'$ para $\Pi$ de forma que $m \neq m'$ e $|m| = |m'| = n$ onde $n$ é o tamanho do bloco,
+\item $\Pi$ vai sortear uma das duas mensagens ($b \leftarrow \{0,1\}$) e devolve $E(k, m_b) =c$,
+\item se $c$ for formado por dois blocos idênticos $\mathcal{A}$ devolve $0$, caso contrário devolve $1$.
+\end{enumerate}
+
+% FIGURA DO ECB
+
+Essa maneira ingênua de combinar os blocos não garante a segurança contra o modelos de ataque mais simples que apresentamos.
+Queremos um sistema que seja seguro contra CPA.
+
+Pela definição de segurança contra CPA que apresentamos, o adversário possui acesso a um oráculo que ele pode consultar para verificar como uma mensagem seria criptografada.
+Essa definição força o algoritmo $E$ de criptografia a ser não determinístico.
+Caso contrário, o adversário poderia derrotar o sistema simplesmente enviando duas mensagens que cuja cifra ele consultou.
+
+Para garantir o não determinismo do sistema incluiremos um bloco aleatório no começo da mensagem chamado de {\em vetor inicial}.
+Como no caso da cifra de fluxo, o vetor inicial não é um segredo, mas garante que toda mensagem será criptografada de maneira diferente.
+
+No modo de operação {\em Cipher Block Chaining} cada bloco depende não apenas da cifra de bloco $p$ e do bloco $m_i$ a ser encriptado, mas também da cifra do bloco imediatamente anterior $c_{i-1}$.
+O algoritmo $E(k,m) := c_0 c_1 \dots c_l$ onde cada $c_i$ tem o tamanho de um bloco $n$ e cada $c_i$ é computado da seguinte maneira:
+
+\begin{eqnarray*}
+  c_0 & := & IV \leftarrow \{0,1\}^n \\
+  c_i & := & p_k(c_{i-1} \xor m_i) \textrm{ para cada } i = 0, \dots, l
+\end{eqnarray*}
+
+Para descriptografar precisamos aplicar $D(k,c) := m_0 \dots m_l$ da seguinte forma:
+\begin{eqnarray*}
+  m_{i} & := & p_k^{-1}(c_{i+1}) \xor c_{i} \textrm{ para cada } i = 0, \dots, l-1
+\end{eqnarray*}
+
+É possível provar que este sistema é seguro contra CPA.
+
+\begin{theorem}
+  Se $p$ é uma PRP então o sistema $\Pi$ tal qual apresentado acima, modo CBC, é seguro contra CPA.
+\end{theorem}
+
+% Figura do CBC
+
+A principal limitação do modo CBC é que os blocos precisam ser processados em sequência, ou seja, não é possível paralelizar esse processo.
+O {\em modo contador} (Ctr), por outro lado, não tem essa limitação.
+Este modo opera de maneira muito similar a uma cifra de fluxo.
+Como no modo CBC o primeiro bloco é uma sequência de bits aleatória ($IV$).
+Para ada bloco é calculado somando o índice do bloco com $IV$ e aplicado uma função pseudoaleatória ao resultado.
+Calculamos por fim o XOR do valor obtido com o bloco da mensagem:
+\begin{eqnarray*}
+  c_0 & := & IV \leftarrow \{0,1\}^n \\
+  c_i & := & m_i \xor f_k(IV + i) \textrm{ para cada } i = 1, \dots, l
+\end{eqnarray*} 
+
+O algoritmo $D(k,c)$ é exatamente a mesma coisa, como se poderia esperar:
+\begin{eqnarray*}
+  m_i & := & c_{i+1} \xor f_k(c_0 + i) \textrm{ para cada } i = 0, \dots, l-1
+\end{eqnarray*} 
+
+A segurança do modo contador exige apenas uma função pseudoaleatória que não precisa ser inversível:
+
+
+\begin{theorem}
+  Seja $f$ uma função pseudoaleatória, o sistema $\Pi$ tal qual apresentado acima, modo Ctr, é segura contra CPA.
+\end{theorem}
+\begin{proof}
+  
+\end{proof}
+
+% Falar sobre o tamanho dos blocos.
+
+\section{Exercícios}
+\label{sec:exercicios}
+
+\begin{exercicio}
+Mostre que a operação $R_i \xor f_i(R_{i-1})$ na rede de Feistel de fato recupera o valor de $L_{i-1}$.
+\end{exercicio}
+
+\begin{exercicio}
+  Mostre a corretude dos modos CBC e Ctr, ou seja, que em ambos os casos $D(k, E(k,m)) = m$;
+\end{exercicio}

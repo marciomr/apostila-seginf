@@ -35,9 +35,14 @@ Pr[C = c | M = m_0] =  \frac{1}{676} \neq Pr[C = c | M = m_1] = 0
 
 Uma forma equivalente, e útil como veremos mais para frente, de definir sigilo perfeito é a partir de um jogo.
 Imaginamos que há um adversário $\mathcal{A}$ cujo objetivo é quebrar a cifra produzida pelo sistema $\Pi$.
-O jogo funciona da seguinte maneira: $\mathcal{A}$ escolhe duas mensagens $m_0$ e $m_1$ com o mesmo tamanho ($|m_0| = |m_1|$) e envia para o sistema $\Pi$.
-O sistema gera uma chave $k$ usando o algoritmo $Gen$ e sorteia aleatoriamente uma das mensagens para criptografar ($\Pi$ sorteia $b \leftarrow \{0, 1\}$ e criptografa $m_b$).
-A cifra produzida $E(k, m_b) = c$ e enviada de volta para o adversário, cujo desafia é acertar qual das duas mensagens foi cifrada.
+O jogo funciona da seguinte maneira: 
+\begin{enumerate}
+\item $\mathcal{A}$ escolhe duas mensagens $m_0$ e $m_1$ com o mesmo tamanho ($|m_0| = |m_1|$) e envia para o sistema $\Pi$.
+\item O sistema gera uma chave $k$ usando o algoritmo $Gen$ e sorteia aleatoriamente uma das mensagens para criptografar ($\Pi$ sorteia $b \leftarrow \{0, 1\}$ e criptografa $m_b$).
+\item A cifra produzida $E(k, m_b) = c$ e enviada de volta para o adversário.
+\end{enumerate}
+
+O desafio do adversário é acertar qual das duas mensagens foi cifrada.
 O diagrama abaixo ilustra o processo:
 
 \begin{center}

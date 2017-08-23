@@ -163,7 +163,6 @@ Em um concurso científico de 2008 para produção de cifras de fluxo seguras, u
 Um dos algoritmos selecionados pelo projeto eSTREAM é o {\em Trivium}.
 Este algoritmo recebe dois valores como entrada ambos com 80 bits, a semente e o vetor incial.
 Um estado no Tivium é um vetor com 288 bits e seu ciclo tem tamanho $2^{64}$, ou seja, $Triv: \{0,1\}^{80}\times \{0,1\}^{80} \to \{0,1\}^{2^{64}}$.
-Até a escrita destas notas, não existem ataques conhecidos ao algoritmo mais eficientes do que o ataque de força-bruta.
 
 O Trivium possui três registradores A, B e C de tamanhos de 93, 84 e 111 respectivamente, somando 288 bits.
 Em cada passo cada registrador:
@@ -178,6 +177,7 @@ Em cada passo cada registrador:
 A chave do Trivium é inserida nas primeiras posições do registrador A, e o vetor inicial nas úlitmas posições do registrador B.
 As demais posições são preenchidas com $0$ excetos as últimas três do registrador C que são preenchidas com $1$.
 Antes de começar a produzir o fluxo de bits, o processo roda $4 \times 288 = 1152$ no que é chamado de {\em fase de aquecimento}. 
+Até a escrita destas notas, não existem ataques conhecidos ao algoritmo mais eficientes do que o ataque de força-bruta.
 
 % INSERIR A FIGURA DA INTERNET
 
