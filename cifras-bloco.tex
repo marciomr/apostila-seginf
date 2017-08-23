@@ -21,6 +21,7 @@ Considere o seguinte jogo.
 \item O sistema gera uma chave $k$ usando o algoritmo $Gen$ e sorteia aleatoriamente uma das mensagens para criptografar ($\Pi$ sorteia $b \leftarrow \{0, 1\}$ e criptografa $m_b$).
 \item Durante todo o processo $\mathcal{A}$ possui acesso a um {\em oráculo} $E_k$ que ele pode usar para verificar como seria criptografadas qualquer mensagem $m$.
 \item A cifra produzida $E(k, m_b) = c$ e enviada de volta para o adversário.
+\item O adversário $\mathcal{A}$ produz um bit $b' \in \{0,1\}$.
 \end{enumerate}
 
 O desafio de $\mathcal{A}$ é acertar qual das duas mensagens foi encriptada.
@@ -279,6 +280,11 @@ No momento em que estas notas são escritas, este valor é alto, mas plausível 
 \label{sec:exercicios}
 
 \begin{exercicio}
+  Considere a definição de segurança contra CPA em que consideramos qualquer adversário $\mathcal{A}$ -- não apenas os eficientes -- e exigimos que $Pr[PrivK^{cpa}_{\Pi,\mathcal{A}}(n) = 1] = \frac{1}{2}$.
+  Mostre que é impossível construir um sistema que satisfaça essa definição de segurança.
+\end{exercicio}
+
+\begin{exercicio}
 Mostre que a operação $R_i \xor f_i(R_{i-1})$ na rede de Feistel de fato recupera o valor de $L_{i-1}$.
 \end{exercicio}
 
@@ -292,7 +298,4 @@ Qual o efeito disso na mensagem descriptografada caso a cifra tenha sido produzi
 \end{exercicio}
 
 
-\begin{exercicio}
-  Considere a definição de segurança contra CPA em que consideramos qualquer adversário $\mathcal{A}$ -- não apenas os eficientes -- e exigimos que $Pr[PrivK^{cpa}_{\Pi,\mathcal{A}}(n) = 1] = \frac{1}{2}$.
-  Mostre que é impossível construir um sistema que satisfaça essa definição de segurança.
-\end{exercicio}
+

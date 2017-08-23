@@ -40,6 +40,7 @@ O jogo funciona da seguinte maneira:
 \item $\mathcal{A}$ escolhe duas mensagens $m_0$ e $m_1$ com o mesmo tamanho ($|m_0| = |m_1|$) e envia para o sistema $\Pi$.
 \item O sistema gera uma chave $k$ usando o algoritmo $Gen$ e sorteia aleatoriamente uma das mensagens para criptografar ($\Pi$ sorteia $b \leftarrow \{0, 1\}$ e criptografa $m_b$).
 \item A cifra produzida $E(k, m_b) = c$ e enviada de volta para o adversário.
+\item O adversário $\mathcal{A}$ produz um bit $b' \in \{0,1\}$.
 \end{enumerate}
 
 O desafio do adversário é acertar qual das duas mensagens foi cifrada.
