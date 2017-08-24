@@ -43,5 +43,6 @@
 \contentsline {section}{\numberline {8.3}Exercicios}{66}
 \contentsline {chapter}{\numberline {9}Fun\IeC {\c c}\IeC {\~o}es de Hash}{67}
 \contentsline {section}{\numberline {9.1}Constru\IeC {\c c}\IeC {\~o}es}{69}
-\contentsline {section}{\numberline {9.2}Aplica\IeC {\c c}\IeC {\~o}es}{69}
-\contentsline {section}{\numberline {9.3}Exerc\IeC {\'\i }cios}{69}
+\contentsline {subsection}{\numberline {9.1.1}SHA-1}{70}
+\contentsline {section}{\numberline {9.2}Aplica\IeC {\c c}\IeC {\~o}es}{70}
+\contentsline {section}{\numberline {9.3}Exerc\IeC {\'\i }cios}{70}

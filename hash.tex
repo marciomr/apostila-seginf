@@ -6,23 +6,23 @@ Em Estrutura de Dados estudamos funções de hash com o propósito de acessar um
 Minimizar as colisões naquele contexto garantia que as listas ligadas de objetos associadas a cada índice de um vetor fosse a menor possível tornando a consulta mais eficiente.
 Em aplicações de criptografia, evitar colisões é mais crítico, pois pode levar a vulnerabilidades no sistema.
 
-Assim, uma função de hash é simplesmente uma função $h: \{0,1\}^* \to \{0,1\}^n$.
+Assim, uma função de hash é simplesmente uma função $H: \{0,1\}^* \to \{0,1\}^n$.
 Para definir o conceito de resistência a colisão vamos introduzir artificialmete uma chave na função de hash que não precisa ser guardada em segredo.
-Além disso, nosso modelo precisa conter além de $h$ um algoritmo $Gen$ que gera a chave.
+Além disso, nosso modelo precisa conter além de $H$ um algoritmo $Gen$ que gera a chave.
 O modelo, portanto, difere da construção prática.
 
-Definiremos resistência à colisão para um sistema $\Pi = \langle Gen, h \rangle$ a partir do jogo que já nos abituamos:
+Definiremos resistência à colisão para um sistema $\Pi = \langle Gen, H \rangle$ a partir do jogo que já nos abituamos:
 \begin{enumerate}
 \item O sistema usa $Gen$ que recebe $1^n$ e gera uma chave $s$.
 \item O adversário $\mathcal{A}$ recebe $s$.
 \item A devolve um par de mensagens $\langle x, x' \rangle$.
 \end{enumerate}
 
-O desafio de $\mathcal{A}$ é achar uma {\em colisão}, ou seja, um par $\langle x, x' \rangle$ tal que $h_s(x) = h_s(x')$
+O desafio de $\mathcal{A}$ é achar uma {\em colisão}, ou seja, um par $\langle x, x' \rangle$ tal que $H_s(x) = H_s(x')$
 \begin{displaymath}
   HashCol_{\mathcal{A}, \Pi}(n) := \left\{
     \begin{array}{lcl}
-      1 & \textrm{se} & h_s(x) = h_s(x')\\
+      1 & \textrm{se} & H_s(x) = H_s(x')\\
       0 & \textrm{c.c.} &\\
     \end{array}
     \right.
@@ -39,29 +39,78 @@ Na prática usamos funções sem chave e tratamos como resistentes a colisão qu
 
 Note que a resistência à colisão é uma propriedade mais forte do que outras propriedades desejáveis em funções de hash:
 \begin{itemize}
-\item {\em resistência contra colisões em alvos específicos}: dado $s$ e $x$ nenhum adversário eficiente é capaz de encontrar $x'$ tal que $h_s(x) = h_s(x')$ com probabilidade considerável.
+\item {\em resistência contra colisões em alvos específicos}: dado $s$ e $x$ nenhum adversário eficiente é capaz de encontrar $x'$ tal que $H_s(x) = H_s(x')$ com probabilidade considerável.
 \item {\em resistência contra preimagem}: dados $s$ e $y$ aleatório, nenhum adversário eficiente é capaz de encontrar $x$ tal que $h_s(x) = y$ com probabilidade considerável. 
 \end{itemize}
 
 Toda a função de hash está sujeita a ataques do tipo força bruta.
-Ou seja, se $h: \{0,1\}^* \to \{0,1\}^n$ podemos calcular $h(x)$ para uma sequência de strings distintas $x_0, x_1, \dots, x_{2^n+1}$.
+Ou seja, se $H: \{0,1\}^* \to \{0,1\}^n$ podemos calcular $H(x)$ para uma sequência de strings distintas $x_0, x_1, \dots, x_{2^n+1}$.
 Pelo {\em princípio da casa dos pombos} necessariamente encontraremos neste caso uma colisão.
-Na verdade se assumirmos que $h$ é uma função aleatória, podemos mostrar que para que a probabilidade de encontrar uma colisão seja maior do que $\frac{1}{2}$ precisamos nossa sequência strings deve ter cerca de $\Theta(\sqrt{n})$.
+Na verdade se assumirmos que $H$ é uma função aleatória, podemos mostrar que para que a probabilidade de encontrar uma colisão seja maior do que $\frac{1}{2}$ precisamos nossa sequência strings deve ter cerca de $\Theta(\sqrt{n})$.
 Esse resultado é chamado de {\em paradoxo do aniversário}, pois bastam 23 pessoas para garantir que a probabilidade de duas fazerem aniversário no mesmo dia seja maior que meio.
-
-
-\begin{theorem}[Paradoxo do Aniversário]
-
-\end{theorem}
-
 Assim, se quisermos um sistema que garanta a segurança equivalente a uma função aleatória com chave de 128 bits, precisamos usar uma função de hash muito confiável que produz uma saída com pelo menos 256 bits.
 
-% falar do risco de achar uma colisão em uma função de hash
+O ataque do aniversariante nos dá uma colisão qualquer $\langle x, x' \rangle$ a primeira vista isso pode parecer inofencivo, pois não podemos controlar os valores de $x$ e  $x'$.
+Note, porém, que o ataque requer uma serie de pelo menos $\sqrt{n}$ mensagens, mas elas não precisam ser aleatórias.
+Precisamos, portanto, apenas gerar um número suficente de mensagens equivalentes para que o ataque seja efetivo.
+Essa é uma tarefa relativamente simples.
+Considere o seguinte exemplo de um conjunto de mensagens equivalentes:
+
+
+\begin{quote}
+  É {\em difícil/impossível/desafiador/complicado} {\em imaginar/acreditar} que {\em encontraremos/localizaremos/contrataremos} outra {\em pessoa/empregada} com a mesma {\em capacidade/versatilidade/destreza} que Eva.
+Ela fez um trabalho {\em incrível/excelente}.
+\end{quote}
+
+% mudar esse exemplo que está identico ao do livro
+
+As palavras em itálico podem umas substituir as outras sem mudar significativamente o espírito da mensagem que pode ser escrita de 288 formas distintas.
+Se nosso conjunto precisa ser $2^{32}$ basta escrever um texto com pelo menos 32 palavras em que cada uma possua um sinônimo.
  
 \section{Construções}
 \label{sec:construcoes}
-% construção de Merkle Damgard
-% SHA-1
+
+A maioria das funções de hash seguem uma construção chamada {\em Merkle-Damgard} que assume a existância de uma {\em função de compressão} resistente à colisão para mensagens de tamanho fixo e a extende para mensagens de tamanho arbitrário.
+Seja $\langle Gen, h \rangle$ um sistema de hash que comprime o tamanho de uma mensagem pela metade $h_s:\{0,1\}^{2n} \to \{0,1\}^n$.
+Construimos $\langle Gen, H \rangle$ da seguinte maneira:
+\begin{itemize}
+\item Sejam $x \in \{0,1\}^*$, $|x| = L < 2^n$ e $B := \lceil \frac{L}{n} \rceil$ o número de blocos de $x$ de tamanho $n$ (se o tamanho de $x$ não for múltiplo de $n$ complete-o com um {\em pad} de $0$s) e insira $L$ ao fim de $x$ i.e. $x = x_0 \dots x_B L$.
+\item Defina $z_0 := 0^n$.
+\item Compute $z_i := h_s(z_{i-1}x_i)$ para $i = 1, \dots, B + 1$.
+\item Devolva $z_{B+1}$.
+\end{itemize}
+
+
+\begin{theorem}
+  Se $\langle Gen, h \rangle$ é resistente a colisão então $\langle Gen, H \rangle$ da forma como definido acima também é resistente a colisão.
+\end{theorem}
+
+Construir uma função de hash resistente a colisão para uma mensagem de tamanho arbitrário se resume, portanto, a encontrar uma para mensagem de tamanho fixo que a comprima pela metade.
+
+\subsection{SHA-1}
+\label{sec:sha-1}
+
+O {\em Secure Hash Algorithm} (SHA-1) é um algoritmo da família MD4 que recebe uma entrada de tamanho arbitrário $l < 2^{64}$ e produz um {\em digest} de $160$ bits.
+Antes de processar a mensagem é inserido um {\em pad} que consiste em uma sequência $10 \dots 0l$ em que $l = |x|$ é o número de bits da mensagem e $|x10 \dots 0l|$ é um múltiplo de 512.
+Essa codificação de $x$ é então dividida em blocos $x_0, \dots, x_n$ tais que $|x_i| = 512$.
+
+A função de hash $h$ que alimenta a construção de Merkle-Damgard consiste de 80 rodadas.
+Um {\em message schedule} é responsavel por gerar 80 strings $W_0, \dots, W_{79}$ de 32 bits cada a partir do bloco $x_i$ sendo processado. 
+Começamos com valores iniciais fixos $A =$ {\tt 67452301}, $B =$ {\tt EFCDAB89}, $C =$ {\tt 98BADCFE}, $D =$ {\tt 10325476}, $E =$ {\tt C3D2E1F0} e alteramos esses valores em cada rodada da seguinte maneira:
+
+\begin{displaymath}
+  A, B, C, D, E := (E + f_t(B,C,D) + A_{\lll 5} + W_j + K_t), A, B_{\lll 30}, C, D
+\end{displaymath}
+
+A cada 20 rodadas mudamos o valor da constante $K_t$ e da função $f_t$ de forma que o algoritmo precisa definir 4 constantes e quatro funções.
+Apenas para matar a curiosidade seguem suas definições:
+\begin{enumerate}
+\item $K_t :=$ {\tt 5A827999} e $f_t(B,C,D) := (B \land C) \lor (B \land D)$ para $t = 0, \dots, 19$
+\item $K_t :=$ {\tt 6ED9EBA1} e $f_t(B,C,D) := B \xor C \xor D$ para $t = 20, \dots, 39$ 
+\item $K_t :=$ {\tt 8F1BBCDC} e $f_t(B,C,D) := (B \land C) \lor (B \land D) \lor (C \land D)$ para $t = 40, \dots, 59$
+\item $K_t :=$ {\tt CA62C1D6} e $f_t(B,C,D) := B \xor C \xor D$ para $t = 60, \dots, 79$ 
+\end{enumerate}
+
 % falar da colisão encontrada no SHA-1 e no MD5
 
 \section{Aplicações}
