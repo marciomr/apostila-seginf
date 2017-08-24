@@ -1,0 +1,47 @@
+\select@language {portuguese}
+\contentsline {chapter}{\numberline {1}Introdu\IeC {\c c}\IeC {\~a}o}{7}
+\contentsline {section}{\numberline {1.1}Privacidade}{7}
+\contentsline {section}{\numberline {1.2}Vigil\IeC {\^a}ncia}{8}
+\contentsline {section}{\numberline {1.3}Marco Regulat\IeC {\'o}rio}{9}
+\contentsline {section}{\numberline {1.4}Vigil\IeC {\^a}ncia Digital em Massa}{10}
+\contentsline {section}{\numberline {1.5}Seguran\IeC {\c c}a da Informa\IeC {\c c}\IeC {\~a}o}{11}
+\contentsline {chapter}{\numberline {2}Cifras Cl\IeC {\'a}ssicas}{13}
+\contentsline {section}{\numberline {2.1}Cifra de Deslocamento}{16}
+\contentsline {section}{\numberline {2.2}Cifra de Substitui\IeC {\c c}\IeC {\~a}o}{18}
+\contentsline {section}{\numberline {2.3}Cifra de Vigen\IeC {\`e}re}{19}
+\contentsline {section}{\numberline {2.4}M\IeC {\'a}quinas de Criptografar}{21}
+\contentsline {section}{\numberline {2.5}Exerc\IeC {\'\i }cio}{22}
+\contentsline {chapter}{\numberline {3}Criptoan\IeC {\'a}lise}{25}
+\contentsline {section}{\numberline {3.1}Ataques For\IeC {\c c}a Bruta}{25}
+\contentsline {section}{\numberline {3.2}Ataques de Frequ\IeC {\^e}ncia}{26}
+\contentsline {section}{\numberline {3.3}Ataques \IeC {\`a} ``Cifra Invenc\IeC {\'\i }vel''}{27}
+\contentsline {section}{\numberline {3.4}Exerc\IeC {\'\i }cios}{28}
+\contentsline {chapter}{\numberline {4}Sigilo Perfeito}{31}
+\contentsline {section}{\numberline {4.1}One Time Pad}{33}
+\contentsline {section}{\numberline {4.2}Exerc\IeC {\'\i }cio}{36}
+\contentsline {chapter}{\numberline {5}Criptografia Moderna}{37}
+\contentsline {section}{\numberline {5.1}Abordagem Assint\IeC {\'o}tica}{39}
+\contentsline {section}{\numberline {5.2}Exerc\IeC {\'\i }cios}{40}
+\contentsline {chapter}{\numberline {6}Cifras de Fluxo}{41}
+\contentsline {section}{\numberline {6.1}Seguran\IeC {\c c}a das Cifras de Fluxo}{43}
+\contentsline {section}{\numberline {6.2}Constru\IeC {\c c}\IeC {\~o}es Pr\IeC {\'a}ticas}{44}
+\contentsline {subsection}{\numberline {6.2.1}Linear-Feedback Shift Registers}{44}
+\contentsline {subsection}{\numberline {6.2.2}Trivium}{45}
+\contentsline {section}{\numberline {6.3}Modos de Opera\IeC {\c c}\IeC {\~a}o}{46}
+\contentsline {section}{\numberline {6.4}Exercicios}{47}
+\contentsline {chapter}{\numberline {7}Cifras de Bloco}{49}
+\contentsline {section}{\numberline {7.1}Constru\IeC {\c c}\IeC {\~o}es Pr\IeC {\'a}ticas}{51}
+\contentsline {subsection}{\numberline {7.1.1}Data Encryption Standard (DES)}{51}
+\contentsline {subsection}{\numberline {7.1.2}Advanced Encryption Standard (AES)}{53}
+\contentsline {section}{\numberline {7.2}Modos de Opera\IeC {\c c}\IeC {\~a}o}{54}
+\contentsline {section}{\numberline {7.3}Exerc\IeC {\'\i }cios}{58}
+\contentsline {chapter}{\numberline {8}Integridade e Autenticidade}{59}
+\contentsline {section}{\numberline {8.1}C\IeC {\'o}digo de Autentica\IeC {\c c}\IeC {\~a}o de Mensagem}{60}
+\contentsline {subsection}{\numberline {8.1.1}CBC-MAC}{62}
+\contentsline {section}{\numberline {8.2}Criptografia Autenticada}{62}
+\contentsline {subsection}{\numberline {8.2.1}Comunica\IeC {\c c}\IeC {\~a}o Segura}{66}
+\contentsline {section}{\numberline {8.3}Exercicios}{66}
+\contentsline {chapter}{\numberline {9}Fun\IeC {\c c}\IeC {\~o}es de Hash}{67}
+\contentsline {section}{\numberline {9.1}Constru\IeC {\c c}\IeC {\~o}es}{69}
+\contentsline {section}{\numberline {9.2}Aplica\IeC {\c c}\IeC {\~o}es}{69}
+\contentsline {section}{\numberline {9.3}Exerc\IeC {\'\i }cios}{69}

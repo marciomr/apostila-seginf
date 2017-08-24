@@ -15,7 +15,7 @@ O objetivo do teste é distinguir as sequências de bits produzidas por um PRG d
 Por este motivo, esses testes são chamados {\em distinguidores}.
 
 Uma bateria de distinguidores pode ser usada para verificar a qualidade de um PRG.
-Idealmente nenhum teste eficiente deveria ser capaz de distinguir o PRG de uma sequência aleatória, ou pelo menos incapaz de fazê-lo com probabilidade considerável.
+Idealmente nenhum teste eficiente deveria ser capaz de distinguir o PRG de uma sequência aleatória, ou pelo menos incapaz de fazê-lo com probabilidade considerável\footnote{Usaremos o termo considerável para probabilidades não despreziveis.}.
 Definiremos um gerador de números pseudo-aleatórios como um algoritmo $G$ que recebe uma semente $s$ de tamanho $n$ e produz $G(s)$ de tamanho $l(n)$ onde $l$ é um polinômio que define o {\em fator de expansão} do PRG -- quão maior é a sequência produzida em relação a semente -- e tal que nenhum algoritmo polinomial $D$ é capaz de distinguir $G(s)$ de um sequencia $r$ escolhida aleatóriamente em $\{0,1\}^{l(n)}$ com probabilidade não desprezível.
 Formalmente temos o seguinte:
 

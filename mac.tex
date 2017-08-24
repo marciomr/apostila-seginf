@@ -69,14 +69,14 @@ Formalmente:
 \end{enumerate}
 
 O desafio de $\mathcal{A}$ é produzir um par válido.
-Chamamos o experimento de $Mac-forge_{\mathcal{A}, \Pi}$:
+Chamamos o experimento de $MacForge_{\mathcal{A}, \Pi}$:
 \begin{displaymath}
-  Mac-forge_{\Pi, \mathcal{A}}(n) = Ver(k, m, t)
+  MacForge_{\Pi, \mathcal{A}}(n) = Ver(k, m, t)
 \end{displaymath}
 
 Um sistema de autenticação de mensagem $\Pi = \langle Gen, Mac, Ver \rangle$ é {\em seguro contra falsificação} se para todo adversário eficiente $\mathcal{A}$ existe uma função desprezível $\varepsilon$ tal que:
 \begin{displaymath}
-  Pr[Mac-forge_{\Pi, \mathcal{A}}(n) = 1] \leq \varepsilon(n)
+  Pr[MacForge_{\Pi, \mathcal{A}}(n) = 1] \leq \varepsilon(n)
 \end{displaymath}
 
 O modelo de ataque considerado garante que um adversário não seja capaz de gerar código para uma mensagem nova, isto é, uma mensagem que não foi consultada.
