@@ -7,7 +7,7 @@ A ideia geral da construação é a seguinte: partimos de uma sequência aleató
 Apesar desta sequência ser gerada de maneira determinística, a segurança do sistema depende do fato de que ela se pareça aleatória.
 Informalmente, um {\em gerador de números pseudoaleatórios} (PRG) é essa função que recebe uma semente aleatória e a expande em uma sequência com cara de aleatória.
 
-Sistemas de cifra de fluxo foram estudados extensamente nos anos 80.
+Sistemas de cifra de fluxo foram estudados extensamente nos anos 80 \cite{Blum84,Yao82}.
 A abordagem para verificar se o gerador de números pseudoaleatórios é suficientemente forte consistia em aplicar uma série de testes estatísticos na sequência gerada para tentar distinguí-lo de uma sequência aleatória.
 Assim, por exemplo, um teste pode verificar se a probabilidade de o primeiro bit da sequência ser igual $1$ é $\frac{1}{2}$ ou que a probabilidade de ocorrência de pelos menos três $0$s em qualquer subsequência de tamanho $4$ deve ser $\frac{5}{16}$ -- existem uma sequência em que o $0$ ocorre quatro vezes e mais quatro sequências possíveis em que ele ocorre três vezes.
 Um teste como recebe uma sequencia produzida por um PRG e deve retornar $1$ se o teste passou e $0$ caso contrário.
@@ -107,7 +107,7 @@ Para fechar este capítulo lembramos que as cifras de fluxo sofrem do mesmo prob
 \label{sec:construcoes-praticas}
 
 A existência de PRGs não foi demonstrada matematicamente.
-No capítulo \ref{} mostraremos porque é tão difícil encontrar uma PRG demonstradamente seguro.
+No Capítulo \ref{cha:owf} mostraremos porque é tão difícil encontrar uma PRG demonstradamente seguro.
 Assim, a abordagem utilizada em relação a PRG é empírica.
 Ou seja, os candidatos a PRG são empiricamente validados a cada tentativa frustrada de construir um distinguidor empírico para eles.
 
@@ -160,7 +160,7 @@ Tipicamente os PRGs usados na prática substituem a operação de ou exclusivo p
 \label{sec:trivium}
 
 Em um concurso científico de 2008 para produção de cifras de fluxo seguras, uma série de algoritmos foram apresentados como alternativas seguras e eficientes para este problema.
-Um dos algoritmos selecionados pelo projeto eSTREAM é o {\em Trivium}.
+Um dos algoritmos selecionados pelo projeto eSTREAM é o {\em Trivium} \cite{DeCanniere06}.
 Este algoritmo recebe dois valores como entrada ambos com 80 bits, a semente e o vetor incial.
 Um estado no Tivium é um vetor com 288 bits e seu ciclo tem tamanho $2^{64}$, ou seja, $Triv: \{0,1\}^{80}\times \{0,1\}^{80} \to \{0,1\}^{2^{64}}$.
 
@@ -179,7 +179,13 @@ As demais posições são preenchidas com $0$ excetos as últimas três do regis
 Antes de começar a produzir o fluxo de bits, o processo roda $4 \times 288 = 1152$ no que é chamado de {\em fase de aquecimento}. 
 Até a escrita destas notas, não existem ataques conhecidos ao algoritmo mais eficientes do que o ataque de força-bruta.
 
-% INSERIR A FIGURA DA INTERNET
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.5\textwidth]{imagens/trivium.png}
+  \caption{Estrutura circular do Trivium}
+\end{figure}
+
 
 A escolha de um bom gerador de números pseudo-aleatórios é central para a segurança de uma cifra de fluxo.
 Um erro típico é utilizar funções padrão, como a função {\tt rand} da biblioteca padrão do {\tt C}, que não são adequadas para aplicações de segurança.
@@ -199,17 +205,17 @@ A limitação desta abordagem é que as partes precisam mater o estado atual sin
 O outro modo é {\em assíncrono}.
 Neste assumimos que além da semente $s$ a algoritmo $G$ recebe uma sequência de bits chamada {\em vetor inicial} $IV$.
 O vetor inicial não é sigiloso, mas deve mudar cada vez que uma nova mensagem é criptografada.
-Desta forma garantimos que a sequência produzida por $G$ com a mesma chave seja distinta e assim impedimos que ataques de repetição de chaves como mostramos no capítulo \ref{cha:sigilo-perfeito}.
+Desta forma garantimos que a sequência produzida por $G$ com a mesma chave seja distinta e assim impedimos que ataques de repetição de chaves como mostramos no Capítulo \ref{cha:sigilo-perfeito}.
 
 % CITAR OS ARTIGOS QUE APRESENTAM O TRIVIUM, O RC4 E O ATAQUE CONTRA O WEP
 
 \begin{example}
 O Wired Equivalent Privacy (WEP) era o padrão para segurança em conexões WiFi desde 97 e é essencialmene uma cifra de fluxo que opera de modo assíncrono.
-Para gerar um fluxo de bits pseudo-aleatórios o WEP utiliza o RC4 -- um PRG proposto por Ron Rivest em 87 -- que recebe como entrada a semente de 40 ou 104 bits e um vetor inicial não sigiloso de 24 bits.
+Para gerar um fluxo de bits pseudo-aleatórios o WEP utiliza o RC4 \cite{Rivest16} -- um PRG proposto por Ron Rivest em 87 -- que recebe como entrada a semente de 40 ou 104 bits e um vetor inicial não sigiloso de 24 bits.
 Para cada pacote transimitido, o WEP gera um novo $IV$ e utiliza a mesma chave para criptografar seu conteúdo.
-Acontece que 24 bits é um tamanho consideravelmente pequeno e se repete com 50\% de chance a cada 5000 pacotes tornando-o completamente inseguro.
+Acontece que 24 bits é um tamanho consideravelmente pequeno e se repete com 50\% de chance a cada 5000 pacotes tornando-o completamente inseguro \cite{Fluhrer01}.
 
-Hoje em dia, um script que implementa este tipo de ataque chamado {\tt aircrack-ng} é capaz de quebrar uma senha WEP usando uma computador pessoal em questão de minutos.
+Hoje em dia, um script que implementa este tipo de ataque chamado {\tt aircrack-ng}\footnote{http://www.aircrack-ng.org/} é capaz de quebrar uma senha WEP usando uma computador pessoal em questão de minutos.
 Esse tipo de vulnerabilidade do protocolo WEP levou-o a ser substituído em pelo protocolo WPA e em seguida pelo WPA2 entre 2004 e 2006.
 \end{example}
 
