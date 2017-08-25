@@ -115,12 +115,89 @@ Apenas para matar a curiosidade seguem suas definições:
 
 \section{Aplicações}
 \label{sec:aplicacoes}
-% HMAC
+
+Funções de hash são amplamente utilizadas em protocolos de segurança.
+Nesta seção veremos quatro aplicações bastante distintas desses sistemas: um sistema de autenticação bastante popular chamado HMAC, identificação de arquivos e outros tipos de mensagens simples e estruturadas  ({\em fingerprints} e {\em árvore de Merkle}) e derivação de subchaves a partir de outras chaves e a partir de uma senha.
+
+\subsection{HMAC}
+\label{sec:hmac}
+
+No capítulo anterior vimos como construir um sistema de autenticação para mensagens de tamanho arbitrário aplicando um esquema similar ao modo CBC.
+Alternativamente poderíamos utilizar um hash para produzir um {\em digest} da mensagem de tamanho fixo e então aplicar um sistema de autenticação para mensagens de tamanho fixo no resultado.
+Esse sistema é conhecido como {\em Hash-and-MAC}.
+
+Considere um sistema de autenticação $\Pi_M = \langle Gen_M, Mac_M, Ver_M \rangle$ para mensagens de tamanho fixo $l(n)$ e um sistema de hash $\langle Gen_H, H \rangle$ que produz um {\em digest} de tamanho $l(n)$.
+O sistema {\em Hash-and-MAC} $\Pi = \langle Gen, Mac, Ver \rangle$ para mensagens de tamanho arbitrário é definido como:
+\begin{itemize}
+\item $Gen(1^n) := k = \langle k_M, s \rangle$ em que $Gen_M(1^n) := k_M$ e $Gen_H(1^n) := s$
+\item $Mac(k, m) := Mac_M(k_M, H_s(m))$
+\item $Ver(k, m, t) := \left\{
+    \begin{array}{lcl}
+      1 & \textrm{se} & Mac(k,m) = t\\
+      0 & \textrm{c.c.} &\\
+    \end{array}
+    \right.$ 
+\end{itemize}
+
+
+\begin{theorem}
+  Se $\Pi_M$ é um sistema de autenticação seguro contra falsificação e $\Pi_H$ é um sistema de hash resistente a colisão então a construção $\Pi$ acima é seguro contra falsificação. 
+\end{theorem}
+
+\begin{proof}
+  Vamos apenas esboçar a prova e deixar os detalhes para o leitor.
+  A ideia é a seguinte, suponha que o adversário $\mathcal{A}$ consulte o tag de uma série de mensagens $Q$ e então suponha por absurdo que ele consiga produzir um código válido para uma mensagem $m \neq Q$.
+  Neste caso temos duas possibilidades:
+  \begin{enumerate}
+  \item existe uma mensagem $m' \in Q$ tal que $H_s(m') = H_s(m)$, mas isso contradiz a hipótese que $\Pi_H$ é resistente a colisões
+  \item caso contrário $\mathcal{A}$ conseguiu falsificar um código para uma mensagem nova $H_s(m)$ de tamanho $l(n)$ contradizendo a hipótese que $\Pi_M$ é seguro contra falsificação.
+  \end{enumerate}
+\end{proof}
+
+% Mencionar os protocolos que usam o HMAC
+
+O popular sistema de autenticação HMAC se inspira no esquema apresentado acima usando duas vezes uma função de hash e duas constantes distintas {\tt ipad} e {\tt opad}.
+Formalmente definimos o sistema HMAC da seguinte forma:
+\begin{itemize}
+\item $Gen(1^n) := k \leftarrow \{0,1\}^n$
+\item $Mac(k, m) := H_s((k \xor \textrm{\tt opad}) H_s(k \xor \textrm{\tt ipad})m)$
+\item $Ver(k, m, t) := \left\{
+    \begin{array}{lcl}
+      1 & \textrm{se} & Mac(k,m) = t\\
+      0 & \textrm{c.c.} &\\
+    \end{array}
+    \right.$
+\end{itemize}
+
+% argumentar sobre a importância das duas constantes e a relação com o sistema anterior
+
+\subsection{Fingerprints e Árvores de Merkle}
+\label{label}
+
 % fingerprint
 % árvore de Merkle
+
+\subsection{Funções de Derivação de Chaves}
+\label{sec:kdf}
+
 % KDF e PBKDF
 
 \section{Exercícios}
 \label{sec:exercicios}
 
+
+\begin{exercicio}
+  Mostre que o seguinte sistema não é seguro contra falsificação considerando que o sistema de hash foi construído a partir do paradigma de Merkle-Damgard:
+\begin{itemize}
+\item $Gen(1^n) := k \leftarrow \{0,1\}^n$
+\item $Mac(k,m) := H(km)$
+\item $Ver(k,m,t) := \left\{
+    \begin{array}{lcl}
+      1 & \textrm{se} & Mac(k,m) = t\\
+      0 & \textrm{c.c.} &\\
+    \end{array}
+    \right.$ 
+\end{itemize}
+
+\end{exercicio}
 
