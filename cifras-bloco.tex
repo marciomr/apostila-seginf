@@ -3,7 +3,7 @@
 
 No capítulo anterior mostramos que somos capazes de construir um sistema seguro contra ataques do tipo {\em ciphertext only}.
 Para isso precisamos supor a existência um gerador de números pseudo-aleatórios, ou seja, um algoritmo capaz de gerar uma sequência de bits indintinguível, para todos efeitos práticos, de uma sequência aleatória.
-Nossa definição de ataque é um pouco mais fraca do que a apresentada no Capítulo \ref{}, mas nosso sistema não requer chaves tão grandes.
+Nossa definição de ataque é um pouco mais fraca do que a apresentada no Capítulo \ref{cha:sigilo-perfeito}, mas nosso sistema não requer chaves tão grandes.
 As cifras de fluxo, porém, compartilham com o OTP dois problemas: são totalmente inseguras caso haja repetição de chaves e não apresentam qualquer garantia de segurança caso o adversário conheça partes do mensagem.
 
 O modelo das cifras de fluxo é adequado para descrever as Máquinas Enigma utilizadas pelo exército nazista nos anos 40.
@@ -72,11 +72,21 @@ Nas cifras de bloco fases de confusão e difusão são repetidas um número de v
 O Data Encryption Standard (DES) foi o padrão para a cifras de bloco do fim dos anos 70 até o fim dos anos 90.
 Projetado pela IBM o algoritmos sofreu importantes alterações pela NSA antes de se tornar um padrão internacional.
 
-O DES utiliza uma técnica chamada {\em rede de Feistel} que utiliza uma serie de funções $f_i:\{0,1\}^{l/2} \to \{0,1\}^{l/2}$ para produzir umafunção eficientemente inversível.
+O DES utiliza uma técnica chamada {\em rede de Feistel} (Figura \ref{fig:feistel}) que utiliza uma serie de funções $f_i:\{0,1\}^{l/2} \to \{0,1\}^{l/2}$ para produzir umafunção eficientemente inversível.
 A entrada $m \in \{0,1\}^l$ da rede é dividia ao meio $L := m_0 \dots m_{(l/2)-1}$ e $R := m_{l/2} \dots m_l$ e em cada rodada $i$ é produzido $L_iR_i$ da seguinte forma:
 \begin{displaymath}
   L_i := R_{i-1} \textrm{ e } R_i := L_{i-1} \xor f_i(R_{i-1})
 \end{displaymath}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.8\textwidth]{imagens/feistel.png}
+  \caption{Rede de Feistel}
+  \label{fig:feistel}
+\end{figure}
+
+
 
 Dada a saída $\langle L_i, R_i \rangle$ da $i$-ésima rodada de uma rede de Feistel, podemos recuperar o valor de $\langle L_{i-1}, R_{i-1} \rangle$ primeiro fazendo $R_{i-1} := L_i$ e em seguinda calculando:
 \begin{displaymath}
@@ -89,15 +99,23 @@ O DES é uma rede de Feistel com 16 rodadas.
 Ela recebe uma chave de 64 e prontamente descarta 8, portanto, e criptografa blocos de 64 bits, ou seja, $DES: \{0,1\}^{56} \times \{0,1\}^{64} \to \{0,1\}^{64}$.
 A chave de 56 passa por um processo chamado {\em key schedule} que produz 16 subchaves de 48 bits.
 As funções em cada rodada do DES são identicas, recebem uma subchave de 48 bits e um bloco de 32 bits (metade do bloco total) e produz um bloco de 32 bits $f: \{0,1\}^{48} \times \{0,1\}^{32} \to \{0,1\}^{32}$.
-Resta, portanto, apresentar a função $f$:
+Resta, portanto, apresentar a função $f$ (Figura \ref{fig:feistel-function}):
 \begin{enumerate}
 \item o bloco é expandido para uma sequência de 48 bits,
 \item aplica-se o XOR do bloco expandido com a subchave,
 \item o resultado é dividido em 8 pedaços de 6 bits cada,
-\item aplica-se uma substituição (S-Box) diferentes para cada um desses pedaços (fase de confusão),
+\item cada pedaço desses passa por um SBox diferente que substitui os 6 bits por 4 bits (fase de confusão),
 \item o resultado é reduzido para uma sequência de 32 bits e, por fim,
 \item os bits são misturados (fase de difusão).
 \end{enumerate}
+
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=.4\textwidth]{imagens/feistel-function.png}
+  \caption{Função de Fiestel do DES}
+  \label{fig:feistel-function}
+\end{figure}
+
 
 A adoção do padrão DES foi cheia de controvérsias.
 Não foi esclarecido o motivo do descarte do 8 bits da chave.
@@ -107,7 +125,6 @@ Anos mais tarde pesquisadores apresentaram uma técnica chamada criptoanálise d
 Diversas cifras se tornaram inseguras com o anúncio desta técnica, mas supreendentemente o DES não.
 Desconfia-se que os pesquisadores da NSA conheciam a técnica e alteraram a cifra de forma que ela se torna-se segura contra este tipo de ataque.
 
-% Figura da rede de Feistel e da função do DES
 % Falar do ataque força bruta descrito no livro do Paar
 
 \subsection{Advanced Encryption Standard (AES)}
@@ -121,7 +138,7 @@ O AES criptografa blocos de 128 bits possui três versões: uma com chaves de 12
 Diferente do DES, o AES não usa uma rede de Feistel, mas uma técnica que chama-se {\em rede de substituição e permutação}.
 
 O bloco no AES é dividido em 8 sequência de 16 bits que é tratada com um quadrado de 4 por 4 chamado de {\em estado}.
-Em cada rodada o algoritmo repete os seguintes passos:
+Em cada rodada o algoritmo repete os seguintes passos (Figuras \ref{fig:add-round-key}, \ref{fig:sub-bytes}, \ref{fig:shift-rows} e \ref{fig:mix-columns}):
 \begin{enumerate}
 \item {\em AddRoundKey:} O {\em key schedule} do AES produz uma subchave de 128 bits para cada rodada e aplicamos o XOR dessa subchave com o estado.
 \item {\em SubBytes:} Cada byte do estado é substituído por um novo byte definido por um SBox único que é bijetor (fase de confusão).
@@ -129,10 +146,38 @@ Em cada rodada o algoritmo repete os seguintes passos:
 \item {\em MixColumns:} As quatro linhas do estado são interpretados com um vetor que é multiplicado por uma matriz específica e fixa. Essa transformação é de tal forma que garante que cada byte de entrada influencie quatro bytes de saída (fase de difusão). 
 \end{enumerate}
 
+\begin{figure}[!htp]
+  \centering
+  \begin{minipage}{.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imagens/AddRoundKey.png}  
+    \caption{AddRoundKey}
+    \label{fig:add-round-key}
+  \end{minipage}
+ \begin{minipage}{.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imagens/SubBytes.png}
+    \caption{SubBytes}
+    \label{fig:sub-bytes}
+  \end{minipage}
+  \begin{minipage}{.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imagens/ShiftRows.png}  
+    \caption{ShiftRows}
+    \label{fig:add-round-key}
+  \end{minipage}
+ \begin{minipage}{.4\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imagens/MixColumns.png}
+    \caption{MixColumns}
+    \label{fig:mix-columns}
+  \end{minipage}
+\end{figure}
+
 Na última rodada a fase {\em MixColumn} é substituída pela {\em AddRoundKey}.
 O AES é construído cuidadosamente de forma ser efecientemente inversível na presença da chave.
 Até a escrita destas notas não se conhece um ataque contra o AES mais eficiente do que o ataque força bruta.
-% Figra do AES
+
 
 \section{Modos de Operação}
 \label{sec:modos-de-operacao-bloco}
@@ -151,6 +196,13 @@ Considere o seguinte adversário $\mathcal{A}$ que derrota esta cifra:
 \end{enumerate}
 
 % FIGURA DO ECB
+
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=.3\textwidth]{imagens/Tux.jpg}
+  \includegraphics[width=.3\textwidth]{imagens/Tux_ecb.jpg}
+  \caption{Imagem criptografada no modo ECB}
+\end{figure}
 
 Essa maneira ingênua de combinar os blocos não garante a segurança contra o modelos de ataque mais simples que apresentamos.
 Queremos um sistema que seja seguro contra CPA.
@@ -274,7 +326,7 @@ Pr[PrivK^{cpa}_{\mathcal{A},\Pi'}(n) = 1] < \frac{1}{2} + \frac{2q(n) - 1}{2^n}
 
 A demonstração indica que o tamanho dos blocos também influencia em sua segurança.
 Isso ocorre, pois quanto menos os blocos maior a chance de gerar vetores inciais idênticos, e portanto, de criptografar duas mensagens distintas com a mesma chave.
-Como exemplo, tomando o caso concreto do DES, seu bloco tem tamanho $64$ e,portanto, esperamos uma colisão depois de $2^{32}$ blocos (ver Capítulo \ref{}), ou cerca de 4Gb.
+Como exemplo, tomando o caso concreto do DES, seu bloco tem tamanho $64$ e,portanto, esperamos uma colisão depois de $2^{32}$ blocos (ver Capítulo \ref{cha:hash}), ou cerca de 4Gb.
 No momento em que estas notas são escritas, este valor é alto, mas plausível em muitas aplicações práticas.
 
 \section{Exercícios}
