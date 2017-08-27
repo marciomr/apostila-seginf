@@ -120,12 +120,17 @@ Resta, portanto, apresentar a função $f$ (Figura \ref{fig:feistel-function}):
 A adoção do padrão DES foi cheia de controvérsias.
 Não foi esclarecido o motivo do descarte do 8 bits da chave.
 Uma chave de 56 bits é hoje considerada insegura contra um ataque de força bruta e estava no limite da segurança nos anos 70.
-Além disso, e mais suspeito, os S-Boxes foram alterados pela NSA sem grandes explicações antes do algoritmos ser adotado como padrão.
+Um artigo de 1993 propõe um projeto de hardware que, em teoria, seria capaz de aplicar um ataque força-bruta em uma chave de 56 bits em um dia e meio \cite{}.
+Em 1998 a {\em Eletronic Frontier Foundation} (EFF) construiu uma máquina que foi capaz de quebrar a cifra em 56 horas (cerca de dois dias e meio).
+A máquina chamada de {\em Deep Crack} custou pouco menos de 250 mil dólares.
+Em 2006 pesquisadores alemães desenvolveram um hardware de baixo custo -- cerca de dez mil dólares -- capaz de efetuar um ataque de força-bruta ao DES em menos de uma semana.
+Desconfia-se que nos anos 80 apenas governos de grandes potências mundiais tinham recursos necessários para construir máquinas com tal capacidade.
+Hoje em dia o algoritmo DES é considerado totalmente inseguro.
+
+Além do pequeno tamanho da chave, e mais suspeito, os S-Boxes foram alterados pela NSA sem grandes explicações antes do algoritmos ser adotado como padrão.
 Anos mais tarde pesquisadores apresentaram uma técnica chamada criptoanálise diferencial.
 Diversas cifras se tornaram inseguras com o anúncio desta técnica, mas supreendentemente o DES não.
 Desconfia-se que os pesquisadores da NSA conheciam a técnica e alteraram a cifra de forma que ela se torna-se segura contra este tipo de ataque.
-
-% Falar do ataque força bruta descrito no livro do Paar
 
 \subsection{Advanced Encryption Standard (AES)}
 \label{sec:aes}
