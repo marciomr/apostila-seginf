@@ -4,19 +4,43 @@
 Nos Capítulos \ref{cha:cifras-de-fluxo}, \ref{cha:cifras-de-bloco} e \ref{cha:mac} demonstramos que dadas certas suposições determinados sistemas de criptografia garantem a segurança contra determinados modelos de ataque.
 Argumentamos que essas supoções -- a saber, a existência de geradores de números pseudoaleatórios, de funções pseudoaleatórias e de permutações pseudoaleatórias -- não são provadas, mas validadas empiricamente.
 Neste capítulo argumentaremos porque não construimos sistemas que comprovadamente satisfazem essas suposições.
-Para tanto apresentaremos uma condição necessária e suficiente para a existência de sistemas seguros: a existência de funções de mão única.
+Para tanto apresentaremos uma condição necessária e suficiente para a existência de sistemas seguros: a existência de funções de mão única\footnote{O leitor interessado deve procurar o livro do Goldreich \cite{Goldreich07} para os detalhes das demonstrações mencionadas neste capítulo.}.
 Por fim mostraremos que uma demonstração da existência de funções de mão única implicam que $P \neq NP$, ou seja, esse resultado teria como consequência um dos problemas em aberto mais relevantes na matemática hoje.
 
 Uma {\em função de mão única} é uma função $f: \{0,1\}^n \to \{0,1\}^n$ que pode ser computada de maneira eficiente, mas que é inviável de ser invertida.
-Ou seja, para todo adversário eficiente $\mathcal{A}$ que recebe $y := f(x)$ só consegue encontrar $x'$ tal que $f(x') = y$ com probabilidade desprezível.
+Ou seja, para todo adversário eficiente $\mathcal{A}$ que recebe $y := f(x)$ só consegue encontrar $x'$ tal que $f(x') = y$ com probabilidade desprezível \cite{Diffie76,Yao82}.
 
-% DEFINIÇÃO FORMAL
+Formalmente definimos função de mão única por meio do seguinte jogo:
+\begin{enumerate}
+\item O sistema escolhe $x \leftarrow \{0,1\}^n$ e computa $y := f(x)$.
+\item O adversário $\mathcal{A}$ recebe $1^n$ e $y$.
+\item $\mathcal{A}$ devolve $x' \in \{0,1\}^n$.
+\end{enumerate}
+
+O desafio do adversário é produzir uma pré-imagem de $f$, ou seja, um $x'$ tal que $f(x') = y$:
+
+\begin{displaymath}
+  Invert_{\mathcal{A}, \Pi}(n) := \left\{
+    \begin{array}{lcl}
+      1 & \textrm{se} & f(x') = y\\
+      0 & \textrm{c.c.} &\\
+    \end{array}
+    \right.
+\end{displaymath}
+
+Uma função $f: \{0,1\}^n \to \{0,1\}^n$ é de mão única se:
+\begin{enumerate}
+\item $f$ pode ser computada de maneira eficiente (polinomial) e
+\item Para todo adversário eficiente $\mathcal{A}$ existe $\varepsilon$ desprezível tal que:
+\begin{displaymath}
+  Pr[Inver_{\mathcal{A}, \Pi}(n) = 1] \leq \varepsilon(n)
+\end{displaymath}
+\end{enumerate}
 
 Note que para derrotar o desafio de uma função de mão única $\mathcal{A}$ precisa calcular a pré-imagem $x'$, não basta conhecer alguma informação parcial sobre $x'$.
 Um {\em predicado hard-core} é um bit de informação sobre a $x'$ que é mantido escondido pela função de mão única $f$.
 Formalmente, um predicado hard core é uma função $hc:\{0,1\}^n \to \{0,1\}$ se qualquer adversário eficiente que conhece $y := f(x)$ consegue acertar o valor de $hc(x)$ apenas com change desprezivelmente maior do que $\frac{1}{2}$.
 
-% DEFINIÇÃO FORMAL
 
 Seja $f:\{0,1\}^n \to \{0,1\}^n$ uma função de mão única.
 Considere a função $g(x,r) := \langle f(x), r \rangle$ em que $|x| = |r|$ e defina $hc(x,r) := \bigoplus_{i=1}^nx_i \cdot r_i$.

@@ -60,7 +60,7 @@ Um sistema de MAC é {\em correto} se o código $t$ produzido por uma chave $k$ 
 Consideraremos um modelo de ameaças bem poderoso contra um sistema MAC.
 Como no modelo CPA, vamos supor que o adversário tem acesso a um oráculo que lhe dá o código de autenticação de mensagens escolhidas por ele.
 O desafio do adversário é produzir qualquer par $\langle m, t \rangle$ válido para a chave escolhida pelo sistema.
-Um sistema em que nenhum adversário polinomial é capaz de derrotar desta maneira com probabilidade considerável será chamado de {\em seguro contra falsificação}.
+Um sistema em que nenhum adversário polinomial é capaz de derrotar desta maneira com probabilidade considerável será chamado de {\em seguro contra falsificação} \cite{Bellare00}.
 Formalmente:
 \begin{enumerate}
 \item O sistema gera uma chave $k$ usando o algoritmo $Gen$
@@ -123,7 +123,7 @@ Construimos o sistema, então, da seguinte forma:
 O modelo de ameaças CPA assume que o adversário tem acesso a um oráculo $E_k$ que indica como mensagens escolhidas por ele podem seria criptografadas pelo sistema.
 Com autenticação somos capaz de construir sistemas contra um modelo de ameaça ainda mais poderoso em que o adversário tem acesso a um oráculo em que ele pode consultar como determinadas cifras seriam decifradas.
 Esse modelo de ameaças supõe um enorme poder por parte do adversário e é difícil encontrar exemplos práticos em que esse tipo de situação ocorra.
-Ainda assim, é bastante interessante saber que é possível construir sistemas seguros contra este tipo de ameaça.
+Ainda assim, é bastante interessante saber que é possível construir sistemas seguros contra este tipo de ameaça \cite{Naor90}.
 
 Formalmente definimos um jogo da seguinte maneira:
 \begin{enumerate}

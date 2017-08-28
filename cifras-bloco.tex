@@ -11,7 +11,7 @@ Sua cifra, porém, foi derrotada não apenas pelo desenvolvimento tecnológico q
 Com a teoria da criptografia moderna, diríamos hoje que o tipo de ataque que os ingleses fizeram foi do tipo {\em known plaintext}.
 
 Neste capítulo nos voltaremos para um modelo de ataque ainda mais poderoso.
-Ataques do tipo {\em chosen plaintext} (CPA) supõe que o adversário, além de acessar o texto cifrado, é capaz de fazer com que o sistema produza as cifras de mensagens produzidas por ele.
+Ataques do tipo {\em chosen plaintext} (CPA) supõe que o adversário, além de acessar o texto cifrado, é capaz de fazer com que o sistema produza as cifras de mensagens produzidas por ele \cite{Bellare97}.
 É evidente que ataques do tipo {\em known plaintext} são um caso particular deste, mas existem situações em que devemos assumir esse poder maior por parte do adversário.
 
 Vamos formalizar segurança contra ataques CPA de forma análoga à segurança contra ataques {\em ciphertext only}.
@@ -44,7 +44,7 @@ Para construir um sistema seguro contra CPA assumiremos a existência de {\em fu
 Considere o conjunto de todas as funções $f: \{0,1\}^n \to \{0,1\}^n$.
 Chamaremos esse conjunto de $Func_n$ e não é difícil calcular que $|Func_n| = 2^{n2^n}$.
 Gostaríamos de escolher aleatoriamente uma função $f \leftarrow Func_n$, mas isso não é possível, o melhor que podemos fazer é escolher uma chave $k \leftarrow \{0,1\}^n$ e tentar produzir uma função $f_k: \{0,1\}^n \to \{0,1\}^n$ que se pareça com uma função escolhida aleatoriamente.
-Assim, como um PRG, uma {\em função pseudoaleatória} (PRF) é tal que não existe algoritmo efeciente capaz de distingui-la de uma função aleatória com probabilidade considerável.
+Assim, como um PRG, uma {\em função pseudoaleatória} (PRF) é tal que não existe algoritmo efeciente capaz de distingui-la de uma função aleatória com probabilidade considerável \cite{Goldreich86}.
 
 Uma {\em cifra de bloco} é uma {\em permutação pseudoaleatória} (PRP), uma função bijetora $p_k: \{0,1\}^n \to \{0,1\}^n$ (permutação), cuja inversa $p_k^{-1}$ pode ser calculado de maneira eficiente e não existe algoritmo polinomial capaz de distinguir $p_k$ de uma permutação aleatória com probabilidade não desprezível.
 
@@ -59,7 +59,7 @@ Assim, dado $k \leftarrow \{0,1\}^n$ construímos $p_k$ que deve ser indistingu�
 Não conhecemos um sistema demonstradamente pseudoaleatório, mas os sistemas que apresentaremos, especialmente o AES, tem sido validado na prática.
 
 Nosso desafio será construir um algoritmo em que a mudança de um único bit, seja na mensagem ou na chave, afeta -- mas não necessarimante altera -- todos os bits da cifra.
-Para essa tarefa partiremos do paradigma proposto por Shannon chamado de {\em confusão e difusão}.
+Para essa tarefa partiremos do paradigma proposto por Shannon chamado de {\em confusão e difusão} \cite{Shannon49}.
 
 A ideia da {\em confusão} é dividir o bloco em partes menores, digamos de 8 bits cada, e aplicar uma tabela que indique para cada sequência de 8 bits da entrada qual seria a saída.
 Apenas a confusão não é suficiente para nosso objetivo, pois a alteração do primeiro bit, por exemplo, afetaria apenas os 8 primeiros bits da cifra.
@@ -72,7 +72,7 @@ Nas cifras de bloco fases de confusão e difusão são repetidas um número de v
 O Data Encryption Standard (DES) foi o padrão para a cifras de bloco do fim dos anos 70 até o fim dos anos 90.
 Projetado pela IBM o algoritmos sofreu importantes alterações pela NSA antes de se tornar um padrão internacional.
 
-O DES utiliza uma técnica chamada {\em rede de Feistel} (Figura \ref{fig:feistel}) que utiliza uma serie de funções $f_i:\{0,1\}^{l/2} \to \{0,1\}^{l/2}$ para produzir umafunção eficientemente inversível.
+O DES utiliza uma técnica chamada {\em rede de Feistel} (Figura \ref{fig:feistel}) que utiliza uma serie de funções $f_i:\{0,1\}^{l/2} \to \{0,1\}^{l/2}$ para produzir umafunção eficientemente inversível \cite{Feistel73}.
 A entrada $m \in \{0,1\}^l$ da rede é dividia ao meio $L := m_0 \dots m_{(l/2)-1}$ e $R := m_{l/2} \dots m_l$ e em cada rodada $i$ é produzido $L_iR_i$ da seguinte forma:
 \begin{displaymath}
   L_i := R_{i-1} \textrm{ e } R_i := L_{i-1} \xor f_i(R_{i-1})
@@ -85,8 +85,6 @@ A entrada $m \in \{0,1\}^l$ da rede é dividia ao meio $L := m_0 \dots m_{(l/2)-
   \caption{Rede de Feistel}
   \label{fig:feistel}
 \end{figure}
-
-
 
 Dada a saída $\langle L_i, R_i \rangle$ da $i$-ésima rodada de uma rede de Feistel, podemos recuperar o valor de $\langle L_{i-1}, R_{i-1} \rangle$ primeiro fazendo $R_{i-1} := L_i$ e em seguinda calculando:
 \begin{displaymath}
@@ -145,7 +143,8 @@ O AES criptografa blocos de 128 bits possui três versões: uma com chaves de 12
 Diferente do DES, o AES não usa uma rede de Feistel, mas uma técnica que chama-se {\em rede de substituição e permutação}.
 
 O bloco no AES é dividido em 8 sequência de 16 bits que é tratada com um quadrado de 4 por 4 chamado de {\em estado}.
-Em cada rodada o algoritmo repete os seguintes passos (Figuras \ref{fig:add-round-key}, \ref{fig:sub-bytes}, \ref{fig:shift-rows} e \ref{fig:mix-columns}):
+Em cada rodada o algoritmo repete os seguintes passos (Figura \ref{fig:aes}).
+
 \begin{enumerate}
 \item {\em AddRoundKey:} O {\em key schedule} do AES produz uma subchave de 128 bits para cada rodada e aplicamos o XOR dessa subchave com o estado.
 \item {\em SubBytes:} Cada byte do estado é substituído por um novo byte definido por um SBox único que é bijetor (fase de confusão).
@@ -155,30 +154,24 @@ Em cada rodada o algoritmo repete os seguintes passos (Figuras \ref{fig:add-roun
 
 \begin{figure}[!htp]
   \centering
-  \begin{minipage}{.4\textwidth}
+  \begin{minipage}{.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{imagens/AddRoundKey.png}  
-    \caption{AddRoundKey}
-    \label{fig:add-round-key}
   \end{minipage}
- \begin{minipage}{.4\textwidth}
+ \begin{minipage}{.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{imagens/SubBytes.png}
-    \caption{SubBytes}
-    \label{fig:sub-bytes}
   \end{minipage}
-  \begin{minipage}{.4\textwidth}
+  \begin{minipage}{.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{imagens/ShiftRows.png}  
-    \caption{ShiftRows}
-    \label{fig:add-round-key}
   \end{minipage}
- \begin{minipage}{.4\textwidth}
+ \begin{minipage}{.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{imagens/MixColumns.png}
-    \caption{MixColumns}
-    \label{fig:mix-columns}
   \end{minipage}
+  \caption{Etapas do AES}
+  \label{fig:aes}
 \end{figure}
 
 Na última rodada a fase {\em MixColumn} é substituída pela {\em AddRoundKey}.

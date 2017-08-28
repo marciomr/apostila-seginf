@@ -28,7 +28,7 @@ O desafio de $\mathcal{A}$ é achar uma {\em colisão}, ou seja, um par $\langle
     \right.
 \end{displaymath}
 
-O sistema $\Pi$ é {\em resistente à colisão} se para todo adversário polinomial $\mathcal{A}$ existe uma função desprezível $\varepsilon$ tal que:
+O sistema $\Pi$ é {\em resistente à colisão} \cite{Damgard88} se para todo adversário polinomial $\mathcal{A}$ existe uma função desprezível $\varepsilon$ tal que:
 \begin{displaymath}
   Pr[HashCol_{\mathcal{A}, \Pi}(n) = 1] \leq \varepsilon(n)
 \end{displaymath}
@@ -70,7 +70,7 @@ Se nosso conjunto precisa ser $2^{32}$ basta escrever um texto com pelo menos 32
 \section{Construções}
 \label{sec:construcoes}
 
-A maioria das funções de hash seguem uma construção chamada {\em Merkle-Damgard} que assume a existância de uma {\em função de compressão} resistente à colisão para mensagens de tamanho fixo e a extende para mensagens de tamanho arbitrário.
+A maioria das funções de hash seguem uma construção chamada {\em Merkle-Damgard} que assume a existância de uma {\em função de compressão} resistente à colisão para mensagens de tamanho fixo e a extende para mensagens de tamanho arbitrário \cite{Merkle89,Damgard89}.
 Seja $\langle Gen, h \rangle$ um sistema de hash que comprime o tamanho de uma mensagem pela metade $h_s:\{0,1\}^{2n} \to \{0,1\}^n$.
 Construimos $\langle Gen, H \rangle$ da seguinte maneira:
 \begin{itemize}
