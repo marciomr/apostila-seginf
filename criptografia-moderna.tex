@@ -6,7 +6,7 @@ A definição, proposta por Shannon, estabelece que um sistema garante o {\em si
 No final do capítulo, porém, vimos que esta definição não é muito útil na prática, pois obriga o universo de chaves ser pelo menos tão grande quanto o universo das mensagens.
 
 Apesar do fracasso desta primeira tentativa de formalizar o conceito de segurança, não abandonaremos a ideia geral.
-A abordagem da {\em criptografia moderna}, que utilizaremos nesta apostila, segue três princípios básicos:
+A abordagem da {\em criptografia moderna} \cite{Goldwasser84}, que utilizaremos nesta apostila, segue três princípios básicos:
 \begin{enumerate}
 \item {\em definições formais:} As noções de segurança utilizadas serão apresentadas de maneira formal por meio de definições. 
 As definições prévias nos ajudam a comparar sistemas e avaliar sua segurança a partir de critérios estabelecidos previamente.
@@ -50,7 +50,7 @@ Colocado de outra maneira, a cifra pode guardar alguma informação sobre a mens
 
 Em termos práticos o que buscamos uma noção de segurança em que para um adversário ter sucesso ele precisaria rodar seu algoritmo em uma máquina excelente por um intervalo bem grande de tempo.
 Alternativamente esperamos que eventualmente o adversário derrote o sistema em pouco tempo, mas com uma probabilidade muito baixa.
-O problema com essa abordagem é como definir o que seria uma ``máquina excelente'', uma ``intervalo bem grande de tempo'' e uma ``probabilidade muito baixa''.
+O problema com essa abordagem é como definir o que seria uma ``máquina excelente'', um ``intervalo bem grande de tempo'' e uma ``probabilidade muito baixa''.
 Essas questões são particularmente complicados em um contexto em que a capacidade computacional evolui de maneira acelerada.
 
 Ao invés de estabelecer valores fixos para definir esses limites, partiremos de uma {\em abordagem assintótica}.
@@ -63,7 +63,7 @@ Vamos estabelecer que o adversário buscará quebrar a cifra usando um algorítm
 A suposição de que o adversário usa um algoritmos randomizado é forte, significa que ele é capaz de acessar uma quantidade arbitrária de bits aleatórios.
 Isso certamente não é possível na prática, mas serve bem aos propósitos de uma análise de pior caso.
 Já a probabilidade ser {\em desprezível} significa que ela cresce assintoticamente mais devagar do que o inverso de qualquer polinômio.
-Formalmente, $\varepsilon: \mathbb{N} \to \mathbb{N}$ é {\em desprezível} se para todo polinômio $p$ existe um número positivo $N$ tal que para todo $n > N$ temos que $\varepsilon(n) < \frac{1}{n}$.
+Formalmente, $\varepsilon: \mathbb{N} \to \mathbb{N}$ é {\em desprezível} se para todo polinômio $p$ existe um número positivo $N$ tal que para todo $n > N$ temos que $\varepsilon(n) < \frac{1}{p(n)}$.
 
 Estamos agora em condições de reescrever a definição de segurança formalmente incorporando os enfraquecimentos descritos neste capítulo.
 

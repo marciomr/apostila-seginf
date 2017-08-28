@@ -146,7 +146,7 @@ O sistema {\em Hash-and-MAC} $\Pi = \langle Gen, Mac, Ver \rangle$ para mensagen
 
 \begin{proof}
   Vamos apenas esboçar a prova e deixar os detalhes para o leitor.
-  A ideia é a seguinte, suponha que o adversário $\mathcal{A}$ consulte o tag de uma série de mensagens $Q$ e então suponha por absurdo que ele consiga produzir um código válido para uma mensagem $m \neq Q$.
+  A ideia é a seguinte, suponha que o adversário $\mathcal{A}$ consulte o tag de uma série de mensagens $Q$ e então suponha por absurdo que ele consiga produzir um código válido para uma mensagem $m \notin Q$.
   Neste caso temos duas possibilidades:
   \begin{enumerate}
   \item existe uma mensagem $m' \in Q$ tal que $H_s(m') = H_s(m)$, mas isso contradiz a hipótese que $\Pi_H$ é resistente a colisões
@@ -179,6 +179,19 @@ Formalmente definimos o sistema HMAC da seguinte forma:
 
 \subsection{Funções de Derivação de Chaves}
 \label{sec:kdf}
+
+Uma {\em função de derivação de chaves} (KDF) tem como objeto produzir uma chave segura a partir de algum material contendo uma boa quantidade de entropia chamado {\em key material}.
+Isso pode ser útil seja porque o {\em key material} não está suficientemente preparado para ser usado como uma chave -- por exemplo no caso de uma senha -- ou quando queremos derivar {\em subchaves} a partir de uma chave inicial.
+
+Formalmente, uma função de derivação de chaves recebe com entrada o {\em key material} $\delta$, o tamanho $l$ da chave a ser produzida e opcionalmente um valor $r$ chamado de {\em salt} e um valor contextual $c$.
+Um KDF seguro deve produzir a partir desses valores uma sequência de bits de tamanho $l$ {\em pseudoaleatória}.
+
+Tipicamente um KDF consiste de duas etapas: 
+\begin{enumerate}
+\item {\em extração}: recebe o {\em key material} e produz uma sequência pseudoaleatória de bits de tamanho fixo
+\item {\em expansão}: que expande o que foi produzido na fase de extração para uma sequência de bits de tamanho $l$
+\end{enumerate}
+
 
 % KDF e PBKDF
 

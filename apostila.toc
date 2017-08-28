@@ -28,21 +28,26 @@
 \contentsline {subsection}{\numberline {6.2.1}Linear-Feedback Shift Registers}{44}
 \contentsline {subsection}{\numberline {6.2.2}Trivium}{45}
 \contentsline {section}{\numberline {6.3}Modos de Opera\IeC {\c c}\IeC {\~a}o}{46}
-\contentsline {section}{\numberline {6.4}Exercicios}{47}
+\contentsline {section}{\numberline {6.4}Exercicios}{48}
 \contentsline {chapter}{\numberline {7}Cifras de Bloco}{49}
 \contentsline {section}{\numberline {7.1}Constru\IeC {\c c}\IeC {\~o}es Pr\IeC {\'a}ticas}{51}
 \contentsline {subsection}{\numberline {7.1.1}Data Encryption Standard (DES)}{51}
-\contentsline {subsection}{\numberline {7.1.2}Advanced Encryption Standard (AES)}{53}
-\contentsline {section}{\numberline {7.2}Modos de Opera\IeC {\c c}\IeC {\~a}o}{54}
-\contentsline {section}{\numberline {7.3}Exerc\IeC {\'\i }cios}{58}
-\contentsline {chapter}{\numberline {8}Integridade e Autenticidade}{59}
-\contentsline {section}{\numberline {8.1}C\IeC {\'o}digo de Autentica\IeC {\c c}\IeC {\~a}o de Mensagem}{60}
-\contentsline {subsection}{\numberline {8.1.1}CBC-MAC}{62}
-\contentsline {section}{\numberline {8.2}Criptografia Autenticada}{62}
-\contentsline {subsection}{\numberline {8.2.1}Comunica\IeC {\c c}\IeC {\~a}o Segura}{66}
-\contentsline {section}{\numberline {8.3}Exercicios}{66}
-\contentsline {chapter}{\numberline {9}Fun\IeC {\c c}\IeC {\~o}es de Hash}{67}
-\contentsline {section}{\numberline {9.1}Constru\IeC {\c c}\IeC {\~o}es}{69}
-\contentsline {subsection}{\numberline {9.1.1}SHA-1}{70}
-\contentsline {section}{\numberline {9.2}Aplica\IeC {\c c}\IeC {\~o}es}{70}
-\contentsline {section}{\numberline {9.3}Exerc\IeC {\'\i }cios}{70}
+\contentsline {subsection}{\numberline {7.1.2}Advanced Encryption Standard (AES)}{54}
+\contentsline {section}{\numberline {7.2}Modos de Opera\IeC {\c c}\IeC {\~a}o}{55}
+\contentsline {section}{\numberline {7.3}Exerc\IeC {\'\i }cios}{60}
+\contentsline {chapter}{\numberline {8}Integridade e Autenticidade}{63}
+\contentsline {section}{\numberline {8.1}C\IeC {\'o}digo de Autentica\IeC {\c c}\IeC {\~a}o de Mensagem}{64}
+\contentsline {subsection}{\numberline {8.1.1}CBC-MAC}{66}
+\contentsline {section}{\numberline {8.2}Criptografia Autenticada}{66}
+\contentsline {subsection}{\numberline {8.2.1}Comunica\IeC {\c c}\IeC {\~a}o Segura}{70}
+\contentsline {section}{\numberline {8.3}Exercicios}{70}
+\contentsline {chapter}{\numberline {9}Fun\IeC {\c c}\IeC {\~o}es de Hash}{71}
+\contentsline {section}{\numberline {9.1}Constru\IeC {\c c}\IeC {\~o}es}{73}
+\contentsline {subsection}{\numberline {9.1.1}SHA-1}{74}
+\contentsline {section}{\numberline {9.2}Aplica\IeC {\c c}\IeC {\~o}es}{74}
+\contentsline {subsection}{\numberline {9.2.1}HMAC}{75}
+\contentsline {subsection}{\numberline {9.2.2}Fingerprints e \IeC {\'A}rvores de Merkle}{76}
+\contentsline {subsection}{\numberline {9.2.3}Fun\IeC {\c c}\IeC {\~o}es de Deriva\IeC {\c c}\IeC {\~a}o de Chaves}{76}
+\contentsline {section}{\numberline {9.3}Exerc\IeC {\'\i }cios}{76}
+\contentsline {chapter}{\numberline {10}Fun\IeC {\c c}\IeC {\~o}es de M\IeC {\~a}o \IeC {\'U}nica}{79}
+\contentsline {chapter}{\numberline {11}Distribui\IeC {\c c}\IeC {\~a}o de Chaves}{83}

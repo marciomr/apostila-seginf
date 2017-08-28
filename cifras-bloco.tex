@@ -127,6 +127,8 @@ Em 2006 pesquisadores alemães desenvolveram um hardware de baixo custo -- cerca
 Desconfia-se que nos anos 80 apenas governos de grandes potências mundiais tinham recursos necessários para construir máquinas com tal capacidade.
 Hoje em dia o algoritmo DES é considerado totalmente inseguro.
 
+% No livro do Paar tem uma definição formal de ataque força bruta e uma análise da probabilidade de coincidência de chaves
+
 Além do pequeno tamanho da chave, e mais suspeito, os S-Boxes foram alterados pela NSA sem grandes explicações antes do algoritmos ser adotado como padrão.
 Anos mais tarde pesquisadores apresentaram uma técnica chamada criptoanálise diferencial.
 Diversas cifras se tornaram inseguras com o anúncio desta técnica, mas supreendentemente o DES não.
@@ -200,7 +202,11 @@ Considere o seguinte adversário $\mathcal{A}$ que derrota esta cifra:
 \item se $c$ for formado por dois blocos idênticos $\mathcal{A}$ devolve $0$, caso contrário devolve $1$.
 \end{enumerate}
 
-% FIGURA DO ECB
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=\textwidth]{imagens/ECB.png}
+  \caption{Modo ECB}
+\end{figure}
 
 \begin{figure}[!htp]
   \centering
@@ -238,7 +244,12 @@ Para descriptografar precisamos aplicar $D(k,c) := m_0 \dots m_l$ da seguinte fo
   Se $p$ é uma PRP então o sistema $\Pi$ tal qual apresentado acima, modo CBC, é seguro contra CPA.
 \end{theorem}
 
-% Figura do CBC
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=\textwidth]{imagens/CBC.png}
+  \caption{Modo CBC}
+\end{figure}
+
 
 A principal limitação do modo CBC é que os blocos precisam ser processados em sequência, ou seja, o algoritmo não é paralelizável.
 O {\em modo contador} (Ctr), por outro lado, não tem essa limitação.
@@ -255,6 +266,12 @@ O algoritmo $D(k,c)$ é exatamente a mesma coisa, como se poderia esperar:
 \begin{eqnarray*}
   m_i & := & c_{i+1} \xor f_k(c_0 + i) \textrm{ para cada } i = 0, \dots, l-1
 \end{eqnarray*} 
+
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=\textwidth]{imagens/Ctr.png}
+  \caption{Modo Contador}
+\end{figure}
 
 A segurança do modo contador exige apenas uma função pseudoaleatória que não precisa ser inversível:
 
