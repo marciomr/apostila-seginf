@@ -174,7 +174,7 @@ A suposição que fizemos é que o tamanho da chave deve ser tão grande quanto 
 Há uma série de problemas práticos com isso.
 Computacionalmente não é possível gerar chaves aleatórias muito grandes, o que limita o tamanho das mensagens que podemos cifrar.
 Além disso, assumimos que as chaves são compartilhadas entre as partes.
-Deixamos os detalhes sobre a distribuição de chaves para o capítulo \ref{}, mas por ora podemos adiantar que se nossa chave é tão grande quanto a mensagem, porque não enviamos a mensagem pelo mesmo canal que enviaríamos a mensagem?
+Deixamos os detalhes sobre a distribuição de chaves para o Capítulo \ref{cha:distribuicao-chaves}, mas por ora podemos adiantar que se nossa chave é tão grande quanto a mensagem, porque não enviamos a mensagem pelo mesmo canal que enviaríamos a mensagem?
 Enfim, um sistema cuja a chave seja tão grande quanto a mensagem é de muito pouca utilidade prática.
 
 Encerramos este capítulo mostrando que esta segunda limitação do OTP infelizmente não é uma peculiaridade do sistema.
@@ -182,7 +182,7 @@ Na verdade todo sistema que possua sigilo perfeito está fadado a ter chaves tã
 Esse resultado negativo foi proposto e demonstrado pelo próprio Shannon ainda nos anos 40.
 
 
-\begin{theorem}[Teorema de Shannon]
+\begin{theorem}[Shannon]
 Seja $\Pi = \langle Gen, E, D \rangle$ um sistema que garante o sigilo perfeito, então temos que $|K| \geq |M|$.  
 \end{theorem}
 \begin{proof}

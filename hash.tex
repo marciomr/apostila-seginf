@@ -80,8 +80,15 @@ Construimos $\langle Gen, H \rangle$ da seguinte maneira:
 \item Devolva $z_{B+1}$.
 \end{itemize}
 
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=.5\textwidth]{imagens/Merkle-Damgard.png}
+  \caption{Diagrama da construção de Merkel Damgrad}
+  \label{fig:merkle-damgard}
+\end{figure}
 
-\begin{theorem}
+
+\begin{theorem}[Merkle-Damgard]
   Se $\langle Gen, h \rangle$ é resistente a colisão então $\langle Gen, H \rangle$ da forma como definido acima também é resistente a colisão.
 \end{theorem}
 

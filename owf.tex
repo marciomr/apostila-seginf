@@ -4,7 +4,7 @@
 Nos Capítulos \ref{cha:cifras-de-fluxo}, \ref{cha:cifras-de-bloco} e \ref{cha:mac} demonstramos que dadas certas suposições determinados sistemas de criptografia garantem a segurança contra determinados modelos de ataque.
 Argumentamos que essas supoções -- a saber, a existência de geradores de números pseudoaleatórios, de funções pseudoaleatórias e de permutações pseudoaleatórias -- não são provadas, mas validadas empiricamente.
 Neste capítulo argumentaremos porque não construimos sistemas que comprovadamente satisfazem essas suposições.
-Para tanto apresentaremos uma condição necessária e suficiente para a existência de sistemas seguros: a existência de funções de mão única\footnote{O leitor interessado deve procurar o livro do Goldreich \cite{Goldreich07} para os detalhes das demonstrações mencionadas neste capítulo.}.
+Para tanto apresentaremos uma condição necessária e suficiente para a existência de sistemas seguros: a existência de funções de mão única.
 Por fim mostraremos que uma demonstração da existência de funções de mão única implicam que $P \neq NP$, ou seja, esse resultado teria como consequência um dos problemas em aberto mais relevantes na matemática hoje.
 
 Uma {\em função de mão única} é uma função $f: \{0,1\}^n \to \{0,1\}^n$ que pode ser computada de maneira eficiente, mas que é inviável de ser invertida.
@@ -20,7 +20,7 @@ Formalmente definimos função de mão única por meio do seguinte jogo:
 O desafio do adversário é produzir uma pré-imagem de $f$, ou seja, um $x'$ tal que $f(x') = y$:
 
 \begin{displaymath}
-  Invert_{\mathcal{A}, \Pi}(n) := \left\{
+  Invert_{\mathcal{A}, f}(n) := \left\{
     \begin{array}{lcl}
       1 & \textrm{se} & f(x') = y\\
       0 & \textrm{c.c.} &\\
@@ -33,21 +33,38 @@ Uma função $f: \{0,1\}^n \to \{0,1\}^n$ é de mão única se:
 \item $f$ pode ser computada de maneira eficiente (polinomial) e
 \item Para todo adversário eficiente $\mathcal{A}$ existe $\varepsilon$ desprezível tal que:
 \begin{displaymath}
-  Pr[Inver_{\mathcal{A}, \Pi}(n) = 1] \leq \varepsilon(n)
+  Pr[Invert_{\mathcal{A}, f}(n) = 1] \leq \varepsilon(n)
 \end{displaymath}
 \end{enumerate}
 
+
+\begin{example}
+  Uma candidata a função de mão é única é a seguinte função para $x$ e $y$ de mesmo tamanho e primos:
+  \begin{displaymath}
+    f(x,y) := x \cdot y
+  \end{displaymath}
+  A dificuldade de inverter $f$ está a associada ao {\em problema da fatoração} que é considerado um problema difícil.
+
+  Veremos no Capítulo \ref{cha:distribuicao-chaves} que para certos grupos $G$ com gerador $g$ temos que a seguinte função $f$ é de mão única:
+  \begin{displaymath}
+    f_g(x) := g^x
+  \end{displaymath}
+
+A dificuldade de inverter esta função está associada ao chamado {\em problema do logarítmo discreto}.
+\end{example}
+
+
 Note que para derrotar o desafio de uma função de mão única $\mathcal{A}$ precisa calcular a pré-imagem $x'$, não basta conhecer alguma informação parcial sobre $x'$.
-Um {\em predicado hard-core} é um bit de informação sobre a $x'$ que é mantido escondido pela função de mão única $f$.
+Um {\em predicado hard-core} é um bit de informação sobre a $x'$ que é mantido escondido pela função de mão única $f$ \cite{Blum84}.
 Formalmente, um predicado hard core é uma função $hc:\{0,1\}^n \to \{0,1\}$ se qualquer adversário eficiente que conhece $y := f(x)$ consegue acertar o valor de $hc(x)$ apenas com change desprezivelmente maior do que $\frac{1}{2}$.
 
 
 Seja $f:\{0,1\}^n \to \{0,1\}^n$ uma função de mão única.
 Considere a função $g(x,r) := \langle f(x), r \rangle$ em que $|x| = |r|$ e defina $hc(x,r) := \bigoplus_{i=1}^nx_i \cdot r_i$.
-É possível mostrar que $g$ é uma função de mão única e $hc$ é um predicado hard-core de $g$.
-Esta construção é a base do seguinte teorema\footnote{Neste capítulo seguiremos essa abordagem de apresentar as construções e omitir as demonstrações.}:
+É possível mostrar que $g$ é uma função de mão única e $hc$ é um predicado hard-core de $g$ \cite{Goldreich89}.
+Esta construção é a base do seguinte teorema\footnote{Neste capítulo seguiremos essa abordagem de apresentar as construções e omitir as demonstrações. O leitor interessado deve procurar o livro do Goldreich \cite{Goldreich07} para uma apresentação completa sobre os temas tratados neste capítulo.}:
 
-\begin{theorem}[Teorema de Goldreich-Levin]
+\begin{theorem}[Goldreich-Levin]
   Assuma que uma função de mão única existe. Então existe uma função de mão única com um predicado hard-core.
 \end{theorem}
 
@@ -68,8 +85,14 @@ Esta construção é a base do seguinte teorema:
   Se existe PRG com fator de expansão $l(n) = n + 1$ então para todo polinômio $p$ existe PRG $G'$ com fator de expansão $l(n) = p(n)$.
 \end{theorem}
 
-% DIAGRAMA DA CONSTRUÇÃO DE G'
-  
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=.5\textwidth]{imagens/OWF-PRG.png}
+  \caption{Diagrama da construção de $G'$}
+  \label{fig:owf-prg}
+\end{figure}
+% Este diagrama está ruim!!
+
 É possível construir uma função pseudoaleatória a partir de um PRG com fator de expansão $2n$.
 Seja $G(k) = y_0 \dots y_{2n}$ um PRG e defina $G_0(k) := y_0 \dots y_n$ e $G_1(k) := y_{n+1} \dots y_{2n}$.
 Construiremos uma PRF $f_k: \{0,1\}^n \to \{0,1\}^n$ da seguinte maneira:
@@ -77,11 +100,16 @@ Construiremos uma PRF $f_k: \{0,1\}^n \to \{0,1\}^n$ da seguinte maneira:
   f_k(x_1 \dots x_n) := G_{x_n}(\dots (G_{x_1}(k))\dots)
 \end{displaymath}
 
-\begin{theorem}
+\begin{theorem}[Yao]
   Se $G$ é um PRG com fator de expansão $l(n) = 2n$ então a construção acima é um PRF.  
 \end{theorem}
 
-% DIAGRAMA DA CONSTRUÇÃO DE F
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=.7\textwidth]{imagens/PRG-PRF.png}
+  \caption{Construção de Yao}
+  \label{fig:owf-prg}
+\end{figure}
 
 Para completar, a partir de uma PRF é possível construir uma PRP usando uma rede de Feistel com três passos em que cada passo usa uma chave distinta.
 \begin{displaymath}
@@ -116,6 +144,31 @@ O teorema a seguir mostra a condição reversa, ou seja, que a existência de fu
   % Esta pretendo fazer passo a passo
 \end{proof}
 
-% Diagrama
-  % owf => PRG => PRF => PRP => Segurança => owf
-% Função de Mão Única => P != NP
+\begin{figure}[htbp]
+  \centering
+    \includegraphics[width=.7\textwidth]{imagens/OWF-diagrama.png}
+  \caption{Cadeia de consequências da existência de funções de mão única}
+  \label{fig:owf-seguranca}
+\end{figure}
+
+Acreditamos que certas função são de mão única, hipótese esta que é validada empiricamente.
+Porém, não temos uma demonstração matemática desta afirmação.
+Suponha que conseguissemos mostrar que $f$ é uma função de mão única.
+Por definição temos que $f(x)$ deve ser computável em tempo polinomial.
+Se sabemos que $f^{-1}(x) = y$ então podemos verificar isso em tempo polinomial testando se $f(y) = x$.
+Em outras palavras, $f$ é um oráculo polinomial para $f^{-1}$, ou seja, $Invert_f(n) \in NP$.
+A definiçao de função de mão única estabelece que $Invert_f(n) \notin P$.
+Portanto, se existe uma função de mão única temos que $P \neq NP$.
+A relação entre os problemas polinomais $P$ e os problemas para os quais existe um oráculo polinomial $NP$ é o problema em aberto mais importante na ciência da computação e um dos mais importantes em aberto na matemática.
+
+\section{Exercícios}
+\label{sec:exercicios}
+
+\begin{exercicio}
+  Mostre que $f(x,y) = x \cdot y$ sem as restrições de que $x$ e $y$ sejam primos e do mesmo tamanho não é uma função de mão única.
+\end{exercicio}
+
+
+\begin{exercicio}
+  Mostre um grupo cíclico com gerador $g$ (ver Capítulo \ref{cha:distribuicao-chaves}) em que $f_g(x) = g^x$ não é uma função de mão única.
+\end{exercicio}
