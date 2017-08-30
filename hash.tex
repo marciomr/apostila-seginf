@@ -167,7 +167,7 @@ O popular sistema de autenticação HMAC se inspira no esquema apresentado acima
 Formalmente definimos o sistema HMAC da seguinte forma:
 \begin{itemize}
 \item $Gen(1^n) := k \leftarrow \{0,1\}^n$
-\item $Mac(k, m) := H_s((k \xor \textrm{\tt opad}) H_s(k \xor \textrm{\tt ipad})m)$
+\item $Mac(k, m) := H_s((k \xor \textrm{\tt opad}) || H_s(k \xor \textrm{\tt ipad})m)$
 \item $Ver(k, m, t) := \left\{
     \begin{array}{lcl}
       1 & \textrm{se} & Mac(k,m) = t\\
@@ -191,16 +191,36 @@ Uma {\em função de derivação de chaves} (KDF) tem como objeto produzir uma c
 Isso pode ser útil seja porque o {\em key material} não está suficientemente preparado para ser usado como uma chave -- por exemplo no caso de uma senha -- ou quando queremos derivar {\em subchaves} a partir de uma chave inicial.
 
 Formalmente, uma função de derivação de chaves recebe com entrada o {\em key material} $\delta$, o tamanho $l$ da chave a ser produzida e opcionalmente um valor $r$ chamado de {\em salt} e um valor contextual $c$.
-Um KDF seguro deve produzir a partir desses valores uma sequência de bits de tamanho $l$ {\em pseudoaleatória}.
-
+Um KDF seguro deve produzir a partir desses valores uma sequência {\em pseudoaleatória} de tamanho $l$.
 Tipicamente um KDF consiste de duas etapas: 
 \begin{enumerate}
-\item {\em extração}: recebe o {\em key material} e produz uma sequência pseudoaleatória de bits de tamanho fixo
-\item {\em expansão}: que expande o que foi produzido na fase de extração para uma sequência de bits de tamanho $l$
+\item {\em extração}: recebe o {\em key material} e opcionalmente uma chave pública ({\em salt}) e produz uma sequência pseudoaleatória de bits de tamanho fixo
+\item {\em expansão}: expande o que foi produzido na fase de extração para uma sequência de bits de tamanho $l$.
 \end{enumerate}
 
+Uma implementação popular deste modelo é o HKDF que usa apenas o HMAC como primitiva:
 
-% KDF e PBKDF
+\begin{eqnarray*}
+  \textrm{PRK}      & := & \textrm{HMAC}(r, \delta)\\
+  \textrm{HKDF}(r, \delta, c, l) & := & K(1)||K(2) \dots ||K(t)\\
+  K(1)     & := & \textrm{HMAC}(\textrm{PRK}, c||0)\\
+  K(i + 1) & := & \textrm{HMAC}(\textrm{PRK}, K(i)||c||i)\\
+\end{eqnarray*}
+
+No caso $\delta$ seja uma senha proposta por um usuário, temos um problema a mais, pois tipicamente essas possuem uma entropia baixa e, portanto, estão sujeitas a {\em ataques de dicionário}.
+Para mitigar este problema podemos utilizar uma função de derivação de chaves lenta.
+Um {\em password based key derivation function} recebe como parâmetro, além do salt $r$, do tamanho $l$ e da senha $\delta$, um valor que estipula o número de ciclos $n$.
+Uma implementação popular deste modelo é o PBKDF2:
+
+\begin{eqnarray*}
+  \textrm{PBKDF2}(r, \delta, c, n, l) & := & K(1)||K(2)|| \dots ||K(t)\\
+  K(i)     & := & U_0^i \xor U_1^i \xor \dots \xor U_n^i\\
+  U_0^i    & := & H(\delta||r||i)\\
+  U_j^i    & := & H(\delta||U_{j-1}^1)\\
+\end{eqnarray*}
+
+Note que a primitiva neste caso é uma função de hash $H$ e que cada $K(i)$ roda $n$ vezes essa função.
+O salt impede o preprocessamento de um dicionário e $n$ deve ser grande o suficiente para impedir sua construção {\em a posteriori}.
 
 \section{Exercícios}
 \label{sec:exercicios}
