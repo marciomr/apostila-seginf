@@ -72,7 +72,7 @@ Uma vez extraído um bit ``seguro'' a partir de uma função de mão única, pod
 
 \begin{theorem}
   Seja $f$ uma função de mão única com um predicado hard-crore $hc$.
-A função $G(s) := f(s)hc(s)$ é um PRG com fator de expansão $l(n) = n+1$.
+A função $G(s) := f(s)||hc(s)$ é um PRG com fator de expansão $l(n) = n+1$.
 \end{theorem}
 
 Agora que somos capazes de gerar um PRG com fator de expansão mínimo, é possível expandi-lo para um PRG com fator de expansão $l(n) = p(n)$ em que $p$ é um polinomio qualquer.

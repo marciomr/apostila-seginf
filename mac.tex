@@ -22,10 +22,10 @@ Como o adversário conhece $m_0$ ele pode alterar $c = c_0c_r$ por $c' = (c_0 \x
 Quando a nova cifra for descriptografada ela produzirá a seguinte mensagem:
 
 \begin{eqnarray*}
-  D(k,c) & = & (G(k)_0 \xor c')(G(k)_r \xor c_r)\\
-         & = & (G(k)_0 \xor c_0 \xor m_0 \xor m')m_r\\
-         & = & (G(k)_0 \xor G(k_0) \xor m_0 \xor m_0 \xor m')m_r\\
-         & = & m'm_r
+  D(k,c) & = & (G(k)_0 \xor c')||(G(k)_r \xor c_r)\\
+         & = & (G(k)_0 \xor c_0 \xor m_0 \xor m')||m_r\\
+         & = & (G(k)_0 \xor G(k_0) \xor m_0 \xor m_0 \xor m')||m_r\\
+         & = & m'||m_r
 \end{eqnarray*}
 
 Desta forma, mesmo sem conhecer a chave $k$, o adversário foi capaz de alterar o cabeçalho da cifra.
@@ -222,7 +222,7 @@ Isso não é apenas um detalhe, o uso da mesma chave de criptografia e autentica
 \begin{example}
   Considere uma permutação pseudoaleatória $p$, escolha $r \leftarrow\{0,1\}^{n/2}$ e criptografe $m \in \{0,1\}^{n/2}$ da seguinte forma:
   \begin{displaymath}
-    E(k,m) = p_k(mr)
+    E(k,m) = p_k(m||r)
   \end{displaymath}
 É possível mostrar que um sistema como esse é seguro contra CPA.
 
@@ -233,8 +233,8 @@ Agora considere um MAC que usa $p^{-1}$ para produzir o código:
 Também é possível mostrar que esse MAC é seguro contra falsificação.
 Porém, quando aplicamos o pardigma {\em encrypt then mac} nesses sistemas temos que:
 \begin{eqnarray*}
-  E(k,m), Mac(k, E(k,m)) & = & p_k(mr), p_k^{-1}(p_k(mr))\\
-                         & = & p_k(mr), mr
+  E(k,m), Mac(k, E(k,m)) & = & p_k(m||r), p_k^{-1}(p_k(m||r))\\
+                         & = & p_k(m||r), m||r
 \end{eqnarray*}
 Neste caso o código de autenticação vaza todo o conteúdo da mensagem!
 \end{example}

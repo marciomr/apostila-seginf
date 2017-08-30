@@ -48,7 +48,7 @@
 \contentsline {subsection}{\numberline {9.2.1}HMAC}{75}
 \contentsline {subsection}{\numberline {9.2.2}Fingerprints e \IeC {\'A}rvores de Merkle}{76}
 \contentsline {subsection}{\numberline {9.2.3}Fun\IeC {\c c}\IeC {\~o}es de Deriva\IeC {\c c}\IeC {\~a}o de Chaves}{76}
-\contentsline {section}{\numberline {9.3}Exerc\IeC {\'\i }cios}{76}
+\contentsline {section}{\numberline {9.3}Exerc\IeC {\'\i }cios}{77}
 \contentsline {chapter}{\numberline {10}Fun\IeC {\c c}\IeC {\~o}es de M\IeC {\~a}o \IeC {\'U}nica}{79}
 \contentsline {section}{\numberline {10.1}Exerc\IeC {\'\i }cios}{83}
 \contentsline {chapter}{\numberline {11}Distribui\IeC {\c c}\IeC {\~a}o de Chaves}{85}
