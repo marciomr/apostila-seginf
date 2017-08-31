@@ -1,27 +1,194 @@
 \chapter{Distribuição de Chaves}
 \label{cha:distribuicao-chaves}
 
+Os sistemas criptográficos que vimos até aqui, simétricos, assumem que as partes compartilham um dado sigiloso, uma chave.
+Discutimos como gerar chaves, mas não entramos tratamos ainda de um problema central da criptograia: como distribuir as chaves.
+Nesta seção veremos dois modelos bastantes distintos, o primeiro pressupõe a existência de uma autoridade central capaz de assumir a tarefa, na segunda partimos para o paradigma da criptografia assimétrica que será mais extensamente discutida nos próximos dois capítulos.
+
 \section{Centro de Distribuição de Chaves}
 \label{sec:kdc}
+
+No modelo de Centro de Distribuição de Chaves (KDC), cada usuário possui uma {\em chave permanente}.
+Essas chaves são gerenciadas por um administrador que centraliza a responsabilidade sobre a distribuição de chaves.
+As chaves são criadas pelo administrador que as entrega pessoalmente para cada usuário verificando sua identidade.
+Quando Alice quer se comunicar com Bob os seguintes passos são seguidos:
+
+\begin{enumerate}
+\item Alice faz uma requisição para o administrador de que pretende falar com Bob.
+\item O administrador gera uma chave efêmera $k$ para a comunicação e envia duas cópias para Alice, uma criptografada pela chave permanente de Alice $E(k_A, k)$ e uma criptografada com a chave permanente de Bob $E(k_B, k)$.
+\item Alice então encaminha $E(k_B, k)$ para Bob.
+\end{enumerate}
+
+Depois da conversa Alice deve descartar a chave efêmera e eventualmente pedir uma nova para o administrador quando precisar voltar a se comunicar com Bob.
+Vamos descrever uma implementação popular do modelo KDC chamada Kerberos.
+
 
 \subsection{Kerberos}
 \label{sec:kerberos}
 
-% Livro do Paar
+O protocolo de Kerberos é uma implementação do modelo KDF.
+Para garantir que as partes tenham acesso à mesma chave efêmera, o protocolo precisa garantir a autenticidade na comunicação entre Alice e o administrador -- para isso é usada uma técnica chamada de {\em desafio-resposta} -- e precisa evitar ataques de repetição -- para isso o administrador estabelece um tempo de vida para a chave efêmera e cada mensagem deve conter um timestamp.
+O protocolo segue os seguintes passos:
+\begin{enumerate}
+\item Alice gera um valor aleatório $r$ ({\em desafio}) e envia este valor para o KDC junto com sua identidade $ID_A$ e a de Bob $ID_B$
+\item O KDC gera a chave efêmera $k$, o seu {\em tempo de vida} $t$ e envia para  Alice $E(k_A, r||ID_B||t) = c_A$ e $E(k_B, ID_A||t) = c_B$
+\item Alice decifra $c_A$, verifica o desafio, verifica $ID_B$ e $t$, gera um {\em timestamp} $t_S$, criptografa $E(k, ID_A||t_S) = c$ e envia $c_B, c$ para Bob
+\item Bob, então, decifra $c_B$ com sua chave e verifica $t$ e decifra $c$ com a chave efêmera e verifica $ID_A$ e $t_S$.
+\item As partes podem se comunicar usando a chave efêmera $k$ até que $t_S > t$.
+\end{enumerate}
+
+Além de pressupor a existência de um administrador confiável que gerencie todas as chaves permanentes, esse modelo possui o que chamamos de {\em ponto único de falha}.
+Se o servidor do administrador sair do ar, por exemplo, todas as comunicações seguras ficarão impedidas.
+Ou seja, mesmo em um ambiente fechado e com hierarquia estabelecida esse modelo não é ideal, em um ambiente aberto ele é totalmente inadequado.
 
 \section{Protocolo de Diffie-Hellman}
 \label{sec:diffie-hellman}
 
-% Definição de Grupos
-% Exemplos
-  % Prop 8.7 
-% Geradores
-% Grupos Cíclicos
-  % Teorema 8.14
-% Exponenciação eficiente
-% Problema do Logaritmo Discreto
-% Protocolo de Diffie-Helamnn
+Em um ambiente aberto não é realista imaginar que as partes podem encontrar o administrador de antemão.
+Surpreendentemente existem formas de trocar chaves que podem ser feitas diretamente pelas partes por meio de um canal inseguro.
+O esquema que mostraremos nesta seção, protocolo de Diffie-Hellman, inaugura o paradigma revolucionário da {\em criptografia assimétrica} que veremos nos próximos capítulos \cite{}.
+Informalmente, o protocolo funciona da seguinte forma: Alice envia um dado público para Bob e vice-versa, ao fim do processo ambas as partes são capazes de gerar um mesmo valor que pode ser usado em um KDF para gerar uma chave, porém, para um observador (Eva) que só teve acesso aos dados públicos, isso não é possível.
+Para explicar o protocolo precisamos definir o que são grupos, geradores e grupos cíclicos e precisamos apresentar o {\em problema do logaritmo discreto} cuja dificuldade é condição necessária -- apesar de insuficiente -- para a segurança do protocolo.
+
+Um {\em grupo} é uma estrutura algébrica $\mathbb{G} = \langle G, \circ \rangle$ em que $G$ é um conjunto e $\circ$ uma operação binária que satisfaz as seguintes propriedades:
+\begin{itemize}
+\item[] {\bf (fecho)} Se $f, g \in G$ então $f \circ g \in G$.
+\item[] {\bf (identidade)} Existe um elemento $e \in G$ tal que $e \circ f = f \circ e = f$ para todo $f \in G$.
+\item[] {\bf (inverso)} Para todo $g \in G$ existe $h \in G$ tal que $g \circ h = e$ (é possível mostrar que $h$ é único para cada $g$ e, portanto, o denotaremos $g^{-1}$).
+\item[] {\bf (associatividade)} Para todo $f,g,h \in G$ temos que $(f \circ g) \circ h = f \circ (g \circ h)$. 
+\end{itemize}
+
+Um grupo é dito {\em finito} se $G$ é finito, neste caso, $|G|$ é a {\em ordem} do grupo.
+Um grupo é {\em abeliano} se satisfaz o seguinte:
+\begin{itemize}
+\item[] {\bf (comutatividade)} Para todo $f, g \in G$ temos que $f \circ g = g \circ f$.
+\end{itemize}
+ 
+Diversas estruturas familiares como $\langle \mathbb{Z}, + \rangle$ e $\langle \mathbb{Q}, \cdot \rangle$ são grupos abelianos, mas não são finitos.
+No próximo capítulo veremos exemplos de grupos finitos.
+Por ora apenas suporemos que eles existem.
+Nos será útil expressar a operação de {\em exponenciação} de um elemento do grupo $g \in G$ em relação a um inteiro positivo $m$:
+\begin{displaymath}
+  g^m := \underbrace{g \circ \dots \circ g}_m
+\end{displaymath}
+
+Uma forma ineficiente de calcular $g^m$ é aplicar $m$ vezes a operação $\circ$.
+Seja $m_0 \dots m_t$ a expressão binária do número $m$, o seguinte algoritmo produz o mesmo resultado em tempo $O(log(m))$:
+
+
+\begin{codebox}
+\Procname{$\proc{Fast-Exponentiation}(g, m)$}
+\li $r \gets g$
+\li \For $i \gets t-1$ \To $0$
+\li \Do $r \gets r \circ r$
+\li \If $m_i = 1$ 
+\li \Then $r \gets g \circ r$
+\End
+\End
+\li \Return $r$
+\End
+\end{codebox}
+
+
+\begin{example}
+  Simularemos a execução de $\proc{Fast-Exponentiation}(2, 10)$ em $\langle \mathbb{Q}, \cdot \rangle$.
+  Primeiro note que $10$ em binário se escreve $1010_2$, pois $10 = 2^3 + 2^1$.
+  \begin{eqnarray*}
+    r & \gets & 2\\
+      & \gets & 2 \cdot 2 = 2^2\\
+      & \gets & 2^2 \cdot 2^2 = 2^4\\
+      & \gets & 2 \cdot 2^4 = 2^5\\
+      & \gets & 2^5 \cdot 2^5 = 2^{10} 
+  \end{eqnarray*}
+\end{example}
+
+
+\begin{theorem}
+  Seja $\mathbb{G} = \langle G, \circ \rangle$ um grupo abeliano finito e $m = |G|$, então para qualquer $g \in G$ temos que $g^m = e$.
+\end{theorem}
+\begin{proof}
+  Note que se $g \circ g_i = g \circ g_j$ então $g_i = g_j$ (basta multiplicar ambos os lados por $g^{-1}$).
+  Assim temos que $\{(g \circ g_1), \dots, (g \circ g_m)\} = G$, porque todos os elementos do conjunto da esquerda são elementos de $G$ e são distintos.
+  O seja:
+  
+  \begin{eqnarray*}
+    g_1 \circ \dots \circ g_m & = & (g \circ g_1) \circ \dots \circ (g \circ g_m)\\
+                              & = & g^m \circ (g_1 \circ \dots \circ g_m)
+  \end{eqnarray*}
+  Multiplicando ambos os lados pelo inverso de $g_1 \circ \dots \circ g_m$ temos que $g^m = e$.
+\end{proof}
+
+Se $\mathbb{G} = \langle G, \circ \rangle$ é um grupo finito e $g \in G$ então definimos o conjunto dos elementos {\em gerados} por $g$ da seguinte forma:
+
+\begin{displaymath}
+  \langle g \rangle := \{g^0, g^1, \dots \}
+\end{displaymath}
+
+A {\em ordem} de um elemento $g \in G$ é o menor $i$ tal que $g^i = e$.
+Pelo teorema anterior temos que $i \leq |G|$ e, portanto, $\langle g \rangle$ é sempre finito.
+Um grupo é chamado de {\em cíclico} se existe um elemento $g$, chamado de {\em gerador} cuja ordem é $|G|$.
+Ou seja, em um grupo cíclico temos que $\langle g \rangle = G$ para algum $g$.
+
+Se $\mathbb{G}$ é um grupo cíclico e $g$ é um gerador então para qualquer $h \in G$ existe um inteiro $x$ tal que $g^x = h$.
+Dizemos que $x$ é o {\em logaritmo} de $h$ na base $g$.
+
+O {\em problema do logaritmo discreto} pode ser descrito pelo seguinte jogo:
+\begin{enumerate}
+\item O sistema recebe o parâmetro de segurança $1^n$ e usa $\mathcal{G}$ para gerar um grupo cíclico $\mathbb{G} = \langle G, \circ \rangle$ com gerador $g$ e ordem $n$
+\item O sistema escolhe $h \leftarrow G$ e manda para o adversário $\mathbb{G}$, $g$ e $h$. 
+\item O adversário produz $x \in \mathbb{Z}_n$
+\end{enumerate}
+
+O desafio do adversário é produzir $x$ tal que $g^x = h$.
+Ou seja:
+\begin{displaymath}
+  DLog_{\mathcal{A}, \mathcal{G}}(n) = \left\{
+    \begin{array}{lcl}
+      1 & \textrm{se} & g^x = h\\
+      0 & \textrm{c.c.} &\\
+    \end{array}
+    \right.
+\end{displaymath}
+
+Dizemos que o {\em problema do logaritmo discreto é difícil} se para todo adversário eficiente $\mathcal{A}$ existe uma função desprezível $\varepsilon$ tal que:
+\begin{displaymath}
+  Pr[DLog_{\mathcal{A}, \mathcal{G}}(n) = 1] \leq \varepsilon(n)
+\end{displaymath}
+
+Algumas estruturas matemáticas são adequadas para produzir grupos cíclicos cujo problema do logaritmo discreto é considerado difícil.
+Duas muito usadas na prática são os {\em resíduos quadráticos de grupos de tamanho primo} e as {\em curvas elípticas}.
+A apresentação dessas estruturas foge ao escopo dessas notas.
+
+A dificuldade do problema do logaritmo discreto é condição necessária, porém insuficiente, para a segurança do {\em protocolo de Diffie-Hellman} que funciona da seguinte maneira:
+\begin{enumerate}
+\item Alice roda $\mathcal{G}(1^n)$ para gerar um grupo cíclico $\mathbb{G}$ e um gerador $g$
+\item Alice sorteia $x \leftarrow \mathbb{Z}_n$ e computa $h_A = g^x$ usando o algoritmo eficiente de exponenciação
+\item Alice envia $\mathbb{G}$, $g$ e $h_A$ para Bob
+\item Bob sorteia $y \leftarrow \mathbb{Z}_n$, computa $h_B = g^y$ e envia para Alice.
+\item Ao fim do processo Alice computa $h_B^x = (g^y)^x = g^{xy}$ e Bob computa $h_A^y = (g^x)^y = g^{xy}$.
+\end{enumerate}
+
+Caso o problema do logaritmo discreto não seja difícil, Eva seria capaz de produzir $x$ e $y$ a partir de $g^x$ e $g^y$ e descobrir o valor de $g^{xy}$.
+Se o sistema for seguro, porém, o melhor que Eva pode fazer é tentar todos os valores de $\mathbb{Z}_n$ até encontrar $x$ ou $y$.
+Escolhendo grupos de ordem suficientemente grande, essa tarefa é computacionalmente inviável.
+Uma vez que as partes possuem o mesmo valor secreto, elas podem utilizá-lo para alimentar um KDF e gerar chaves para um sistema de criptografia simétrico.
+
+A protocolo de Diffie-Hellman permite às partes compartilharem uma chave secreta sem a necessidade de se encontrarem pessoalmente, ou de confiarem em alguma autoridade que as encontrou separadamente.
+Uma limitação do protocolo, porém, é que ele não garante que as partes saibam se a chave que receberam foi de fato enviada por quem eles imaginam que as enviou.
+No Capítulo \ref{} voltaremos a este problema chamado de {\em ataque Man In The Middle}.
+
+
 
 \section{Exercícios}
 \label{sec:exercicios}
 
+%\begin{exercicio}
+%  Mostre que se $n|a$ e $n|b$ então para quaisquer $r$ e $s$ temos que $n|(a \cdot r + b \cdot s)$.
+%\end{exercicio}
+
+
+%\begin{exercicio}
+%\label{ex:grupo}
+%  Considere a estrutura $\langle \mathbb{Z}_{12}, \cdot \rangle$ em que a multiplicação é calculada módulo 12.
+%Mostre que $6$ não possui inverso nesta estrutura e, portanto, ela não é um grupo.
+%\end{exercicio}
