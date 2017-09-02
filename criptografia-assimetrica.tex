@@ -1,0 +1,294 @@
+\chapter{Criptografia Assimétrica}
+\label{cha:criptografia-assimetrica}
+
+Concluímos o capítulo anterior apresentando um protocolo de troca de chaves que não requer que as partes se encontrem pessoalmente -- ou com um terceiro confiável -- em nenhum momento.
+Essa ideia revolucionária foi proposta inicialmente em um artigo seminal de Diffie e Hellman \cite{Diffie76}.
+Neste mesmo artigo os autores propõe a possibilidade de construção de um esquema de {\em criptografia assimétrico}.
+O modelo sugerido pela dupla se assemelha ao esquema de um cadeado em que qualquer um pode usar para trancar, mas apenas o dono da chave possui a forma de abrir.
+No modelo assimétrico cada ator possui duas chaves: uma pública que pode ser exposta no meio inseguro e uma secreta.
+Quando Alice quer se comunicar com Bob ela precisa acessar a chave pública $p_k$ de Bob que pode estar disponível publicamente em um site ou Bob pode enviá-la por qualquer canal inseguro.
+Com a chave pública de Bob, Alice pode criptografar uma mensagem que apenas ele será capaz de descifrar com sua chave secreta $s_k$.
+O esquema está representado no digrama a seguir:
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+\node (alice) at (0, 2){Alice};
+\node (bob) at (10, 2) {Bob};
+\node (eva) at (5, 2) {Eva};
+
+\node (m1) at (0,1) {$m$};
+\node (pk1) at (0,-2) {$p_k$};
+\node (E)  at (2,0) {$E(p_k,m) = c$};
+\node (D)  at (8,0) {$D(s_k,c) = m$};
+\node (sk) at (10,-1) {$s_k$};
+\node (pk2) at (10,-2) {$p_k$};
+\node (m2) at (10,1) {$m$};
+
+\path[->] (eva) edge (5,1);
+\draw[->] (m1) -> (E);
+\draw[->] (pk1) -> (E);
+\draw[->] (D) -> (m2);
+\draw[->] (k2) -> (D);
+\draw[->] (pk2) -> (pk1);
+\draw[->] (E) -> node[above]{$c$} (D);
+\end{tikzpicture}
+\end{center}
+
+Formalmente, o {\em sistema de criptografia simétrico} $\Pi$ é formado por três algoritmos $\langle Gen, E, D \rangle$, $Gen(1^n)$ produz um par de chaves $\langle s_k, p_k \rangle$ e precisamos garantir que:
+\begin{displaymath}
+  D(s_k, E(p_k, m)) = m
+\end{displaymath}
+
+Um sistema de criptografia assimétrico é {\em seguro} se não é viável para um adversário distinguir duas mensagens a partir de uma cifra mesmo na posse da chave pública.
+A posse da chave pública dá ao adversário um capacidade equivalente ao CPA, mesmo que ele não tenha acesso à um oráculo.
+
+Os sistemas de criptografia assimétricos que veremos neste capítulo são pelo menos uma ordem de grandesa menos eficientes do que os sistemas de criptografia simétrica que vimos anteriormente.
+Além disso, é difícil garantir a segurança desses sistemas pra mensagens em qualquer distribuição de probabilidades.
+Por esses motivos, o modelos mais popular de criptografia assimétrica segue um modelo híbrido dividido em duas fases: uma fase de encapsulamento de chave (KEM) seguido de uma fase de encapsulamento dos dados (DEM).
+
+Um {\em mencanismo de encapsulamento de chave} (KEM) é um sistema $\Pi = \langle Gen, Encaps, Decaps \rangle$ tal que:
+\begin{itemize}
+\item $Gen(1^n) := \langle s_k, p_k \rangle$ em que $p_k$ é uma chave pública e $s_k$ uma chave secreta
+\item $Encaps$ recebe a chave pública $p_k$ e o parâmetro de segurânça $1^n$ e produz uma cifra $c$ e uma chave $k \in \{0,1\}^{l(n)}$
+\item $Decaps$ recebe a chave secreta $s_k$ e a cifra $c$ e produz uma chave.
+\end{itemize}
+ 
+Um sistema KEM $\Pi = \langle Gen, Encaps, Decaps \rangle$ correto em que $Encaps(p_k, 1^n) = \langle c, k \rangle$ deve satisfazer:
+\begin{displaymath}
+  Decaps(s_k, c) =  k
+\end{displaymath}
+
+Um sistema KEM é {\em seguro contra CPA} se um adversário polinomial não é capaz de distinguir com probabilidade considerável a chave produzida por $Encaps$ de uma chave de mesmo tamanho escolhida aleatóriamente.
+Se $\Pi_K = \langle Gen_K, Encaps, Decaps \rangle$ é um KEM seguro contra CPA, e $\Pi' = \langle Gen', E', D' \rangle$ é um sistema de criptografia simétrica seguro contra ataques ``ciphertext only'' então o seguinte sistema, chamado de {\em híbrido} $\Pi = \langle Gen, E, D \rangle$ é seguro contra CPA:
+
+\begin{itemize}
+\item $Gen(1^n) := Gen_k(1^n) = \langle s_k, p_k \rangle$
+\item $E(p_k, m) := \langle c_k, c \rangle$ em que: 
+\begin{itemize}
+\item $Encaps(p_k, 1^n) = \langle c_k, k \rangle$ e
+\item $E'(k, m) = c$
+\end{itemize}
+\item $D(s_k,\langle c_k, c \rangle) = m$ tal que:
+\begin{itemize}
+\item $Decaps(s_k, c_k) = k$ e
+\item $D'(k, c) = m$
+\end{itemize}
+\end{itemize}
+
+Uma forma natural de produzir um KEM é produzir uma chave $k$ e usar um sistema de criptografia assimétrica $\Pi$ para criptografar a chave.
+Esse esquema é seguro desde que o sistema desde que $\Pi$ seja seguro, mas veremos que existem sistemas mais eficientes em determinados casos.
+
+
+\section{El Gammal}
+\label{sec:el-gammal}
+O primeiro sistema de criptografia assimétrico foi descoberto por Rivest, Shamir e Adelman um ano depois do trabalho de Diffie e Hellman.
+Essa solução será apresentada em seguida, antes disso mostraremos um esquema que se assemelha muito ao protocolo apresentado no capítulo anterior.
+Apesar das semelhanças, esse sistema só foi formalizado em 1985 por Taher El Gamal \cite{ElGamal85}.
+O sistema parte do modelo de criptografia assimétrica e é definido como $\Pi= \langle Gen, E, D\rangle$:
+\begin{itemize}
+\item $Gen(1^n) := \langle s_k, p_k \rangle$ com $p_k = \langle \mathbb{G}, g, h \rangle$ e $s_k = \langle \mathbb{G}, g, x \rangle$ com $x \leftarrow \mathbb{Z}_{|\mathbb{G}|}$ em que o grupo $\mathbb{G}$ e o gerador $g$ são gerados por $\mathcal{G}(1^n)$ e $h := g^x$.
+\item $E(p_k, m) = \langle g^y, h^y \cdot m\rangle$ em que $y \leftarrow \mathbb{Z}_n$ e $m \in \mathbb{G}$
+\item $D(s_k, \langle c_1, c_2 \rangle) = \frac{c_2}{c_1^x}$
+\end{itemize}
+
+A correção do sistema segue abaixo:
+\begin{displaymath}
+  D(s_k, E(p_k, m)) =  \frac{h^y \cdot m}{(g^y)^x} = \frac{(g^x)^y \cdot m}{g^{y \cdot x}} = m 
+\end{displaymath}
+
+Como no caso do protocolo de Diffie-Hellman, normalmente os valores $\mathbb{G}$ e $g$ são definidos pelo protocolo e reutilizados por todos os usuários.
+Isso não causa nenhum efeito deletério à segurança do sistema.
+O principal inconveniente do sistema de El Gammal é que $M = \mathbb{G}$.
+Ou seja, as mensagens devem ser elementos do grupo e não sequências arbitrárias de bits.
+Não se deve restringir que mensagens os usuários devem ser capazes de trocar por conta de uma questão técnica como essa.
+Uma forma de resolver esse problema é utilizando um sistema híbrido, como veremos no fim deste capítulo.
+
+% Sistema híbrido de El Gamal
+
+\section{RSA}
+\label{sec:rsa}
+
+Em 1978 Rivest, Shamir e Adelman apresentaram o primeiro sistema de criptografia assimétrica conforme concebido um ano antes por Diffie e Hellman \cite{Rivest78}.
+Diferente do protocolo de seus colegas e do sistema de El Gamal que se baseiam na dificuldade do problema do logaritmo discreto, o sistema RSA dependende da dificuldade de outro problema matemático, o problema da fatoração.
+
+Antes de apresentar o sistema precisamos fazer uma pequena digressão matemática e aproveitaremos para dar um exemplo concreto de grupo finito.
+
+Podemos considerar $\langle \mathbb{Z}_n, \cdot \rangle$ em que a multiplicação é calculada módulo $n$, neste caso, porém, nem todo $n$ forma um grupo (o Exercício \ref{ex:grupo} pede para mostrar que $6$ não possui inverso em $\langle \mathbb{Z}_{12}, \cdot \rangle$).
+Será útil para isso apresentar uma versão extendida do algoritmo de Euclides que calcula o {\em máximo divisor comum} entre dois valores $a$ e $b$ e calcula $r$ e $s$ tais que $r \cdot a + s \cdot b = mdc(a,b)$.
+
+\begin{codebox}
+\Procname{$\proc{AEE}(a, b)$}
+\li \If $b|a$
+\li     \Then 
+        \Return $\langle b, 0, 1 \rangle$
+\li \Else $\langle t, r, s \rangle \gets \proc{AEE}(b, [a\ mod\ b])$
+\li     \Return $\langle t, s, r - s \cdot \lfloor \frac{a}{b} \rfloor \rangle$
+\End
+\end{codebox}
+
+A correção do algoritmo segue por conta do invariante $t = r \cdot a + s \cdot b$ e pela seguinte:
+
+\begin{proposition}
+\begin{displaymath}
+  mdc(a,b) = mdc(b, [a\ mod\ b])  
+\end{displaymath}
+\end{proposition}
+\begin{proof}
+
+Seja $a = q \cdot b + r$ em que $r = [a\ mod\ b]$, então $r = a - q \cdot b$.
+Portanto, $x$ divide $a$ e $b$ sse $x$ divide $r$ e $x$ divide $b$ e $r$ sse $x$ divide $a$.
+Concluímos que $x$ divide $a$ e $b$ sse $x$ divide $b$ e $r = [a\ mod\ b]$.
+Como eles possuem os mesmos divisores comuns, certamente possuem o mesmo máximo divisor comum.
+\end{proof}
+
+\begin{example}
+    Simularemos a execução de $\proc{AEE}(42, 22)$:
+    \begin{displaymath}
+      \proc{AEE}(42, 22) \vdash \proc{AEE}(22, 20) \vdash \proc{AEE}(20, 2)
+    \end{displaymath}
+    Neste ponto temos que $2|20$ então calculamos recursivamentes:
+    \begin{displaymath}
+      \begin{array}{lllr}
+        t \gets 2 & r \gets 0 & s \gets 1 & 0 \cdot 20 + 1 \cdot 2 = 2\\
+        t \gets 2 & r \gets 1 & s \gets -1 & 1 \cdot 22 - 1 \cdot 20 = 2\\
+        t \gets 2 & r \gets -1 & s \gets 2 & -1 \cdot 42 + 2 \cdot 22 = 2\\
+      \end{array}
+    \end{displaymath}
+\end{example}
+
+A correção deste algoritmo implica que, em $\langle \mathbb{Z}_n, \cdot \rangle$, a condição necessaria e suficiente para $a$ possuir inverso é ser um {\em primo em relação a} $n$:
+
+\begin{proposition}
+Um número $a$ possui inverso em $\langle \mathbb{Z}_n, \cdot \rangle$ se e somente se $mdc(a,n) = 1$.
+\end{proposition}
+\begin{proof}
+  Se $mdc(a, n) = 1$ usando o Algoritmo Estendido de Euclides temos $1 = a \cdot r + n \cdot s$ para $r, s \in Z$, ou seja, $r$ é o inverso de $a$ em $\langle \mathbb{Z}_n, \cdot \rangle$.
+Agora considere que $mdc(a, n) = b \neq 1$ e suponha por absurdo que $r$ é o
+inverso de $a$ em $\langle \mathbb{Z}_n , \cdot \rangle$. 
+Então $n|(a \cdot r - 1)$ e, portanto, existe $n'$ tal que $n \cdot n' = a \cdot r - 1$ e então $1 = a \cdot r - n \cdot n'$. 
+Como $b|a$ e $b|n$ então $b|(a \cdot r - n \cdot n')$, ou seja, $b|1$, mas isso é impossível se $b \neq 1$.
+\end{proof}
+
+
+Definimos enfim $\mathbb{Z}_n^\star$ como os elementos em $\mathbb{Z}_n$ que possuem inverso multiplicativo:
+\begin{displaymath}
+  \mathbb{Z}_n^\star := \{a \in \mathbb{Z}_n : mdc(a,n) = 1\}
+\end{displaymath}
+
+Note que se $mdc(a,n) = 1$ então o Algoritmo Extendido de Euclides devolve $r$ e $s$ tais que $r \cdot a + s \cdot n = 1$.
+Se fizermos essa conta em $\mathbb{Z}_n$ temos que $r \cdot a \equiv 1\ (mod\ n)$.
+Ou seja, para os elementos $a \in \mathbb{Z}_n^\star$ o AEE nos dá uma forma de computar o inverso.
+ 
+Não é difícil mostrar que $\langle \mathbb{Z}_n^\star, \cdot \rangle$ (Exercício \ref{}) é um grupo visto que todos os elementos possuem inverso por definição.
+A {\em função de Euler} atribui a cada $n$ o tamanho de $\mathbb{Z}_n^\star$:
+
+\begin{displaymath}
+  \phi(n) := |\mathbb{Z}_n^\star|
+\end{displaymath}
+
+No caso em que $n$ é o produto de dois número primos calcular a função de Euler é relativamente simples:
+
+\begin{proposition}
+Sejam $p$ e $q$ números primos:  
+\begin{displaymath}
+  \phi(pq) = (p - 1)(q - 1)
+\end{displaymath}
+\end{proposition}
+\begin{proof}
+Seja $a \in \mathbb{Z}_n$ e $mdc(a, n) \neq 1$ então $p|a$ ou $q|a$ (se ambos dividissem então $n|a$, mas como $a \in \mathbb{Z}_n$ então $a < n$).
+Os elementos de $\mathbb{Z}_n$ divisíveis por $p$ são $p, 2p, \dots , (q - 1) \cdot p$ e os elementos divisíveis por $q$ são $q, 2q, \dots , (p - 1) \cdot q$. 
+Assim, o total de elementos que não são divizíveis por nenhum dos dois é:
+\begin{displaymath}
+  \phi(n) = n - 1 - (p - 1) - (q - 1) = p \cdot q - p - q + 1 = (p - 1)(q - 1)
+\end{displaymath}
+
+
+\end{proof}
+
+A geração de chaves no sistema RSA segue os seguintes passos:
+\begin{enumerate}
+\item Recebe o parâmetro de segurança $1^n$ e sorteia dois primos $p$ e $q$ com $n$ bits.
+\item Calcula $N = pq$ e $\phi(N) := (p - 1)(q - 1)$
+\item Escolhe $e > 1$ de forma que $mdc(e, \phi(N)) = 1$
+\item Computa $d = [e^{-1}\ mod\ \phi(N)]$
+\item Devolve $N$, $e$ e $d$ 
+\end{enumerate}
+
+Na prática podemos fixar a escolha de $e$ e computar $d$ de acordo.
+Se lembrarmos o algoritmo que $\proc{FastExp}$ notaremos que uma boa escolha para $e$ deve possuir poucos bits $1$ para tornar esse procedimento mais eficiente.
+Dois valores usados na prática são $3$ e $2^{16}+1$.
+
+Vimos que para calcular $d$ basta usar o Algoritmo Extendido de Euclides.
+Falta uma forma eficiente de sortear primos de tamanho $n$.
+Voltaremos a este problema na Seção \ref{}.
+
+Em sua versão crua, o sistema de RSA é definido pela seguinte tripla de algoritmos:
+
+\begin{itemize}
+\item $Gen(1^n) = \langle s_k, p_k \rangle$ em que $s_k = \langle N, d \rangle$ e $p_k = \langle N, e \rangle$ com valores computados conforme descrito acima. 
+\item $E(p_k, m) = [m^e\ mod\ N]$ para $m \in \mathbb{Z}_n^\star$
+\item $D(s_k, c) = [c^d\ mod\ N]$
+\end{itemize}
+
+Como $\langle \mathbb{Z}_n^\star, \cdot \rangle$ é um grupo, segue do Teorema \ref{} que para qualquer $a$ temos que:
+\begin{displaymath}
+  a^{\phi(n)} \equiv 1\ (mod\ n)
+\end{displaymath}
+
+Esse resultado é chamado de {\em Teorema de Euler}.
+
+\begin{corollary}
+  Para todo $a \in \mathbb{Z}_n^\star$ temos que $a^x = a^{[x\ mod\ \phi(n)]}$.
+\end{corollary}
+\begin{proof}
+  Seja $x = q \cdot \phi(n) + r$ em que $r = [x\ mod\ \phi(n)]$:
+  \begin{displaymath}
+    a^x = a^{q \cdot \phi(n) + r} = a^{q \cdot \phi(n)} \cdot a^r = (a^{\phi(n)})^q \cdot a^r = 1^q \cdot a^r = a^r
+  \end{displaymath}
+\end{proof}
+
+
+\begin{corollary}
+Seja $x \in \mathbb{Z}_n^\star$, $e > 0$ tal que $mdc(e, \phi(n)) = 1$ e $d \equiv e^{-1}\ (mod\ \phi(n))$ então $(x^e)^d \equiv x\ (mod\ n)$
+\end{corollary}
+
+\begin{proof}
+  \begin{displaymath}
+    x^{ed} \equiv x^{[ed\ mod\ \phi(n)]} \equiv x\ (mod\ n)
+  \end{displaymath}
+\end{proof}
+
+Esses são os resultados necessários para mostrar a corretude do sistema RSA:
+\begin{displaymath}
+D(s_k, E(p_k, m)) = [(m^e)^d\ mod\ N] = [m^{ed}\ mod\ N] = [m\ mod\ N] = m  
+\end{displaymath}
+
+% Problema da Fatoração
+% Padded RSA (!)
+% Sistema Híbrido RSA
+
+\subsection{Sorteando Números Primos*}
+\label{sec:primos}
+
+Para gerar uma chave no sistema RSA precisamos gerar primos grandes e aleatórios.
+Para garantir que o número tera uma quantidade $n$ de bits sorteamos $p' \leftarrow \{0,1\}^{n-1}$ e acrescentar um bit $1$ à esquerda.
+Caso o número não seja primos repetimos o processo.
+
+\begin{theorem}[Bertrand]
+  Para qualquer $n > 1$ temos que pelo menos $\frac{1}{3n}$ inteiros de $n$ bits são primos.
+\end{theorem}
+
+Assim, podemos mostrar que se repetirmos o procedimento de geração de números aleatórios $3n^2$ vezes, a chance de nenhum ser primo é desprezível.
+Para cada tentativa, porém, precisamos verificar se o valor gerado é de fato primo.
+A forma ingênua -- verificar cada um dos possíveis divisores -- é inviável.
+Assim, precisamos utilizar algum método eficiente de verificação de primos.
+
+O método mais popular de teste de primalidade é o {\em Miler-Rabin}
+Ele é correto quando o número é primo, mas erra com probabilidade desprezível quando o número é composto.
+
+% algoritmo de Miler Rabin para calcular primos
+
+\section{Exercícios}
+\label{sec:exercicios}
+
+
