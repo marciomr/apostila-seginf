@@ -44,15 +44,28 @@
 \contentsline {chapter}{\numberline {9}Fun\IeC {\c c}\IeC {\~o}es de Hash}{71}
 \contentsline {section}{\numberline {9.1}Constru\IeC {\c c}\IeC {\~o}es}{73}
 \contentsline {subsection}{\numberline {9.1.1}SHA-1}{74}
-\contentsline {section}{\numberline {9.2}Aplica\IeC {\c c}\IeC {\~o}es}{74}
+\contentsline {section}{\numberline {9.2}Aplica\IeC {\c c}\IeC {\~o}es}{75}
 \contentsline {subsection}{\numberline {9.2.1}HMAC}{75}
 \contentsline {subsection}{\numberline {9.2.2}Fingerprints e \IeC {\'A}rvores de Merkle}{76}
-\contentsline {subsection}{\numberline {9.2.3}Fun\IeC {\c c}\IeC {\~o}es de Deriva\IeC {\c c}\IeC {\~a}o de Chaves}{76}
-\contentsline {section}{\numberline {9.3}Exerc\IeC {\'\i }cios}{77}
-\contentsline {chapter}{\numberline {10}Fun\IeC {\c c}\IeC {\~o}es de M\IeC {\~a}o \IeC {\'U}nica}{79}
+\contentsline {subsection}{\numberline {9.2.3}Fun\IeC {\c c}\IeC {\~o}es de Deriva\IeC {\c c}\IeC {\~a}o de Chaves}{77}
+\contentsline {section}{\numberline {9.3}Exerc\IeC {\'\i }cios}{78}
+\contentsline {chapter}{\numberline {10}Fun\IeC {\c c}\IeC {\~o}es de M\IeC {\~a}o \IeC {\'U}nica*}{79}
 \contentsline {section}{\numberline {10.1}Exerc\IeC {\'\i }cios}{83}
 \contentsline {chapter}{\numberline {11}Distribui\IeC {\c c}\IeC {\~a}o de Chaves}{85}
 \contentsline {section}{\numberline {11.1}Centro de Distribui\IeC {\c c}\IeC {\~a}o de Chaves}{85}
-\contentsline {subsection}{\numberline {11.1.1}Kerberos}{85}
-\contentsline {section}{\numberline {11.2}Protocolo de Diffie-Hellman}{85}
-\contentsline {section}{\numberline {11.3}Exerc\IeC {\'\i }cios}{85}
+\contentsline {subsection}{\numberline {11.1.1}Kerberos}{86}
+\contentsline {section}{\numberline {11.2}Protocolo de Diffie-Hellman}{87}
+\contentsline {section}{\numberline {11.3}Exerc\IeC {\'\i }cios}{90}
+\contentsline {chapter}{\numberline {12}Criptografia Assim\IeC {\'e}trica}{91}
+\contentsline {section}{\numberline {12.1}El Gammal}{93}
+\contentsline {section}{\numberline {12.2}RSA}{94}
+\contentsline {subsection}{\numberline {12.2.1}Sorteando N\IeC {\'u}meros Primos*}{99}
+\contentsline {section}{\numberline {12.3}Exerc\IeC {\'\i }cios}{101}
+\contentsline {chapter}{\numberline {13}Assinaturas Digitais}{103}
+\contentsline {chapter}{\numberline {14}Protocolos}{105}
+\contentsline {section}{\numberline {14.1}Transport Layer Security}{105}
+\contentsline {section}{\numberline {14.2}Pretty Good Privacy}{105}
+\contentsline {section}{\numberline {14.3}Off The Record}{105}
+\contentsline {section}{\numberline {14.4}Signal}{105}
+\contentsline {section}{\numberline {14.5}Telegram}{105}
+\contentsline {section}{\numberline {14.6}Blockchain}{105}

@@ -46,15 +46,15 @@ Ou seja, mesmo em um ambiente fechado e com hierarquia estabelecida esse modelo 
 
 Em um ambiente aberto não é realista imaginar que as partes podem encontrar o administrador de antemão.
 Surpreendentemente existem formas de trocar chaves que podem ser feitas diretamente pelas partes por meio de um canal inseguro.
-O esquema que mostraremos nesta seção, protocolo de Diffie-Hellman, inaugura o paradigma revolucionário da {\em criptografia assimétrica} que veremos nos próximos capítulos \cite{}.
+O esquema que mostraremos nesta seção, protocolo de Diffie-Hellman, inaugura o paradigma revolucionário da {\em criptografia assimétrica} que veremos nos próximos capítulos \cite{Diffie76}.
 Informalmente, o protocolo funciona da seguinte forma: Alice envia um dado público para Bob e vice-versa, ao fim do processo ambas as partes são capazes de gerar um mesmo valor que pode ser usado em um KDF para gerar uma chave, porém, para um observador (Eva) que só teve acesso aos dados públicos, isso não é possível.
 Para explicar o protocolo precisamos definir o que são grupos, geradores e grupos cíclicos e precisamos apresentar o {\em problema do logaritmo discreto} cuja dificuldade é condição necessária -- apesar de insuficiente -- para a segurança do protocolo.
 
 Um {\em grupo} é uma estrutura algébrica $\mathbb{G} = \langle G, \circ \rangle$ em que $G$ é um conjunto e $\circ$ uma operação binária que satisfaz as seguintes propriedades:
 \begin{itemize}
 \item[] {\bf (fecho)} Se $f, g \in G$ então $f \circ g \in G$.
-\item[] {\bf (identidade)} Existe um elemento $e \in G$ tal que $e \circ f = f \circ e = f$ para todo $f \in G$.
-\item[] {\bf (inverso)} Para todo $g \in G$ existe $h \in G$ tal que $g \circ h = e$ (é possível mostrar que $h$ é único para cada $g$ e, portanto, o denotaremos $g^{-1}$).
+\item[] {\bf (identidade)} Existe um elemento $1 \in G$ tal que $1 \circ f = f \circ 1 = f$ para todo $f \in G$.
+\item[] {\bf (inverso)} Para todo $g \in G$ existe $h \in G$ tal que $g \circ h = 1$ (é possível mostrar que $h$ é único para cada $g$ e, portanto, o denotaremos $g^{-1}$).
 \item[] {\bf (associatividade)} Para todo $f,g,h \in G$ temos que $(f \circ g) \circ h = f \circ (g \circ h)$. 
 \end{itemize}
 
@@ -73,38 +73,46 @@ Nos será útil expressar a operação de {\em exponenciação} de um elemento d
 \end{displaymath}
 
 Uma forma ineficiente de calcular $g^m$ é aplicar $m$ vezes a operação $\circ$.
-Seja $m_0 \dots m_t$ a expressão binária do número $m$, o seguinte algoritmo produz o mesmo resultado em tempo $O(log(m))$:
+O seguinte algoritmo produz o mesmo resultado em tempo $O(log(m))$:
 
 
 \begin{codebox}
-\Procname{$\proc{Fast-Exponentiation}(g, m)$}
-\li $r \gets g$
-\li \For $i \gets t-1$ \To $0$
-\li \Do $r \gets r \circ r$
-\li \If $m_i = 1$ 
-\li \Then $r \gets g \circ r$
+\Procname{$\proc{FastExp}(g, m)$}
+\li \Comment Recebe $g \in \mathbb{G}$ e $m \in \mathbb{N}$
+\li \Comment Devolve $g^m$
+\li $x \gets g$
+\li $r \gets 1$
+\li \While $m > 0$
+\li \Do \If $m$ for ímpar 
+\li \Then $r \gets r \circ x$
+\li $m \gets m - 1$
 \End
+\li $x \gets x \circ x$
+\li $m \gets \frac{m}{2}$
 \End
 \li \Return $r$
 \End
 \end{codebox}
 
+Para verificar a correção do algoritmo note que em todos os passos o seguinte valor se mantém invariante: $r \circ x^m$.
 
 \begin{example}
-  Simularemos a execução de $\proc{Fast-Exponentiation}(2, 10)$ em $\langle \mathbb{Q}, \cdot \rangle$.
-  Primeiro note que $10$ em binário se escreve $1010_2$, pois $10 = 2^3 + 2^1$.
-  \begin{eqnarray*}
-    r & \gets & 2\\
-      & \gets & 2 \cdot 2 = 2^2\\
-      & \gets & 2^2 \cdot 2^2 = 2^4\\
-      & \gets & 2 \cdot 2^4 = 2^5\\
-      & \gets & 2^5 \cdot 2^5 = 2^{10} 
-  \end{eqnarray*}
+  Simularemos a execução de $\proc{FastExp}(2, 10)$ em $\langle \mathbb{Q}, \cdot \rangle$.
+\begin{displaymath}
+  \begin{array}{lllr}
+    r \gets 1 & x \gets 2 & m \gets 10 & 1 \cdot 2^{10} = 2^{10}\\
+    r \gets 1 & x \gets 2^2 & m \gets 5 & 1 \cdot 2^{2 \cdot 5} = 2^{10}\\
+    r \gets 2^2 & x \gets 2^2 & m \gets 4 & 2^2 \cdot 2^{2 \cdot 4} = 2^{10}\\
+    r \gets 2^2 & x \gets 2^4 & m \gets 2 & 2^2 \cdot 2^{4 \cdot 2} = 2^{10}\\
+    r \gets 2^2 & x \gets 2^8 & m \gets 1 & 2^2 \cdot 2^8 = 2^{10}\\
+    r \gets 2^{10} & x \gets 2^8 & m \gets 0 & 2^{10} \cdot 2^{8 \cdot 0} = 2^{10}\\
+  \end{array}
+\end{displaymath}
 \end{example}
 
 
 \begin{theorem}
-  Seja $\mathbb{G} = \langle G, \circ \rangle$ um grupo abeliano finito e $m = |G|$, então para qualquer $g \in G$ temos que $g^m = e$.
+  Seja $\mathbb{G} = \langle G, \circ \rangle$ um grupo abeliano finito e $m = |G|$, então para qualquer $g \in G$ temos que $g^m = 1$.
 \end{theorem}
 \begin{proof}
   Note que se $g \circ g_i = g \circ g_j$ então $g_i = g_j$ (basta multiplicar ambos os lados por $g^{-1}$).
@@ -115,7 +123,7 @@ Seja $m_0 \dots m_t$ a expressão binária do número $m$, o seguinte algoritmo 
     g_1 \circ \dots \circ g_m & = & (g \circ g_1) \circ \dots \circ (g \circ g_m)\\
                               & = & g^m \circ (g_1 \circ \dots \circ g_m)
   \end{eqnarray*}
-  Multiplicando ambos os lados pelo inverso de $g_1 \circ \dots \circ g_m$ temos que $g^m = e$.
+  Multiplicando ambos os lados pelo inverso de $g_1 \circ \dots \circ g_m$ temos que $g^m = 1$.
 \end{proof}
 
 Se $\mathbb{G} = \langle G, \circ \rangle$ é um grupo finito e $g \in G$ então definimos o conjunto dos elementos {\em gerados} por $g$ da seguinte forma:
@@ -173,7 +181,11 @@ Se o sistema for seguro, porém, o melhor que Eva pode fazer é tentar todos os 
 Escolhendo grupos de ordem suficientemente grande, essa tarefa é computacionalmente inviável.
 Uma vez que as partes possuem o mesmo valor secreto, elas podem utilizá-lo para alimentar um KDF e gerar chaves para um sistema de criptografia simétrico.
 
-A protocolo de Diffie-Hellman permite às partes compartilharem uma chave secreta sem a necessidade de se encontrarem pessoalmente, ou de confiarem em alguma autoridade que as encontrou separadamente.
+No modelo assumimos que o grupo e o gerador são criados sempre que as partes decidem se comunicar.
+Na prática o mais comum é que esses parâmetros sejam definidos pelo protocolo e reutilizados em todas as comunicações.
+Isso não deve afetar de nenhuma forma na segurança do sistema.
+
+O protocolo de Diffie-Hellman permite às partes compartilharem uma chave secreta sem a necessidade de se encontrarem pessoalmente, ou de confiarem em alguma autoridade que as encontrou separadamente.
 Uma limitação do protocolo, porém, é que ele não garante que as partes saibam se a chave que receberam foi de fato enviada por quem eles imaginam que as enviou.
 No Capítulo \ref{} voltaremos a este problema chamado de {\em ataque Man In The Middle}.
 

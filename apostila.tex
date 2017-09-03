@@ -3,12 +3,15 @@
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{clrscode}
 \usepackage{tikz}
 
 \newtheorem{example}{Exemplo}
 \newtheorem{exercicio}{Exercício}
 \newtheorem{definition}{Definição}
 \newtheorem{theorem}{Teorema}
+\newtheorem{proposition}{Proposição}
+\newtheorem{corollary}{Corolário}
 
 \newcommand{\xor}{\oplus}
 
@@ -24,6 +27,8 @@
 
 \tableofcontents
 
+% lembrar de colocar em cada um dos algoritmos qual é sua entrada e qual é sua saída!!!
+
 \include{apresentacao}
 \include{intro}
 \include{cifras-classicas}
@@ -37,14 +42,7 @@
 \include{owf}
 \include{distribuicao-chaves}
 \include{criptografia-assimetrica}
-  % El Gammal
-  % Problema da Fatoração
-  % Função de Euller
-  % Algortimo de Euller Extendido
-  % RSA
-  % Padded RSA (!)
 \include{assinaturas-digitais}
-  % Autoridades Certificadoras
 \include{protocolos}
   % SSL
   % PGP

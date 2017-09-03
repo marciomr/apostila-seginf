@@ -53,13 +53,13 @@ Um {\em mencanismo de encapsulamento de chave} (KEM) é um sistema $\Pi = \langl
 \item $Decaps$ recebe a chave secreta $s_k$ e a cifra $c$ e produz uma chave.
 \end{itemize}
  
-Um sistema KEM $\Pi = \langle Gen, Encaps, Decaps \rangle$ correto em que $Encaps(p_k, 1^n) = \langle c, k \rangle$ deve satisfazer:
+Um sistema KEM em que $Encaps(p_k, 1^n) = \langle c, k \rangle$ é {\em correto} se:
 \begin{displaymath}
   Decaps(s_k, c) =  k
 \end{displaymath}
 
 Um sistema KEM é {\em seguro contra CPA} se um adversário polinomial não é capaz de distinguir com probabilidade considerável a chave produzida por $Encaps$ de uma chave de mesmo tamanho escolhida aleatóriamente.
-Se $\Pi_K = \langle Gen_K, Encaps, Decaps \rangle$ é um KEM seguro contra CPA, e $\Pi' = \langle Gen', E', D' \rangle$ é um sistema de criptografia simétrica seguro contra ataques ``ciphertext only'' então o seguinte sistema, chamado de {\em híbrido} $\Pi = \langle Gen, E, D \rangle$ é seguro contra CPA:
+Se $\Pi_K = \langle Gen_K, Encaps, Decaps \rangle$ é um KEM seguro contra CPA, e $\Pi' = \langle Gen', E', D' \rangle$ é um sistema de criptografia simétrica seguro contra ataques ``ciphertext only'' então o seguinte sistema $\Pi = \langle Gen, E, D \rangle$, chamado de {\em híbrido}, é seguro contra CPA:
 
 \begin{itemize}
 \item $Gen(1^n) := Gen_k(1^n) = \langle s_k, p_k \rangle$
@@ -86,7 +86,12 @@ Essa solução será apresentada em seguida, antes disso mostraremos um esquema 
 Apesar das semelhanças, esse sistema só foi formalizado em 1985 por Taher El Gamal \cite{ElGamal85}.
 O sistema parte do modelo de criptografia assimétrica e é definido como $\Pi= \langle Gen, E, D\rangle$:
 \begin{itemize}
-\item $Gen(1^n) := \langle s_k, p_k \rangle$ com $p_k = \langle \mathbb{G}, g, h \rangle$ e $s_k = \langle \mathbb{G}, g, x \rangle$ com $x \leftarrow \mathbb{Z}_{|\mathbb{G}|}$ em que o grupo $\mathbb{G}$ e o gerador $g$ são gerados por $\mathcal{G}(1^n)$ e $h := g^x$.
+\item $Gen(1^n) := \langle s_k, p_k \rangle$ em que $\mathcal{G}(1^n) = \langle \mathbb{G}, g \rangle$,
+\begin{itemize}
+\item  $s_k = \langle \mathbb{G}, g, x \rangle$ com $x \leftarrow \mathbb{Z}_{|\mathbb{G}|}$ e
+\item  $p_k = \langle \mathbb{G}, g, h \rangle$ com $h := g^x$.
+\end{itemize}
+
 \item $E(p_k, m) = \langle g^y, h^y \cdot m\rangle$ em que $y \leftarrow \mathbb{Z}_n$ e $m \in \mathbb{G}$
 \item $D(s_k, \langle c_1, c_2 \rangle) = \frac{c_2}{c_1^x}$
 \end{itemize}
@@ -101,9 +106,26 @@ Isso não causa nenhum efeito deletério à segurança do sistema.
 O principal inconveniente do sistema de El Gammal é que $M = \mathbb{G}$.
 Ou seja, as mensagens devem ser elementos do grupo e não sequências arbitrárias de bits.
 Não se deve restringir que mensagens os usuários devem ser capazes de trocar por conta de uma questão técnica como essa.
-Uma forma de resolver esse problema é utilizando um sistema híbrido, como veremos no fim deste capítulo.
+Uma forma de resolver esse problema é utilizando um sistema híbrido.
 
-% Sistema híbrido de El Gamal
+Uma forma de obter um sistema híbrido é simplemente usando o sistema de El Gamal para criptografar uma chave.
+Ao invés disso, porém, podemos construir o seguinte KEM:
+
+\begin{itemize}
+\item $Gen(1^n) := \langle s_k, p_k \rangle$ em que e $\mathcal{G}(1^n) := \langle \mathbb{G}, g \rangle$, 
+\begin{itemize}
+\item $s_k = \langle \mathbb{G}, g, x \rangle$ com $x \leftarrow \mathbb{Z}_n$ e
+\item $p_k = \langle \mathbb{G}, g, h, H \rangle$ com $H: \mathbb{G} \to \{0,1\}^{l(n)}$ e $h = g^x$
+\end{itemize}
+\item $Encaps(p_k, 1^n) = \langle g^y, H(h^y)\rangle$ em que $y \leftarrow \mathbb{Z}_n$
+\item $Decaps(s_k, c) = H(c^x)$
+\end{itemize}
+
+A função $H$ é simplesmente uma função de hash.
+Temos assim que $Decaps(s_k, g^y) = H((g^y)^x) = H(g^{xy}) = k$, pois $k = H(h^y) = H(g^{xy})$.
+É possível provar que este mecanismo de encapsulamento de chaves é tão seguro quanto o protocolo de Diffie-Helmann.
+Usamos então $k$ como chave para criptografar uma mensagem com um sistema de criptografia simétrica para produzir um sistema híbrido.
+Como já enunciamos, se o sistema de criptografia simétrico usado for seguro contra ataques ``ciphertext only'' então o sistema híbrido será seguro sob CPA.
 
 \section{RSA}
 \label{sec:rsa}
@@ -118,6 +140,8 @@ Será útil para isso apresentar uma versão extendida do algoritmo de Euclides 
 
 \begin{codebox}
 \Procname{$\proc{AEE}(a, b)$}
+\li \Comment Recebe $a, b \in \mathbb{Z}$ com $a > b$
+\li \Comment Devolve $t$, $r$ e $s$ tais que $t = mdc(a,b) = r \cdot a + s \cdot b$  
 \li \If $b|a$
 \li     \Then 
         \Return $\langle b, 0, 1 \rangle$
@@ -225,7 +249,11 @@ Voltaremos a este problema na Seção \ref{}.
 Em sua versão crua, o sistema de RSA é definido pela seguinte tripla de algoritmos:
 
 \begin{itemize}
-\item $Gen(1^n) = \langle s_k, p_k \rangle$ em que $s_k = \langle N, d \rangle$ e $p_k = \langle N, e \rangle$ com valores computados conforme descrito acima. 
+\item $Gen(1^n) = \langle s_k, p_k \rangle$. Conforme descrito acima temos:
+\begin{itemize}
+\item  $s_k = \langle N, d \rangle$
+\item  $p_k = \langle N, e \rangle$ 
+\end{itemize}
 \item $E(p_k, m) = [m^e\ mod\ N]$ para $m \in \mathbb{Z}_n^\star$
 \item $D(s_k, c) = [c^d\ mod\ N]$
 \end{itemize}
@@ -263,9 +291,54 @@ Esses são os resultados necessários para mostrar a corretude do sistema RSA:
 D(s_k, E(p_k, m)) = [(m^e)^d\ mod\ N] = [m^{ed}\ mod\ N] = [m\ mod\ N] = m  
 \end{displaymath}
 
-% Problema da Fatoração
-% Padded RSA (!)
-% Sistema Híbrido RSA
+Notem que uma condição necessária, porém não suficiente, para a segurança dos sistemas RSA é a dificuldade do {\em problema da fatoração} que pode ser descrito formalmente da seguinte forma:
+\begin{itemize}
+\item O sistema gera dois números primos aleatórios $p$ e $q$ de tamanho $n$ e envia $N = pq$ para o adversário
+\item O adversário $\mathcal{A}$ deve produzir $p'$ e $q'$
+\end{itemize}
+
+Dizemos que o adversário venceu o desafio se $p' \cdot q' = N$.
+O problema da fatoração é considerado {\em difícil} pois não se conhece nenhum adversário eficiente capaz de vencer o jogo com probabilidade considerável.
+
+Caso um adversário eficiente fosse capaz de fatorar $N$, ele produziria $p$ e $q$ e seria então capaz de gerar $\phi(N) = (p-1)(q-1)$ sem nenhuma dificuldade.
+Com isso o sistema se torna completamente inseguro.
+Ou seja, a dificuldade do problema da fatoração é necessária para garantir a segurança do sistema.
+Não sabemos, porém, se essa condição é suficiente.
+
+A construção apresentada acima é chamada de RSA simples ({\em plain RSA}) e é insegura por uma série de motivos.
+Um mecanismo para torná-la mais segura é sortear uma sequência de bits $r$ aleatóriamente e usar $m' = r||m$ como mensagem.
+O mecanismo segue de maneira identica, a única diferença é que ao decifrar se recupera $r||m$ e então é preciso descartar os primeiros bits.
+Essa versão é chamada {\em padded RSA} e uma adaptação dela é usada no padrão {\tt RSA PKCS \#1 v1.5} usada na prática.
+
+Como no caso da cifra de El Gamal, podemos construir um Mecanismo de Encapsulamento a partir do RSA.
+A construção segue os seguintes passos:
+\begin{itemize}
+\item $Gen(1^n) := \langle s_k, p_k \rangle$ em que:
+\begin{itemize}
+\item $p_k = \langle N, e \rangle$
+\item $s_k = \langle N, d' \rangle$ em que $d' = [d^n\ mod\ \phi(N)]$
+\end{itemize}
+\item $Encaps(p_k, 1^n) = \langle c_{n+1}, k \rangle$ em que $c_1 \leftarrow \mathbb{Z}_N^\star$:
+\begin{itemize}
+\item $k_i := \textrm{\tt lsb}(c_i)$ e
+\item $c_{i+1} := [c_i^e\ mod\ N]$
+\end{itemize}
+\item $Decaps(s_k, c) = k'$ em que $c_1' = [c^{d'}\ mod\ N]$ e:
+\begin{itemize}
+\item $k_i := \textrm{\tt lsb}(c_i)$ e
+\item $c_{i+1} := [c_i^e\ mod\ N]$
+\end{itemize}
+\end{itemize}
+
+Em palavras, a ideia é criptografar o primeiro bit de $k$ usando o último bit de $[c^e\ mod\ N]$ para um $c$ escolhido aleatóriamente em $\mathbb{Z}_N^\star$.
+O segundo bit de $k$ é computado usando o último de $[c^{e^2}\ mod\ N]$ e assim por diante.
+Ao final o algoritmo $Encaps$ devole o $k$ obtido e $[c^{e^n}\ mod\ N]$.
+Para decifrar partimos de $[c^{e^n}\ mod\ N]$ e elevamos a $d^n$ para recuperar o $c$ original e então repetimos exatamente o mesmo processo do algoritmo $Encaps$ para extrair cada um dos bits de $k$.
+
+É possível mostrar que esta construção produz um KEM seguro e, portanto, pode ser usado para produzir um sistema híbrido seguro contra CPA como vimos.
+Construir um sistema RSA seguro contra CCA requer uma série de modificações nos esquemas que vimos até aqui, cujos detalhes omitiremos.
+A especificação de um sistema RSA seguro contra CCA foi formalizada em um sistema chamado {\tt RSA PKCS \#1 v2.0}.
+
 
 \subsection{Sorteando Números Primos*}
 \label{sec:primos}
@@ -283,10 +356,41 @@ Para cada tentativa, porém, precisamos verificar se o valor gerado é de fato p
 A forma ingênua -- verificar cada um dos possíveis divisores -- é inviável.
 Assim, precisamos utilizar algum método eficiente de verificação de primos.
 
-O método mais popular de teste de primalidade é o {\em Miler-Rabin}
-Ele é correto quando o número é primo, mas erra com probabilidade desprezível quando o número é composto.
+A ideia que seguiremos é de procurar {\em testemunhas} de que um número é composto.
+Por exemplo, o Teorema de Euller garante que para todo $a \in \mathbb{Z}_n^\star$ temos que $a^{\phi(n)} \equiv 1\ mod\ n$.
+No caso em que $n$ é primo sabemos que $\phi(n) = n - 1$ que todo inteiro positivo $a$ é inversível em $\mathbb{Z}_n$.
+Podemos então escolher $a \leftarrow \mathbb{Z}_n$ e fazer $a^{n-1}\ mod\ n$, se este valor for diferente de $1$ sabemos que $n$ não é primo.
+Ou seja $a$ é uma testemunha de que $n$ não é primo.
 
-% algoritmo de Miler Rabin para calcular primos
+Infelizmente existe uma infinidade de números compostos que não possuem esse tipo de testemunha.
+Seja então $n - 1 = 2^ru$, temos que se $n$ é primo então a sequência $a^u, a^{2u}, \dots, a^{2^ru}$ em algum momento começa a produzir apenas $1$s.
+Mais do que isso, com este teste todo número composto possui uma quantidade grande de testemunhas -- metade dos valores $a$ são testemunhas.
+Assim, se testarmos $t$ valores de $a$ diferentes e escolhidos de maneira aleatória, a chance de todos os testes acusarem de maneira falsa que $a$ não é composto é $2^{-t}$.
+
+Essa estratégia dá origem ao algoritmo de Miller-Rabin \cite{Miller75,Rabin80} que é o teste de primalidade mais usado hoje em dia:
+
+\begin{codebox}
+\Procname{$\proc{MillerRabin}(n, t)$}
+\li \Comment Recebe $n, t \in \mathbb{Z}$
+\li \Comment Devolve {\tt composto} se $n$ é composto
+\li \Comment Devolve {\tt primo} se $n$ é primo com probabilidade $1 - 2^{-t}$
+\li \If $n$ for par
+\li   \Then \Return {\tt composto}
+    \End
+\li \If $n = n'^e$ para algum $n'$ e algum $e$
+\li   \Then \Return {\tt composto}
+    \End
+\li  Calcule $r$ e $u$ tais que $n-1 = 2^ru$
+\li \For $j = 1$ \To $t$
+\li   \Do sorteia $a$ em $\{1, \dots, n-1\}$ 
+\li   \For $i = 1$ \To $r-1$
+\li     \Do \If $a^u \neq \pm 1\ mod\ n$ e $a^{2^iu} \neq -1\ mod\ n$
+\li         \Then \Return {\tt composto}
+            \End
+      \End
+    \End
+\li \Return {\tt primo}
+\end{codebox}
 
 \section{Exercícios}
 \label{sec:exercicios}

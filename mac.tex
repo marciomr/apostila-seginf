@@ -89,7 +89,7 @@ Este modelo de ataque é mais poderoso e chamaremos de {\em segurança forte con
 Agora que conhecemos o sistema de autenticação de mensagem e definimos uma noção de segurança, resta mostrar concretamente como construir tal sistema explicitando nossas suposições.
 Uma função pseudoaleatória pode ser usada para construir um MAC para um mensagem de tamanho fixo.
 É possível provar que este sistema é seguro contra falsificação.
-Para extender essa construção a mensagens de tamanho arbitrário usamos um esquema parecido com o modo CBC.
+Para extender essa construção a mensagens de tamanho arbitrário podemos usar um esquema parecido com o modo CBC produzindo o sistema CBC-MAC 
 
 Aplicaremos os algoritmos não diretamente na mensagem $m$, mas em uma codificação dela.
 Para a demonstração da segurança a função de condificação, $encode$, precisa garantir que para quaisquer $m_1, m_2$ válidos $encode(m_1)$ não é um prefixo de $m_2$.

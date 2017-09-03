@@ -118,7 +118,11 @@ Apenas para matar a curiosidade seguem suas definições:
 \item $K_t :=$ {\tt CA62C1D6} e $f_t(B,C,D) := B \xor C \xor D$ para $t = 60, \dots, 79$ 
 \end{enumerate}
 
-% falar da colisão encontrada no SHA-1 e no MD5
+Em fevereiro de 2017 um grupo de pesquisadores da Google e de uma faculdade holandesa anunciaram um ataque prático contra o SHA-1 capaz de encontrar colisões\footnote{https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html}.
+Os autores estimaram que um ataque força-bruta em uma ano requereria cerca de 12 milhões de processadores gráficos para encontrar uma colisão, mas explorando as vulnerabilidades apontadas isso pode ser executado com apenas 110 processadores.
+Como prova do conceito eles produziram dois documentos PDF com um infográfico explicando sobre o ataque.
+Cada um desses arquivos possui uma cor diferente, mas ambos produzem o mesmo hash quando processados pelo SHA-1.
+A orientação hoje é utilizar sistemas de hash mais seguros como o SHA-256 e o SHA-3.
 
 \section{Aplicações}
 \label{sec:aplicacoes}
@@ -161,8 +165,6 @@ O sistema {\em Hash-and-MAC} $\Pi = \langle Gen, Mac, Ver \rangle$ para mensagen
   \end{enumerate}
 \end{proof}
 
-% Mencionar os protocolos que usam o HMAC
-
 O popular sistema de autenticação HMAC se inspira no esquema apresentado acima usando duas vezes uma função de hash e duas constantes distintas {\tt ipad} e {\tt opad}.
 Formalmente definimos o sistema HMAC da seguinte forma:
 \begin{itemize}
@@ -181,8 +183,20 @@ Formalmente definimos o sistema HMAC da seguinte forma:
 \subsection{Fingerprints e Árvores de Merkle}
 \label{label}
 
-% fingerprint
-% árvore de Merkle
+Um hash seguro contra colisão pode ser usado para identificar um arquivo ou uma mensagem qualquer de maneira eficiente.
+Esse identificador costuma ser chamado de {\em fingerprint} ou impressão digital do arquivo.
+Fingerprints são utilizados em diversas aplicações como para identificação de malwares, para encontrar arquivos duplicados em um HD, para encontrar um arquivo em uma rede P2P (um {\em link magnético} nada mais é do que um fingerprint de um arquivo) e para verificar chaves (veremos isso no Capítulo \ref{cha:protocolos}).
+
+Considere agora a situação em que temos uma série de $n$ arquivos em um servidor e gostaríamos de identificá-los localmente para verificar se o arquivo recuperado não foi corrompido.
+Uma solução simples seria guardar localmente um fingerprint de cada um dos arquivos.
+Essa solução requer o armazenamento e gerenciamento de $n$ fingerprints.
+Uma solução mais eficiente é usar uma {\em árvore de Merkle}.
+Uma árvore de Merkle é uma árvore binária em que as folhas são os arquivos e cada nó é o hash dos seus dois filhos.
+Assim podemos armazenar localmente apenas o valor da raiz da árvore.
+Toda vez que recuperarmos um arquivo o servidor deve enviar uma prova de que o arquivo não foi corrompido.
+Essa prova consiste dos valores da árvore de Merkle no caminho da raíz até a folha (note que são necessários $lg(n)$ valores).
+Com isso locamente conseguimos recuperar o valor da raíz e comparar com o que armazenamos localmente.
+Veremos no Capítulo \ref{cha:protocolos} como as árvores de Merkle são usadas nos protocolos de criptomoeadas.
 
 \subsection{Funções de Derivação de Chaves}
 \label{sec:kdf}
@@ -198,7 +212,7 @@ Tipicamente um KDF consiste de duas etapas:
 \item {\em expansão}: expande o que foi produzido na fase de extração para uma sequência de bits de tamanho $l$.
 \end{enumerate}
 
-Uma implementação popular deste modelo é o HKDF que usa apenas o HMAC como primitiva:
+Uma implementação popular deste modelo é o HKDF \cite{Krawczyk10} que usa apenas o HMAC como primitiva:
 
 \begin{eqnarray*}
   \textrm{PRK}      & := & \textrm{HMAC}(r, \delta)\\
@@ -222,15 +236,20 @@ Uma implementação popular deste modelo é o PBKDF2:
 Note que a primitiva neste caso é uma função de hash $H$ e que cada $K(i)$ roda $n$ vezes essa função.
 O salt impede o preprocessamento de um dicionário e $n$ deve ser grande o suficiente para impedir sua construção {\em a posteriori}.
 
+
 \section{Exercícios}
 \label{sec:exercicios}
 
 
 \begin{exercicio}
+  Mostre que resistência contra colisões garante a resistência contra preimagem.
+\end{exercicio}
+
+\begin{exercicio}
   Mostre que o seguinte sistema não é seguro contra falsificação considerando que o sistema de hash foi construído a partir do paradigma de Merkle-Damgard:
 \begin{itemize}
 \item $Gen(1^n) := k \leftarrow \{0,1\}^n$
-\item $Mac(k,m) := H(km)$
+\item $Mac(k,m) := H(k||m)$
 \item $Ver(k,m,t) := \left\{
     \begin{array}{lcl}
       1 & \textrm{se} & Mac(k,m) = t\\
@@ -238,6 +257,9 @@ O salt impede o preprocessamento de um dicionário e $n$ deve ser grande o sufic
     \end{array}
     \right.$ 
 \end{itemize}
+\end{exercicio}
 
+\begin{exercicio}
+% arvores de Merkle
 \end{exercicio}
 
