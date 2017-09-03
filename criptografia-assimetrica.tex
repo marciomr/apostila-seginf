@@ -347,11 +347,8 @@ Para gerar uma chave no sistema RSA precisamos gerar primos grandes e aleatório
 Para garantir que o número tera uma quantidade $n$ de bits sorteamos $p' \leftarrow \{0,1\}^{n-1}$ e acrescentar um bit $1$ à esquerda.
 Caso o número não seja primos repetimos o processo.
 
-\begin{theorem}[Bertrand]
-  Para qualquer $n > 1$ temos que pelo menos $\frac{1}{3n}$ inteiros de $n$ bits são primos.
-\end{theorem}
-
-Assim, podemos mostrar que se repetirmos o procedimento de geração de números aleatórios $3n^2$ vezes, a chance de nenhum ser primo é desprezível.
+Um importante resultado de Teoria dos Números chamado {\em Teorema dos Nùmeros Primos} estabelece que dado um número $n$ escolhido ao acaso, a chance de ele ser primo é $\frac{1}{ln(n)}$.
+Se estamos buscando um número menor que $n$, precisamos em média chutar $ln(n)$ números até encontrar um primo ou metade disso se ignorarmos os pares.
 Para cada tentativa, porém, precisamos verificar se o valor gerado é de fato primo.
 A forma ingênua -- verificar cada um dos possíveis divisores -- é inviável.
 Assim, precisamos utilizar algum método eficiente de verificação de primos.
