@@ -1,10 +1,117 @@
 \chapter{Assinaturas Digitais}
 \label{cha:assinaturas-digitais}
 
-% definição
-% pradigma hash and sign
-% RSA
-% Esquema de Identificação
-% Transformação de Fiat-Shamir
-% DSA
-% Certificados e PKI
+No capítulo anterior vimos que é possível construir um sistema de criptografia em que as partes não precisam trocar um segredo de antemão.
+Os esquemas da criptografia assimétrica pressupõe a geração de um par de chaves, uma pública e outra secreta.
+As assinaturas digitais, que veremos neste capítulo, seriam o equivalente àos códigos de autenticação de mensagem que vimos no Capítulo \ref{cha:mac} no contexto da criptografia assimétrica.
+
+Um {\em sistema de assinatura digital} consiste de três algoritmos:
+\begin{itemize}
+\item $Gen$ recebe o parâmetro de segurança $1^n$ e produz um par de chaves $\langle s_k, p_k \rangle$. 
+A primeira deve ser mantida em sigilo e a segunda pode ser publicada.
+\item $Sign$ recebe a chave secreta $s_k$ e uma mensagem $m$ e produz uma assinatura $t$.
+\item $Ver$ recebe a chave pública $p_k$, uma mensagem $m$ e uma assinatura $t$ e verifica se essa assinatura é válida para mensagem $m$ e de fato da pessoa que possui a chave secreta.
+Em caso positivo o algritmo deve devoler $1$ e em caso negativo $0$. 
+\end{itemize}
+
+Note que no meio digital, para cada mensagem direferente uma mesma pessoa produz assinaturas diferentes.
+Um sistema de assinatura digital é {\em correto} se:
+\begin{displaymath}
+  Ver(p_k, m, Sign(s_k, m)) = 1
+\end{displaymath}
+ 
+Um sistema como esse é {\em seguro contra falsificação} se qualquer adversário eficiente, mesmo com acesso a um oráculo que lhe entregue assinaturas para mensagens diferentes de $m$, não é capaz de produzir uma assinatura válida para $m$ com probabilidade considerável.
+
+Da mesma forma que os sistemas de criptografia assimétrica, produzir uma assinatura digital para uma mensagem muito grande pode ser um processo lento.
+Uma técnica usada na prática para mitigar este problema é assinar não a mensagem $m$ em si, mas um hash da mensagem $H(m)$.
+Neste caso, para verificar a integridade e autenticidade da mensagem, basta gerar $H(m)$ e verificar a assinatura.
+Essa construção é chamada de {\em paradigma Hash-and-Sign}.
+É possível provar a segurança contra falsificação em uma construção como essa no caso em que o esquema de assinatura usado é seguro contra falsificação e o hash é resistente à colisão.
+
+\section{Esquemas de Identificação}
+\label{sec:esqu-de-ident}
+
+Um esquema de identificação é um protocolo em que uma parte tem como objetivo provar sua identidade para a outra.
+Chamamos de {\em provador} aquele que deseja provar sua identidade e {\em verificador} aquele que deseja verificá-la.
+Assumimos que o verificador possui a chave pública do provador e vamos focar em protocolos com três interações e três algoritmos $langle \mathcal{P}_1, \mathcal{P}_2, \mathcal{V} \rangle$:
+\begin{enumerate}
+\item O provador usa $\mathcal{P}_1$ com sua chave secreta $s_k$ para gerar uma {\em mensagem inicial} $I$ e um estado $st$ e envia $I$ para o verificador.
+\item O Verificador escolhe um {\em desafio} $r$ aleatoriamente de um conjunto $\Omega_{p_k}$ gerado a partida da chave pública do Provador e envia $r$  de volta.
+\item O Provador usa $\mathcal{P}_2$ com entradas $s_k$, $st$ e $r$ para gerar uma resposta $s$ que ele envia para o Verificador.
+\item Por fim, o Verificador testa se $\mathcal{V}(p_k, r, s)$ computa $I$.
+\end{enumerate}
+
+% DIAGRAMA!!!
+
+A ideia por trás do esquema de identificação é que apenas que possui a chave secreta seria capaz de $s$ a partir do desafio $r$.
+A mensagem $I$ e o estado $st$ servem para garantir que um adversário não copie os mesmos passos de identificação e seja bem sucedido.
+Um esquema de identificação seguro deve garantir que seja computacionalmente inviável para um adversário enganar o sistema de identificação mesmo que ele observe vários processos similares.
+
+A partir de um sistema de identificação seguro é possível gerar um sistema de assinatura digital seguro usando a {\em transformação de Fiat-Shamir} \cite{Fiat87}.
+Na hora de assinar uma mensagem $I$ e $st$ são computados e calculamos $H(I, m)$ para gerar $r$ e usamos $r$, $s_k$ e $st$ para gerar $s$.
+A assinatura será exatamente o par $\langle r, s \rangle$.
+O algoritmo de verificação deve rodar $\mathcal{V}$ com $p_k$, $r$ e $s$ como entrada para produzir $I$ e então verifica-se se $H(I, m) = r$: 
+
+\begin{itemize}
+\item $Gen(1^n) := \langle s_k, p_k \rangle$ e assumimos que $H: \{0,1\}^* \to \Omega_{p_k}$ é uma função de hash específica
+\item $Sign(s_k, m) = \langle r, s \rangle$ tal que
+\begin{itemize}
+\item $\mathcal{P}_1(s_k) := \langle I, st \rangle$,
+\item $r := H(I, m)$ e
+\item $s := \mathcal{P}_2(s_k, st, r)$
+\end{itemize}
+\item $Ver(p_k, m, \langle r, s \rangle) = \left\{
+    \begin{array}{lcl}
+      1 & \textrm{se} & H(\mathcal{V}(p_k, r, s), m) = r\\
+      0 & \textrm{c.c.} &\\
+    \end{array}
+    \right.$
+\end{itemize}
+
+Considerando que o esquema de identificação $\langle \mathcal{P}_1, \mathcal{P}_2, \mathcal{V} \rangle$ seja seguro, podemos provar que o sistema de assinatura digital acima também é seguro, mas para esta prova é necessário supor não que $H$ seja resistente a colisões, mas que ele seja um {\em oráculo aleatório}, uma suposição muito mais forte e difícil de validar empiricamente.
+
+
+\section{Assinatura RSA}
+\label{sec:assinatura-rsa}
+
+Um sistema de assinatura digital $\Pi = \langle Gen, Sign, Ver \rangle$ pode ser construído invertendo o esquema de criptografia assimétrica que vimos no capítulo anterior.
+Ou seja, criptografamos a mensagem com a chave secreta para gerar a assinatura e descriptografamos com a chave pública para verificar.
+Esse esquema não é seguro até aplicarmos o paradigma {\em hash-and-sign}.
+O esquema todo segue:
+\begin{itemize}
+\item $Gen(1^n) = \langle s_k, p_k \rangle$ em que:
+\begin{itemize}
+\item $s_k = \langle N, e \rangle$ e
+\item $p_k = \langle N, d \rangle$
+\end{itemize}
+\item $Sign(s_k, m) = [H(m)^d\ mod\ N]$
+\item $Ver(p_k, m, t) = \left\{
+    \begin{array}{lcl}
+      1 & \textrm{se} & t^e \equiv H(m)\ mod\ N\\
+      0 & \textrm{c.c.} &\\
+    \end{array}
+    \right.$
+\end{itemize}
+
+A correção deste sistema segue os mesmos passos da correção do sistema de criptografia RSA que vimos no capítulo anterior.
+Além disso, podemos provar que se o sistema RSA é seguro e o hash $H$ usado é resistente à colisão então o sistema acima é seguro contra falsificação.
+Esse sistema é a base do sistema de assinatura do protocolo {\tt RSA PKCS \#1 v2.1}.
+
+\section{Algoritmo de Assinatura Digital (DSA)}
+\label{sec:dsa}
+
+
+\section{Infraestrutura de Chaves Públicas}
+\label{sec:pki}
+
+% autoridade certificador única
+% autoridade certificadora múltipla
+% delegação de autoridade
+% rede de confiança (WoT)
+
+\section{Exercícios}
+\label{sec:exercicios}
+
+
+
+

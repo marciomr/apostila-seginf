@@ -62,10 +62,15 @@
 \contentsline {subsection}{\numberline {12.2.1}Sorteando N\IeC {\'u}meros Primos*}{99}
 \contentsline {section}{\numberline {12.3}Exerc\IeC {\'\i }cios}{101}
 \contentsline {chapter}{\numberline {13}Assinaturas Digitais}{103}
-\contentsline {chapter}{\numberline {14}Protocolos}{105}
-\contentsline {section}{\numberline {14.1}Transport Layer Security}{105}
-\contentsline {section}{\numberline {14.2}Pretty Good Privacy}{105}
-\contentsline {section}{\numberline {14.3}Off The Record}{105}
-\contentsline {section}{\numberline {14.4}Signal}{105}
-\contentsline {section}{\numberline {14.5}Telegram}{105}
-\contentsline {section}{\numberline {14.6}Blockchain}{105}
+\contentsline {section}{\numberline {13.1}Esquemas de Identifica\IeC {\c c}\IeC {\~a}o}{104}
+\contentsline {section}{\numberline {13.2}Assinatura RSA}{105}
+\contentsline {section}{\numberline {13.3}Algoritmo de Assinatura Digital (DSA)}{106}
+\contentsline {section}{\numberline {13.4}Infraestrutura de Chaves P\IeC {\'u}blicas}{106}
+\contentsline {section}{\numberline {13.5}Exerc\IeC {\'\i }cios}{106}
+\contentsline {chapter}{\numberline {14}Protocolos}{107}
+\contentsline {section}{\numberline {14.1}Transport Layer Security}{107}
+\contentsline {section}{\numberline {14.2}Pretty Good Privacy}{107}
+\contentsline {section}{\numberline {14.3}Off The Record}{107}
+\contentsline {section}{\numberline {14.4}Signal}{107}
+\contentsline {section}{\numberline {14.5}Telegram}{107}
+\contentsline {section}{\numberline {14.6}Blockchain}{107}
