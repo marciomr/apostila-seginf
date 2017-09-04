@@ -69,8 +69,8 @@
 \contentsline {section}{\numberline {13.5}Exerc\IeC {\'\i }cios}{109}
 \contentsline {chapter}{\numberline {14}Protocolos}{111}
 \contentsline {section}{\numberline {14.1}Transport Layer Security}{111}
-\contentsline {section}{\numberline {14.2}Pretty Good Privacy}{112}
-\contentsline {section}{\numberline {14.3}Off The Record}{112}
-\contentsline {section}{\numberline {14.4}Signal}{112}
-\contentsline {section}{\numberline {14.5}Telegram}{112}
+\contentsline {section}{\numberline {14.2}Secure Shell}{112}
+\contentsline {section}{\numberline {14.3}Pretty Good Privacy}{112}
+\contentsline {section}{\numberline {14.4}Off The Record}{112}
+\contentsline {section}{\numberline {14.5}Signal}{112}
 \contentsline {section}{\numberline {14.6}Blockchain}{112}

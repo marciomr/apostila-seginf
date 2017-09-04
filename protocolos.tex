@@ -37,6 +37,26 @@ Quando $C$ envia uma mensagem para $S$ ele a autentica com $k_C'$ e a criptograf
 Note que o protocolo segue o paradigma {\em mac then encrypt} que não é demononstradamente seguro.
 
 
+\section{Secure Shell}
+\label{sec:ssh}
+
+O protocolo {\em Secure Shell} (SSH) para comunicação segura para login e transferência de arquivos em servidores remotos.
+
+Antes da fase de troca de chaves, as partes passam por uma fase de negociação de algoritmos.
+Nesta fase cada qual envia para a outra parte uma lista dos algortimos de criptografia suportados $I_S$ e $I_C$.
+Nesta fase eles definem um grupo $\mathbb{G}$ com ordem $n$ e gerador $g$ e uma função de hash $H$.
+A fase de troca de chaves segue os seguintes passos:
+\begin{enumerate}
+\item $C$ sorteia $x \leftarrow \{2, \dots, n-1\}$ e envia $e = g^x$ para $S$.
+\item $S$ sorteia $y \leftarrow \{2, \dots, n-1\}$, calcula $f = g^y$ e computa $k = e^y$, $h = H(Id_C || Id_S || I_C || I_S || pk_S || e || f || k)$ e $s = Sign(sk_S, H)$.
+$S$ então envia $pk_S$, $f$ e $s$ para $C$
+\item $C$ pode verificar a autenticidade de $pk_S$ neste passo, então computa $k = f^x$ e $h = H(Id_C || Id_S || I_C || I_S || pk_S || e || f || k)$ e, por, fim verifica a assinatura $Ver(pk_S, h, s)$.
+\end{enumerate}
+
+O protocolo SSH permite o uso de certificados para verificar $pk_S$.
+Tipicamente, porém, o modelo de segurança que é seguido é chamado de {\em Trust On First Use} (TOFU): a primeira vez que o cliente $C$ se conecta com o servidor $S$ uma aviso é exibido e a identidade do servidor é salva em uma base de dados no cliente, assim as próximas conexões podem verificar a autenticidade da chave apenas verificando essa base.
+A conexão apresenta também um {\em fingreprint} da chave pública que pode ser enviado de maneira segura para verificação manual.
+
 \section{Pretty Good Privacy}
 \label{sec:pgp}
 
@@ -46,8 +66,8 @@ Note que o protocolo segue o paradigma {\em mac then encrypt} que não é demono
 \section{Signal}
 \label{sec:signal}
 
-\section{Telegram}
-\label{sec:telegram}
+%\section{Telegram}
+%\label{sec:telegram}
 
 \section{Blockchain}
 \label{sec:blockchain}
