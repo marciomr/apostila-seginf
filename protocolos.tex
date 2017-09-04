@@ -57,6 +57,20 @@ O protocolo SSH permite o uso de certificados para verificar $pk_S$.
 Tipicamente, porém, o modelo de segurança que é seguido é chamado de {\em Trust On First Use} (TOFU): a primeira vez que o cliente $C$ se conecta com o servidor $S$ uma aviso é exibido e a identidade do servidor é salva em uma base de dados no cliente, assim as próximas conexões podem verificar a autenticidade da chave apenas verificando essa base.
 A conexão apresenta também um {\em fingreprint} da chave pública que pode ser enviado de maneira segura para verificação manual.
 
+No final da fase de troca de chaves servidor e cliente compartilham $k$, $h$ e uma identificação da seção $Id$.
+A partir desses valores são geradas as chaves de criptografia $k_S$ e $k_C$, as chaves de autenticação $k_S'$ e $k_C'$ e os vetores inciais $IV_S$ e $IV_C$.
+Todos valores são obtidos usando um hash $H$ com $k$, $h$, $Id$ e uma constante diferente para cada chave.
+
+Antes das partes começarem a fase de troca de mensagens {\em protocolo de conexão}, o servidor precisa autenticar o cliente.
+Isso é feito na fase de {\em autenticação} de três formas alternativas:
+\begin{itemize}
+\item {\em chave pública}: $C$ envia uma mensagem assinada para $S$ contendo $pk_C$. 
+O servidor então verifica se a chave é aceitável para a autenticação e então verifica a assinatura.
+\item {\em senha}: $C$ envia uma mensagem com uma senha protegida pelo esquema apresentado acima.
+\item {\em hostbased}: O host de $C$ realiza a autenticação por meio de algum protocolo de verificação de assinatura.
+O servidor verifica o host e confia que ele autenticou $C$.
+\end{itemize}
+
 \section{Pretty Good Privacy}
 \label{sec:pgp}
 
