@@ -149,10 +149,40 @@ No caso de $F$ isso é particularmente difícil de aceitar e não se conhece uma
 \section{Infraestrutura de Chaves Públicas}
 \label{sec:pki}
 
-% autoridade certificador única
-% autoridade certificadora múltipla
-% delegação de autoridade
-% rede de confiança (WoT)
+O protocolo de Diffie-Hellman e a criptografia assimétrica garantem a segurança da comunicação contra ataques passivos sem precisarmos supor que as partes compartilhe um segredo {\em a priori}.
+Um problema que ainda não tratamos até aqui é como garantir a segurança contra um ataque ativo, ou seja, contra um modelo de ameaça em que o adversario não só é capaz de observar a comunicação, como também é capaz de interferir nela.
+Um ataque que os sistemas que vimos até aqui estão particularmente sujeitos é o seguinte.
+Digamos que Alice pretende se comunicar com Bob usando um sistema de criptografia assimétrico.
+O primeiro passo para Alice é obter a chave pública de Bob.
+Neste momento Eva pode enviar a sua chave pública como se fosse a de Bob, receber as mensagens que Alice enviaria para Bob, copiá-las e re-encaminhá-las para Bob.
+Este tipo de ataque é chamado de {\em Man In The Middle} e nada do que vimos até aqui o previne.
+
+Não há como evitar este tipo de ataque sem algum encontro físico em que algum segredo seja compartilhado de maneira segura, mas os sistemas de assinatura digitais podem facilitar bastante esse processo.
+A ideia é confiar a alguma autoridade a identificação das chaves públicas.
+A autoridade $A$ teria então a responsabilidade de verificar se a entidade portadora da identidade $Id_B$ é de fato a o pessoa que possui a chave secreta correspondente à chave pública $pk_B$.
+Neste caso a autoridade $A$ pode emitir um {\em certificado} $cert_{A \to B}$ que nada mais é do que uma assinatura de $A$ conectando $Id_B$ a $pk_B$:
+\begin{displaymath}
+  cert_{A \to B} := Sign(Id_B, pk_B)
+\end{displaymath}
+
+Existem diversos modelos de {\em infraestrutura de chaves públicas} (PKI):
+\begin{itemize}
+\item {\em autoridade certificadora única:} Neste cenário assumimos que todos possuem a chave pública da autoridade certificadora $A$ que foi obtida de maneira segura. 
+Sempre que algum novo ator $B$ precisar publicar sua chave pública ele deve se apresentar à essa autoridade e comprovar sua identidade para obter o certificado $cert_{A \to B}$
+\item {\em múltiplas autoridades certificadoras:} Neste cenário existem várias autoridades certificadoras e assumimos que todos possuem chaves públicas de algumas ou todas elas.
+Quando um novo ator precisar publicar sua chave ele pode procurar uma ou mais autoridades para gerar o certificado que será válido para aqueles que confiarem na autoridade certificadora que o emitiu.
+Neste cenário a comunicação é tão segura quanto a menos confiável das autoridades incluídas na lista das partes.
+\item {\em delegação de autoridade:} Neste cenário as autoridades certificadoras não apenas podem certificar a autenticidade de uma chave pública como podem também produzir um certificado especial $cert^*$ que dá o poder a outro de produzir certificados. 
+Assim digamos que $C$ consiga um certificado de $B$ sobra a autenticidade de sua chave $cert_{B \to C}$ e suponha que $B$ possui um certificado especial de $A$ que o autorize a produzir certificados em seu nome $cert^*_{A \to B}$.
+Assim alguém que possui a chave pública de $A$ pode verificar o certificado $cert^*_{A \to B}$ e usar a chave pública assinada de $B$ para verificar $cert_{B \to C}$.
+\item {\em rede de confiança:} Neste cenário, todas as partes atuam como autoridades certificadoras e podem assinar certificados para qualquer chave que elas verificaram.
+Cabe a cada um avaliar a confiança que tem em seus colegas quanto a edoniedade em produzir certificados.
+\end{itemize}
+
+Um certificado pode e deve conter uma {\em data de expiração} que limite seu tempo de validade.
+Depois dessa data o certificado não dever ser mais considerado válido e precisa ser renovado.
+Em alguns modelos o portador pode comprovar sua identidade com a autoridade que emitiu o certificado e esta pode assinar e publicar um {\em certificado de revogação} anunciando que a chave não deve mais ser considerada válida -- por exemplo no caso de ela ser perdida ou roubada.
+
 
 \section{Exercícios}
 \label{sec:exercicios}
