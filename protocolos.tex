@@ -1,8 +1,41 @@
 \chapter{Protocolos}
 \label{cha:protocolos}
 
+Para fechar essas notas apresentaremos uma serie de protocolos que utilizam as primitivas criptograficas que vimos até aqui.
+Um {\em protocolo} propriamente dito deveria descrever os passos de comunicação em um nível de detalhes suficiente para ser implementado sem ambiguidades.
+Este não é nosso propósito.
+Pretendemos aqui apenas apresentar aplicações práticas de uso de criptografia forte e como as primitivas são usadas para resolver problemas de comunicação digital.
+
 \section{Transport Layer Security}
 \label{sec:tls}
+
+O {\em Transport Layer Security} (TLS) é a evolução do protobolo {\em Secure Socket Layer} (SSL) usado amplamente em todo o mundo nas conexões web suguras (sempre que conectamos em um site {\tt https}).
+A primeira versão do SSL data de meados dos anos 90 e foi desenvolvida por programadores da Netscape.
+A primeira versão do TLS é de 1999 e sua versão atual é de 2006.
+
+O protocolo se divide em duas fases: {\em handshake} responsável por estabelecer as chaves de critpografia simétrica entre cliente e servidor e {\em record-layer} responsavel por garantir a confidencialidade, integridade e autenticidade na comunicação. 
+Na comunicação usando TLS o cliente possui a chave pública de uma série de autoridades certificadoras que tipicamente vem junto do navegador e o servidor deve possuir um certificado $cert_{CA \to S}$ que obteve junto a alguma dessas entidades certificadoras para um par de chaves $\langle sk_S, pk_S \rangle$.
+O {\em handshake} consiste dos seguintes passos:
+
+\begin{enumerate}
+\item O Cliente $C$ envia uma mensagem a $S$ contendo informando a versão do protocolo e os esquemas de criptografia suportados e um {\em nonce} $N_C$
+\item $S$ seleciona a última versão do protocolo compatível com $C$ e envia de volta sua chave pública $pk_S$ com o certificado $cert_{CA \to S}$ e outro nonce $N_S$
+\item $C$ verifica o certificado $cert_{CA \to S}$ então usa $pk_S$ para encapsular uma chave ({\em pre-master key}) $Encaps(pk_S, 1^k) = \langle c_{pmk}, pmk \rangle$.
+  Por meio de uma função de derivação de chave $KDF$ é então produzida outra chave $mk$ ({\em master key}) usando $pmk$, $N_C$ e $N_S$.
+Um PRG é usado para gerar quatro chaves $k_C$, $k_C'$, $k_S$ e $k_S'$.
+Por fim, $C$ produz um mac $t_C$ com a chave $mk$ de toda a comunicação entre as partes até este ponto e envia $t_C$ e $c_{pmk}$ para $S$.
+\item $S$ computa $Decaps(sk_S)$ para gerar $mk$ e então segue os mesmos passos de $C$ para recuperar $k_C$, $k_C'$, $k_S$ e $k_S'$.
+Então $S$ verifica $t_C$ e aborta o processo em caso de falha.
+Por fim, $S$ produz outro mac $t_S$ de toda a comunicação até aqui com a chave $mk$ e envia para $C$.
+\item $C$ verifica $t_S$ e aborta o processo se falhar.
+\end{enumerate}
+
+%% DIAGRAMA ?
+
+No fim deste processo $S$ e $C$ compartilham dois pares de chaves autênticos.
+Quando $C$ envia uma mensagem para $S$ ele a autentica com $k_C'$ e a criptografa com $k_C$ e quando $S$ responde ele autentica a mensagem com $k_S'$ e criptografa tudo com $k_S$.
+Note que o protocolo segue o paradigma {\em mac then encrypt} que não é demononstradamente seguro.
+
 
 \section{Pretty Good Privacy}
 \label{sec:pgp}
