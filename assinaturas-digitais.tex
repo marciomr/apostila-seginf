@@ -79,13 +79,13 @@ Ou seja, criptografamos a mensagem com a chave secreta para gerar a assinatura e
 Esse esquema não é seguro até aplicarmos o paradigma {\em hash-and-sign}.
 O esquema todo segue:
 \begin{itemize}
-\item $Gen(1^n) = \langle s_k, p_k \rangle$ em que:
+\item $Gen(1^n) := \langle s_k, p_k \rangle$ em que:
 \begin{itemize}
-\item $s_k = \langle N, e \rangle$ e
-\item $p_k = \langle N, d \rangle$
+\item $s_k := \langle N, e \rangle$ e
+\item $p_k := \langle N, d \rangle$
 \end{itemize}
-\item $Sign(s_k, m) = [H(m)^d\ mod\ N]$
-\item $Ver(p_k, m, t) = \left\{
+\item $Sign(s_k, m) := [H(m)^d\ mod\ N]$
+\item $Ver(p_k, m, t) := \left\{
     \begin{array}{lcl}
       1 & \textrm{se} & t^e \equiv H(m)\ mod\ N\\
       0 & \textrm{c.c.} &\\
@@ -100,6 +100,51 @@ Esse sistema é a base do sistema de assinatura do protocolo {\tt RSA PKCS \#1 v
 \section{Algoritmo de Assinatura Digital (DSA)}
 \label{sec:dsa}
 
+O esquema de assinatura RSA depende da dificuldade do problema da fatoração.
+Podemos também construir sistemas que dependem da dificuldade do problema do logaritmo discreto.
+Este é o caso do popular esquema DSA e do ECDSA que usa curvas elípticas.
+Antes de apresentar o sistema de assinatura digital, apresentaremos um esquema de identificação em que assumimos que a chave secreta é $x$ e a chave pública é $\langle \mathbb{G}, g, y, n \rangle$ com $\mathbb{G}$ um grupo cíclico, $g$ um gerador e $y = g^x$:
+
+\begin{enumerate}
+\item O Provador sorteia $k \leftarrow \mathbb{Z}_n^\star$ e envia $I := g^k$ para o Verificador.
+\item O Verificador sorteia $a, r \leftarrow \mathbb{Z}_q$ como desafios e envia de volta.
+\item O Provador envia $s := [k^{-1} \cdot (\alpha + xr)\ mod\ q]$ como resposta.
+\item O Verificador aceita se $s \neq 0$ e $g^{\alpha s^{-1}} \cdot y^{rs^{-1}} = I$
+\end{enumerate}
+
+A probabilidade de $s = 0$ é desprezível.
+Se assumirmos que $s \neq 0$ a correção do esquema segue, pois:
+\begin{displaymath}
+  g^{\alpha s^{-1}} \cdot y^{rs^{-1}} = g^{\alpha s^{-1}} \cdot g^{xrs^{-1}} = g^{(\alpha + xr)\cdot s^{-1}} = g^{(\alpha + xr)\cdot k \cdot (\alpha + xr)^{-1}} = g^k = I
+\end{displaymath}
+
+É possível provar que este esquema é seguro considerando que o problema do logaritmo discreto seja seguro.
+
+Podemos transformar esse esquema de identificação em um sistema de assinatura usando a transformação de Fiat-Shamir, mas o popular esquema DSA segue um caminho um pouco diferente.
+Assumiremos a existência de duas funções $H: \{0,1\}^* \to \mathbb{Z}_n$ e $F: \mathbb{G} \to \mathbb{Z}_n$:
+
+\begin{itemize}
+\item $Gen(1^n) = \langle s_k, p_k \rangle$ em que:
+\begin{itemize}
+\item $s_k := x \leftarrow \mathbb{Z}_n$ e
+\item $p_k := \langle \mathbb{G}, g, y, n \rangle$ com $y = g^x$
+\end{itemize}
+\item $Sign(s_k, m) = \langle r, s \rangle$ em que:
+  \begin{itemize}
+  \item $r := F(g^k)$ com $k \leftarrow \mathbb{Z}_n$ e
+  \item $s := [k^{-1} \cdot (H(m) + xr)\ mod\ q]$ (sorteamos outro $r$ caso $s = 0$)
+  \end{itemize}
+\item $Ver(p_k, m, t) := \left\{
+    \begin{array}{lcl}
+      1 & \textrm{se} & r = F(g^{H(m) \cdot s^{-1}} y^{r \cdot s^{-1}})\\
+      0 & \textrm{c.c.} &\\
+    \end{array}
+    \right.$
+\end{itemize}
+
+A correção desse sistema é muito similar ao esquema de identificação apresentado anteriormente.
+É possível provar sua segurança assumindo a dificuldade do problema do logaritmo discreto e tratando $H$ e $F$ como oráculos aleatórios.
+No caso de $F$ isso é particularmente difícil de aceitar e não se conhece uma prova de segurança melhor do que essa até hoje.
 
 \section{Infraestrutura de Chaves Públicas}
 \label{sec:pki}
