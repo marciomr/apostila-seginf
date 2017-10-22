@@ -65,50 +65,24 @@ Um grupo é {\em abeliano} se satisfaz o seguinte:
 \end{itemize}
  
 Diversas estruturas familiares como $\langle \mathbb{Z}, + \rangle$ e $\langle \mathbb{Q}, \cdot \rangle$ são grupos abelianos, mas não são finitos.
-No próximo capítulo veremos exemplos de grupos finitos.
-Por ora apenas suporemos que eles existem.
+No próximo capítulo demonstraremos que certas estruturas são grupos finitos.
+Por ora vamos apenas apresentar um grupo finito como exemplo sem uma demonstração para esse fato:
+\begin{example}
+  A estrutura $\langle \mathbb{Z}_p^\star, \cdot \rangle$ em que $p$ é primo, $\mathbb{Z}_p^\star = \{1, 2, \dots, p - 1 \}$ e a operação de multiplicação é calculada módulo $p$ é um grupo.
+\begin{itemize}
+\item $1^{-1} \equiv 1\ mod\ 7$
+\item $2^{-1} \equiv 4\ mod\ 7$
+\item $3^{-1} \equiv 5\ mod\ 7$
+\item $4^{-1} \equiv 2\ mod\ 7$
+\item $5^{-1} \equiv 3\ mod\ 7$
+\item $6^{-1} \equiv 6\ mod\ 7$
+\end{itemize}
+\end{example}
+
 Nos será útil expressar a operação de {\em exponenciação} de um elemento do grupo $g \in G$ em relação a um inteiro positivo $m$:
 \begin{displaymath}
   g^m := \underbrace{g \circ \dots \circ g}_m
 \end{displaymath}
-
-Uma forma ineficiente de calcular $g^m$ é aplicar $m$ vezes a operação $\circ$.
-O seguinte algoritmo produz o mesmo resultado em tempo $O(log(m))$:
-
-
-\begin{codebox}
-\Procname{$\proc{FastExp}(g, m)$}
-\li \Comment Recebe $g \in \mathbb{G}$ e $m \in \mathbb{N}$
-\li \Comment Devolve $g^m$
-\li $x \gets g$
-\li $r \gets 1$
-\li \While $m > 0$
-\li \Do \If $m$ for ímpar 
-\li \Then $r \gets r \circ x$
-\li $m \gets m - 1$
-\End
-\li $x \gets x \circ x$
-\li $m \gets \frac{m}{2}$
-\End
-\li \Return $r$
-\End
-\end{codebox}
-
-Para verificar a correção do algoritmo note que em todos os passos o seguinte valor se mantém invariante: $r \circ x^m$.
-
-\begin{example}
-  Simularemos a execução de $\proc{FastExp}(2, 10)$ em $\langle \mathbb{Q}, \cdot \rangle$.
-\begin{displaymath}
-  \begin{array}{lllr}
-    r \gets 1 & x \gets 2 & m \gets 10 & 1 \cdot 2^{10} = 2^{10}\\
-    r \gets 1 & x \gets 2^2 & m \gets 5 & 1 \cdot 2^{2 \cdot 5} = 2^{10}\\
-    r \gets 2^2 & x \gets 2^2 & m \gets 4 & 2^2 \cdot 2^{2 \cdot 4} = 2^{10}\\
-    r \gets 2^2 & x \gets 2^4 & m \gets 2 & 2^2 \cdot 2^{4 \cdot 2} = 2^{10}\\
-    r \gets 2^2 & x \gets 2^8 & m \gets 1 & 2^2 \cdot 2^8 = 2^{10}\\
-    r \gets 2^{10} & x \gets 2^8 & m \gets 0 & 2^{10} \cdot 2^{8 \cdot 0} = 2^{10}\\
-  \end{array}
-\end{displaymath}
-\end{example}
 
 
 \begin{theorem}
@@ -140,6 +114,111 @@ Ou seja, em um grupo cíclico temos que $\langle g \rangle = G$ para algum $g$.
 Se $\mathbb{G}$ é um grupo cíclico e $g$ é um gerador então para qualquer $h \in G$ existe um inteiro $x$ tal que $g^x = h$.
 Dizemos que $x$ é o {\em logaritmo} de $h$ na base $g$.
 
+
+\begin{example}
+Considere o grupo $\langle \mathbb{Z}_7^\star, \cdot \rangle$:
+\begin{itemize}
+\item $\langle 2 \rangle = \{1, 2, 4\}$. A ordem de $2$ é $3$ e, portanto, $2$ não é um gerador de $\mathbb{Z}_7$. 
+Além disso, neste grupo $log_2(1) = 0$, $log_2(2) = 1$ e $log_2(4) = 2$. 
+\item $\langle 3 \rangle = \{1, 3, 2, 6, 4, 5\}$. A ordem de $3$ é $6$, portanto $3$ é um gerador de $\mathbb{Z}_7$ e o grupo é cíclico.
+Além disso, neste grupo $log_3(1) = 0$, $log_3(2) = 2$ e $log_3(3) = 1$, $log_3(4)= 4$, $log_3(5) = 5$ e $log_3(6) = 3$. 
+\end{itemize}
+\end{example}
+
+
+O {\em protocolo de Diffie-Hellman} que funciona da seguinte maneira:
+\begin{enumerate}
+\item Alice roda $\mathcal{G}(1^n)$ para gerar um grupo cíclico $\mathbb{G}$ e um gerador $g$
+\item Alice sorteia $x \leftarrow \mathbb{Z}_n$ e computa $h_A = g^x$ usando o algoritmo eficiente de exponenciação
+\item Alice envia $\mathbb{G}$, $g$ e $h_A$ para Bob
+\item Bob sorteia $y \leftarrow \mathbb{Z}_n$, computa $h_B = g^y$ e envia para Alice.
+\item Ao fim do processo Alice computa $h_B^x = (g^y)^x = g^{xy}$ e Bob computa $h_A^y = (g^x)^y = g^{xy}$.
+\end{enumerate}
+
+Ao fim do procedimento tanto Alice, quanto Bob são capazes de produzir $g^{xy}$, a primeira porque possui $x$ e $g^y$ e o segundo porque possui $y$ e $g^x$.
+Quem observa a comunicação, porém, só possui $g^x$ e $g^y$.
+Caso esse observador seja capaz de calcular o $log_g(g^x) = x$ então ele seria capaz de quebrar o protocolo.
+O ataque força bruta neste caso seria testar todos os valores possíveis de $x$ até encontar o correto.
+Este ataque é linear no valor de $x$, mas é exponencial no tamanho de $x$ (note que para escrever o número $x$ em notação binária usamos espaço proporcional a $lg(x)$).
+
+Porém, quando Bob calcula $(g^{y})^x$ ele pode usar um algoritmo muito mais eficiente.
+A maneira ingênua de calcular a exponenciação se baseia no seguinte invariante:
+\begin{displaymath}
+  g^m = g \circ g^{m-1}
+\end{displaymath}
+Com isso reduzimos o problema a um problema um pouco mais simples e paramos quando $m = 0$, pois neste caso $g^0 = 1$.
+Essa constatação dá origem ao seguinte algoritmo:
+
+\begin{codebox}
+\Procname{$\proc{Exp}(g, m)$}
+\li \Comment Recebe $g \in \mathbb{G}$ e $m \in \mathbb{N}$
+\li \Comment Devolve $g^m$
+\li \If $m = 0 $ 
+\li \Then \Return $1$
+\End
+\li \Return $\proc{Exp}(g, m-1) \circ g$
+\End
+\end{codebox}
+
+Podemos estimar o tempo de $\proc{Exp}$ resolvendo a seguinte recorrência:
+
+\begin{eqnarray*}
+  T(m) & = & T(m - 1) + O(1)\\
+  T(1) & = & O(1)
+\end{eqnarray*}
+
+Não é difícil mostrar que $T(m) = O(m)$.
+
+Podemos, porém, fazer bem melhor do que isso usando o seguinte invariante:
+\begin{displaymath}
+  g^m = \left\{ 
+    \begin{array}{lcl}
+      g^{\lfloor \frac{m}{2} \rfloor} \circ  g^{\lfloor \frac{m}{2} \rfloor} & \textrm{se} & m \textrm{ é par}\\
+      g^{\lfloor \frac{m}{2} \rfloor} \circ  g^{\lfloor \frac{m}{2} \rfloor} \circ g & \textrm{se} & m \textrm{ é ímpar}\\  
+    \end{array}
+    \right.
+\end{displaymath}
+
+Esse invariante produz o seguinte algoritmo:
+\begin{codebox}
+\Procname{$\proc{FastExp}(g, m)$}
+\li \Comment Recebe $g \in \mathbb{G}$ e $m \in \mathbb{N}$
+\li \Comment Devolve $g^m$
+\li \If $m = 0 $ 
+\li \Then \Return $1$
+\End
+\li $x \gets \proc{FastExp}(g, \lfloor \frac{m}{2} \rfloor)$
+\li \If $m$ é par
+\li \Then \Return $x \circ x$
+\li \Else \Return $x \circ x \circ g$
+\End
+\end{codebox}
+
+
+Estimamos o tempo de $\proc{FastExp}$ resolvendo a seguinte recorrência:
+
+\begin{eqnarray*}
+  T(m) & = & T(\lfloor \frac{m}{2} \rfloor) + O(1)\\
+  T(1) & = & O(1)
+\end{eqnarray*}
+
+Vimos no curso de Introdução à Análise de Algoritmos que $T(m) = O(lg(m))$.
+Em outras palavras, o problema da exponenciação pode ser resolvido lineramente no tamanho da entrada.
+Já o problema do logaritmo pode ser difícil.
+
+\begin{example}
+  Simularemos a execução de $\proc{FastExp}(2, 10)$ em $\langle \mathbb{Q}, \cdot \rangle$.
+\begin{displaymath}
+  \begin{array}{ll}
+    FastExp(2, 10) = x \cdot x = 2^{10} & x = FastExp(2, 5) = 2^5 \\
+    FastExp(2, 5)  = x \cdot x \cdot 2 = 2^5 & x = FastExp(2, 2) = 2^2\\
+    FastExp(2, 2)  = x \cdot x = 2^2 & x = FastExp(2, 1) = 2\\
+    FastExp(2, 1)  = x \cdot x \cdot 2 = 2 & x = FastExp(2, 0) = 1\\
+    FastExp(2, 0)  = 1 \\
+  \end{array}
+\end{displaymath}
+\end{example}
+
 O {\em problema do logaritmo discreto} pode ser descrito pelo seguinte jogo:
 \begin{enumerate}
 \item O sistema recebe o parâmetro de segurança $1^n$ e usa $\mathcal{G}$ para gerar um grupo cíclico $\mathbb{G} = \langle G, \circ \rangle$ com gerador $g$ e ordem $n$
@@ -163,18 +242,11 @@ Dizemos que o {\em problema do logaritmo discreto é difícil} se para todo adve
   Pr[DLog_{\mathcal{A}, \mathcal{G}}(n) = 1] \leq \varepsilon(n)
 \end{displaymath}
 
+A dificuldade do problema do logaritmo discreto é condição necessária, porém insuficiente, para a segurança do protocolo de Diffie-Hellman.
 Algumas estruturas matemáticas são adequadas para produzir grupos cíclicos cujo problema do logaritmo discreto é considerado difícil.
 Duas muito usadas na prática são os {\em resíduos quadráticos de grupos de tamanho primo} e as {\em curvas elípticas}.
 A apresentação dessas estruturas foge ao escopo dessas notas.
 
-A dificuldade do problema do logaritmo discreto é condição necessária, porém insuficiente, para a segurança do {\em protocolo de Diffie-Hellman} que funciona da seguinte maneira:
-\begin{enumerate}
-\item Alice roda $\mathcal{G}(1^n)$ para gerar um grupo cíclico $\mathbb{G}$ e um gerador $g$
-\item Alice sorteia $x \leftarrow \mathbb{Z}_n$ e computa $h_A = g^x$ usando o algoritmo eficiente de exponenciação
-\item Alice envia $\mathbb{G}$, $g$ e $h_A$ para Bob
-\item Bob sorteia $y \leftarrow \mathbb{Z}_n$, computa $h_B = g^y$ e envia para Alice.
-\item Ao fim do processo Alice computa $h_B^x = (g^y)^x = g^{xy}$ e Bob computa $h_A^y = (g^x)^y = g^{xy}$.
-\end{enumerate}
 
 Caso o problema do logaritmo discreto não seja difícil, Eva seria capaz de produzir $x$ e $y$ a partir de $g^x$ e $g^y$ e descobrir o valor de $g^{xy}$.
 Se o sistema for seguro, porém, o melhor que Eva pode fazer é tentar todos os valores de $\mathbb{Z}_n$ até encontrar $x$ ou $y$.
@@ -188,7 +260,6 @@ Isso não deve afetar de nenhuma forma na segurança do sistema.
 O protocolo de Diffie-Hellman permite às partes compartilharem uma chave secreta sem a necessidade de se encontrarem pessoalmente, ou de confiarem em alguma autoridade que as encontrou separadamente.
 Uma limitação do protocolo, porém, é que ele não garante que as partes saibam se a chave que receberam foi de fato enviada por quem eles imaginam que as enviou.
 No Capítulo \ref{} voltaremos a este problema chamado de {\em ataque Man In The Middle}.
-
 
 
 \section{Exercícios}
