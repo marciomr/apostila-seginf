@@ -7,17 +7,17 @@ As assinaturas digitais, que veremos neste capítulo, seriam o equivalente àos 
 
 Um {\em sistema de assinatura digital} consiste de três algoritmos:
 \begin{itemize}
-\item $Gen$ recebe o parâmetro de segurança $1^n$ e produz um par de chaves $\langle s_k, p_k \rangle$. 
+\item $Gen$ recebe o parâmetro de segurança $1^n$ e produz um par de chaves $\langle sk, pk \rangle$. 
 A primeira deve ser mantida em sigilo e a segunda pode ser publicada.
-\item $Sign$ recebe a chave secreta $s_k$ e uma mensagem $m$ e produz uma assinatura $t$.
-\item $Ver$ recebe a chave pública $p_k$, uma mensagem $m$ e uma assinatura $t$ e verifica se essa assinatura é válida para mensagem $m$ e de fato da pessoa que possui a chave secreta.
+\item $Sign$ recebe a chave secreta $sk$ e uma mensagem $m$ e produz uma assinatura $t$.
+\item $Ver$ recebe a chave pública $pk$, uma mensagem $m$ e uma assinatura $t$ e verifica se essa assinatura é válida para mensagem $m$ e de fato da pessoa que possui a chave secreta.
 Em caso positivo o algritmo deve devoler $1$ e em caso negativo $0$. 
 \end{itemize}
 
 Note que no meio digital, para cada mensagem direferente uma mesma pessoa produz assinaturas diferentes.
 Um sistema de assinatura digital é {\em correto} se:
 \begin{displaymath}
-  Ver(p_k, m, Sign(s_k, m)) = 1
+  Ver(pk, m, Sign(sk, m)) = 1
 \end{displaymath}
  
 Um sistema como esse é {\em seguro contra falsificação} se qualquer adversário eficiente, mesmo com acesso a um oráculo que lhe entregue assinaturas para mensagens diferentes de $m$, não é capaz de produzir uma assinatura válida para $m$ com probabilidade considerável.
@@ -35,10 +35,10 @@ Um esquema de identificação é um protocolo em que uma parte tem como objetivo
 Chamamos de {\em provador} aquele que deseja provar sua identidade e {\em verificador} aquele que deseja verificá-la.
 Assumimos que o verificador possui a chave pública do provador e vamos focar em protocolos com três interações e três algoritmos $langle \mathcal{P}_1, \mathcal{P}_2, \mathcal{V} \rangle$:
 \begin{enumerate}
-\item O provador usa $\mathcal{P}_1$ com sua chave secreta $s_k$ para gerar uma {\em mensagem inicial} $I$ e um estado $st$ e envia $I$ para o verificador.
-\item O Verificador escolhe um {\em desafio} $r$ aleatoriamente de um conjunto $\Omega_{p_k}$ gerado a partida da chave pública do Provador e envia $r$  de volta.
-\item O Provador usa $\mathcal{P}_2$ com entradas $s_k$, $st$ e $r$ para gerar uma resposta $s$ que ele envia para o Verificador.
-\item Por fim, o Verificador testa se $\mathcal{V}(p_k, r, s)$ computa $I$.
+\item O provador usa $\mathcal{P}_1$ com sua chave secreta $sk$ para gerar uma {\em mensagem inicial} $I$ e um estado $st$ e envia $I$ para o verificador.
+\item O Verificador escolhe um {\em desafio} $r$ aleatoriamente de um conjunto $\Omega_{pk}$ gerado a partida da chave pública do Provador e envia $r$  de volta.
+\item O Provador usa $\mathcal{P}_2$ com entradas $sk$, $st$ e $r$ para gerar uma resposta $s$ que ele envia para o Verificador.
+\item Por fim, o Verificador testa se $\mathcal{V}(pk, r, s)$ computa $I$.
 \end{enumerate}
 
 % DIAGRAMA!!!
@@ -48,21 +48,21 @@ A mensagem $I$ e o estado $st$ servem para garantir que um adversário não copi
 Um esquema de identificação seguro deve garantir que seja computacionalmente inviável para um adversário enganar o sistema de identificação mesmo que ele observe vários processos similares.
 
 A partir de um sistema de identificação seguro é possível gerar um sistema de assinatura digital seguro usando a {\em transformação de Fiat-Shamir} \cite{Fiat87}.
-Na hora de assinar uma mensagem $I$ e $st$ são computados e calculamos $H(I, m)$ para gerar $r$ e usamos $r$, $s_k$ e $st$ para gerar $s$.
+Na hora de assinar uma mensagem $I$ e $st$ são computados e calculamos $H(I, m)$ para gerar $r$ e usamos $r$, $sk$ e $st$ para gerar $s$.
 A assinatura será exatamente o par $\langle r, s \rangle$.
-O algoritmo de verificação deve rodar $\mathcal{V}$ com $p_k$, $r$ e $s$ como entrada para produzir $I$ e então verifica-se se $H(I, m) = r$: 
+O algoritmo de verificação deve rodar $\mathcal{V}$ com $pk$, $r$ e $s$ como entrada para produzir $I$ e então verifica-se se $H(I, m) = r$: 
 
 \begin{itemize}
-\item $Gen(1^n) := \langle s_k, p_k \rangle$ e assumimos que $H: \{0,1\}^* \to \Omega_{p_k}$ é uma função de hash específica
-\item $Sign(s_k, m) = \langle r, s \rangle$ tal que
+\item $Gen(1^n) := \langle sk, pk \rangle$ e assumimos que $H: \{0,1\}^* \to \Omega_{pk}$ é uma função de hash específica
+\item $Sign(sk, m) = \langle r, s \rangle$ tal que
 \begin{itemize}
-\item $\mathcal{P}_1(s_k) := \langle I, st \rangle$,
+\item $\mathcal{P}_1(sk) := \langle I, st \rangle$,
 \item $r := H(I, m)$ e
-\item $s := \mathcal{P}_2(s_k, st, r)$
+\item $s := \mathcal{P}_2(sk, st, r)$
 \end{itemize}
-\item $Ver(p_k, m, \langle r, s \rangle) = \left\{
+\item $Ver(pk, m, \langle r, s \rangle) = \left\{
     \begin{array}{lcl}
-      1 & \textrm{se} & H(\mathcal{V}(p_k, r, s), m) = r\\
+      1 & \textrm{se} & H(\mathcal{V}(pk, r, s), m) = r\\
       0 & \textrm{c.c.} &\\
     \end{array}
     \right.$
@@ -79,13 +79,13 @@ Ou seja, criptografamos a mensagem com a chave secreta para gerar a assinatura e
 Esse esquema não é seguro até aplicarmos o paradigma {\em hash-and-sign}.
 O esquema todo segue:
 \begin{itemize}
-\item $Gen(1^n) := \langle s_k, p_k \rangle$ em que:
+\item $Gen(1^n) := \langle sk, pk \rangle$ em que:
 \begin{itemize}
-\item $s_k := \langle N, e \rangle$ e
-\item $p_k := \langle N, d \rangle$
+\item $sk := \langle N, e \rangle$ e
+\item $pk := \langle N, d \rangle$
 \end{itemize}
-\item $Sign(s_k, m) := [H(m)^d\ mod\ N]$
-\item $Ver(p_k, m, t) := \left\{
+\item $Sign(sk, m) := [H(m)^d\ mod\ N]$
+\item $Ver(pk, m, t) := \left\{
     \begin{array}{lcl}
       1 & \textrm{se} & t^e \equiv H(m)\ mod\ N\\
       0 & \textrm{c.c.} &\\
@@ -124,17 +124,17 @@ Podemos transformar esse esquema de identificação em um sistema de assinatura 
 Assumiremos a existência de duas funções $H: \{0,1\}^* \to \mathbb{Z}_n$ e $F: \mathbb{G} \to \mathbb{Z}_n$:
 
 \begin{itemize}
-\item $Gen(1^n) = \langle s_k, p_k \rangle$ em que:
+\item $Gen(1^n) = \langle sk, pk \rangle$ em que:
 \begin{itemize}
-\item $s_k := x \leftarrow \mathbb{Z}_n$ e
-\item $p_k := \langle \mathbb{G}, g, y, n \rangle$ com $y = g^x$
+\item $sk := x \leftarrow \mathbb{Z}_n$ e
+\item $pk := \langle \mathbb{G}, g, y, n \rangle$ com $y = g^x$
 \end{itemize}
-\item $Sign(s_k, m) = \langle r, s \rangle$ em que:
+\item $Sign(sk, m) = \langle r, s \rangle$ em que:
   \begin{itemize}
   \item $r := F(g^k)$ com $k \leftarrow \mathbb{Z}_n$ e
   \item $s := [k^{-1} \cdot (H(m) + xr)\ mod\ q]$ (sorteamos outro $r$ caso $s = 0$)
   \end{itemize}
-\item $Ver(p_k, m, t) := \left\{
+\item $Ver(pk, m, t) := \left\{
     \begin{array}{lcl}
       1 & \textrm{se} & r = F(g^{H(m) \cdot s^{-1}} y^{r \cdot s^{-1}})\\
       0 & \textrm{c.c.} &\\

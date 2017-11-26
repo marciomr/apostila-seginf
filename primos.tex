@@ -1,0 +1,50 @@
+\chapter{Números Primos}
+\label{cha:primos}
+
+Para gerar uma chave no sistema RSA precisamos gerar primos grandes e aleatórios.
+Para garantir que o número tera uma quantidade $n$ de bits sorteamos $p' \leftarrow \{0,1\}^{n-1}$ e acrescentar um bit $1$ à esquerda.
+Caso o número não seja primos repetimos o processo.
+
+Um importante resultado de Teoria dos Números chamado {\em Teorema dos Nùmeros Primos} estabelece que dado um número $n$ escolhido ao acaso, a chance de ele ser primo é $\frac{1}{ln(n)}$.
+Se estamos buscando um número menor que $n$, precisamos em média chutar $ln(n)$ números até encontrar um primo ou metade disso se ignorarmos os pares.
+Para cada tentativa, porém, precisamos verificar se o valor gerado é de fato primo.
+A forma ingênua -- verificar cada um dos possíveis divisores -- é inviável.
+Assim, precisamos utilizar algum método eficiente de verificação de primos.
+
+A ideia que seguiremos é de procurar {\em testemunhas} de que um número é composto.
+Por exemplo, o Teorema de Euller garante que para todo $a \in \mathbb{Z}_n^\star$ temos que $a^{\phi(n)} \equiv 1\ mod\ n$.
+No caso em que $n$ é primo sabemos que $\phi(n) = n - 1$ que todo inteiro positivo $a$ é inversível em $\mathbb{Z}_n$.
+Podemos então escolher $a \leftarrow \mathbb{Z}_n$ e fazer $a^{n-1}\ mod\ n$, se este valor for diferente de $1$ sabemos que $n$ não é primo.
+Ou seja $a$ é uma testemunha de que $n$ não é primo.
+
+Infelizmente existe uma infinidade de números compostos que não possuem esse tipo de testemunha.
+Seja então $n - 1 = 2^ru$, temos que se $n$ é primo então a sequência $a^u, a^{2u}, \dots, a^{2^ru}$ em algum momento começa a produzir apenas $1$s.
+Mais do que isso, com este teste todo número composto possui uma quantidade grande de testemunhas -- metade dos valores $a$ são testemunhas.
+Assim, se testarmos $t$ valores de $a$ diferentes e escolhidos de maneira aleatória, a chance de todos os testes acusarem de maneira falsa que $a$ não é composto é $2^{-t}$.
+
+Essa estratégia dá origem ao algoritmo de Miller-Rabin \cite{Miller75,Rabin80} que é o teste de primalidade mais usado hoje em dia:
+
+\begin{codebox}
+\Procname{$\proc{MillerRabin}(n, t)$}
+\li \Comment Recebe $n, t \in \mathbb{Z}$
+\li \Comment Devolve {\tt composto} se $n$ é composto
+\li \Comment Devolve {\tt primo} se $n$ é primo com probabilidade $1 - 2^{-t}$
+\li \If $n$ for par
+\li   \Then \Return {\tt composto}
+    \End
+\li \If $n = n'^e$ para algum $n'$ e algum $e$
+\li   \Then \Return {\tt composto}
+    \End
+\li  Calcule $r$ e $u$ tais que $n-1 = 2^ru$
+\li \For $j = 1$ \To $t$
+\li   \Do sorteia $a$ em $\{1, \dots, n-1\}$ 
+\li   \For $i = 1$ \To $r-1$
+\li     \Do \If $a^u \neq \pm 1\ mod\ n$ e $a^{2^iu} \neq -1\ mod\ n$
+\li         \Then \Return {\tt composto}
+            \End
+      \End
+    \End
+\li \Return {\tt primo}
+\end{codebox}
+
+

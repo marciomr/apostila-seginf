@@ -24,8 +24,8 @@ O {\em handshake} consiste dos seguintes passos:
   Por meio de uma função de derivação de chave $KDF$ é então produzida outra chave $mk$ ({\em master key}) usando $pmk$, $N_C$ e $N_S$.
 Um PRG é usado para gerar quatro chaves $k_C$, $k_C'$, $k_S$ e $k_S'$.
 Por fim, $C$ produz um mac $t_C$ com a chave $mk$ de toda a comunicação entre as partes até este ponto e envia $t_C$ e $c_{pmk}$ para $S$.
-\item $S$ computa $Decaps(sk_S)$ para gerar $mk$ e então segue os mesmos passos de $C$ para recuperar $k_C$, $k_C'$, $k_S$ e $k_S'$.
-Então $S$ verifica $t_C$ e aborta o processo em caso de falha.
+\item $S$ computa $Decaps(sk_S, c_{pmk})$ para gerar $pmk$ e então segue os mesmos passos de $C$ para recuperar $k_C$, $k_C'$, $k_S$ e $k_S'$.
+Em seguida $S$ verifica $t_C$ e aborta o processo em caso de falha.
 Por fim, $S$ produz outro mac $t_S$ de toda a comunicação até aqui com a chave $mk$ e envia para $C$.
 \item $C$ verifica $t_S$ e aborta o processo se falhar.
 \end{enumerate}
@@ -76,31 +76,108 @@ O servidor verifica o host e confia que ele autenticou $C$.
 
 O PGP foi desenvolvido no começo dos anos 90 por Phil Zimmermann, um ativista do movimento contra o uso de armas nucleares.
 O protocolo utiliza criptografia assimétrica e o modelo de rede de confiança para certificação das chaves públicas.
-Assim cada usuário possui um par de chaves $\langle s_k, p_k \rangle$ e disponibiliza $p_k$ em um servidor de chaves.
+Assim cada usuário possui um par de chaves $\langle sk, pk \rangle$ e disponibiliza $pk$ em um servidor de chaves.
 Qualquer um pode verificar a autenticidade de uma chave -- conferindo seu fingerprint manualmente e a identidade do titula -- e publicar no mesmo servidor de chaves um certificado.
 Apesar da idade, o PGP é ainda hoje o principal protocolo de criptografia ponta a ponta para e-mails.
 
 Com protocolo PGP um usuário pode: criptografar uma mensagem, assinar uma mensagem ou assinar e criptografar a mensagem.
 \begin{itemize}
-\item {\em criptografia:} Alice sorteia uma chave de seção $k$, compacta a mensagem $m$ e criptografa o resultado $Z(m)$ com uma cifra de bloco $c = E(k,Z(m))$ então a chave $k$ é criptografada usando uma versão do algoritmo RSAou de El Gamal $c_k = E'(pk_B, k)$ e ambos $c$ e $c_k$ são enviados para Bob.
+\item {\em criptografia:} Alice sorteia uma chave de seção $k$, compacta a mensagem $m$ e criptografa o resultado $Z(m)$ com uma cifra de bloco em modo {\em Cipher Feedback} (CFB) $c = E(k, Z(m))$ então a chave $k$ é criptografada usando uma versão do algoritmo RSA ou de El Gamal $c_k = E'(pk_B, k)$ e ambos $c$ e $c_k$ são enviados para Bob.
   Bob então usa sua chave secreta $sk_B$ para recuperar $k$ e então usa $k$ para desctiptografar e por fim então descompatar $m$.
   Em poucas palavras, trata-se de um KEM tradicional com um passo de compactação.
-\item {\em autenticação}: Alice computa $H(m)$ e assina com sua chave secreta $sk_A$ usando o algoritmo RSA ou DSA, junta isso com a mensagem $m$ e compacta tudo para mandar para Bob.
+\item {\em autenticação}: Alice computa $H(m)$ e assina com sua chave secreta $sk_A$ usando o algoritmo RSA ou DSA $Sign(sk_A, H(m))$, junta isso com a mensagem $m$ e compacta tudo $Z(m||Sign(sk_A, H(m)))$ para mandar para Bob.
 Bob então decompacta a mensagem, calcula o hash e verifica a assinatura.
-Ou seja, trat-se de uma implementação simples do modelo {\em hash-and-sign}.
-\item {\em autenticação e criptografia}: Alice autentica a mensagem e em seguida criptografa e Bob faz os passos na ordem reversa. 
+Ou seja, trata-se de uma implementação simples do modelo {\em hash-and-sign}.
+\item {\em autenticação e criptografia}: Alice autentica a mensagem e em seguida criptografa $E(k, Z(m||Sign(sk_A, H(m))))$ e Bob faz os passos na ordem reversa. 
 \end{itemize}
+
+O modo {\em cipher feedback} (CFB) se assemelha bastante ao modo CBC que vimos anteriormente:
+
+\begin{eqnarray*}
+  c_0 & := & IV \leftarrow \{0,1\}^n\\
+  c_i & := & E(k, c_{i-1}) \xor m_i
+\end{eqnarray*}
+
 
 \section{Off The Record}
 \label{sec:otr}
 
+Enquanto o protocolo PGP foi concebido para comunicação assíncrona, estilo e-mail, modelando essencialmente o que seria o envio de uma carta selada, o protocolo OTR procura modelar uma conversa privada em uma comunicação síncrona, como um chat \cite{Borisov04}.
+Como o PGP, o OTR busca garantir autenticidade, integridade e confidencialidade na comunicação, mas além disso o protocolo tenta também garantir:
+\begin{itemize}
+\item {\em perfect foward secrecy}: caso alguém grave a comunicação cifrada entre as partes e eventualmente tenha acesso a chave de comunicação não será possível decifrar as mensagens antigas
+\item {\em negação plausível}: o destinatário da mensagem não deve ser capaz de provar a um terceiro quem foi o remetente da mensagem
+\end{itemize}
+
+Como outros protocolos que vimos, o OTR começa com um handshake.
+\begin{itemize}
+\item Alice gera $x_0$, produz $g^{x_0}$, assina com sua chave secreta e envia $Sig(sk_A, g^{x_0})$ e $g^{x_0}$ para Bob
+\item Bob então verifica a assinatura, gera $y_0$, produz $g^{y_0}$ e envia $Sign(sk_B, g^{y_0})$ e $g^{y_0}$ para Alice
+\end{itemize}
+
+Assumimos que Alice e Bob possuem cada qual a chave pública do outro.
+Eles podem verificar manualmente o fingerprint dessa chave ou usar algum outro protocolo para isso\footnote{No caso da comunicação síncrona é possível usar, por exemplo, o protocolo do milionário socialista para verificar se as partes compartilham alguma informação secreta}.
+Uma vez que as partes foram autenticadas, elas podem usar $k_{00} = H(g^{x_0y_0})$ como chave efêmera para encriptar as mensagens.
+O esquema de criptografia usado no OTR é o AES em modeo contador que é propositalmente maleável -- ou seja, é fácil injetar uma mensagem.
+A comuncação então segue os seguintes passos:
+\begin{itemize}
+\item Alice gera $x_1$, calcula $E(k_{00}, m_1) = c_1$ e $MAC(H(k_{00}), c_1 || g^{x_1}) = t_1 $ e envia $c_1$, $t_1$ e $g^{x_1}$ para Bob.
+\item Bob gera $y_1$ e calcula $k_{10} = H(g^{x_1y_0})$ e $g^{y_1}$ e então manda $E(k_{10}, m_2) = c_2$, $g^{y_1}$, $MAC(H(k_{10}), c_2 || g^{y_1}) = t_2$ e $H(k_{00})$ para Alice.
+O ponto importante aqui é que $t_1$ já cumpriu seu papel e então sua chave pode ser transmitida pelo canal inseguro. 
+\item Alice então pode esquecer (apagar) $x_1$ e gerar um novo $x_2$, caluclar $g^{x_2}$ e repitir todo o processo.
+\end{itemize}
+
+O {\em perfect foward secrecy} é garantido no processo de troca e esquecimento de chaves ({\em rechaveamento}).
+Já a {\em negação plausível} é ao se revelar a chave de do MAC e no uso de um esquema de criptografia maleável.
+
+
 \section{Signal}
 \label{sec:signal}
+
+O OTR foi concebido como um protocolo para criptografia ponta a ponta para comunicação síncrona.
+Os mensageiros modernos, porém, operam tipicamente de maneira assíncrona -- ou seja o usuário não precisa saber se a outra parte está ou não conectada na hora em que a mensagem é enviada.
+Essa característica traz alguns desafios particulares em termos de segurança.
+O protocolo do Signal (originalmente chamado de Axolotl) soluciona alguns desses problemas.
+
+Como seus antecessores, ele opera em duas fases: handshake e troca de mensagens.
+Quando o aplicativo é instalado, Alice gera uma chave permanente $A$ que fica armazenada no servidor responsável por distribui-la para seus contatos (no nosso exemplo Bob).
+Diferente do OTR, o handshake do Signal não usa assinaturas digitais e segue os seguintes passos.:
+\begin{itemize}
+\item Alice sorteia uma chave efêmera $a_0$ e envia $g^{a_0}$ para Bob.
+\item Bob sorteia uma chave efêmera $b_b$ e envia $g^{b_0}$ para Alice.
+\item Amabas as partes produzem três valores combinando suas chaves permanentes e efêmeras $g^{Ab_0}$, $g^{Ba_0}$ e $g^{a_0b_0}$.
+  Esses valores alimentam um HKDF que gera uma chave $rk_0$ chamada de chave raiz ({\em root key}).
+\end{itemize}
+
+Essa forma de handshake dispensa a implementação delicada de assinaturas digitais e fortalece a negação plausível.
+Alice pode garantir a autenticidade pois apenas Bob poderia gerar $g^{Ba_0}$, mas ela não tem como provar isso pois $a_0$ é um valor aleatório que não tem qualquer conexão com sua identidade.
+
+No OTR o rechaveamento ocorre sempre que uma comunicação se completa, ou seja, Alice escreve para Bob e Bob responde para Alice.
+Caso Alice escreva múltiplas mensagens para Bob sem resposta, a mesma chave é usada.
+A solução {\em ad hoc} que o OTR oferece para essa limitação é forçar que Bob responda uma mensagem vazia depois de um número máximo de mensagens recebidas.
+O Signal resolve esse problema de uma forma mais elegante.
+
+A chave raiz alimenta o KDF para gerar uma {\em chain key} $ck$ que por sua vez alimenta um MAC para gerar uma chave mestra ({\em master key}) $mk$.
+A {\em master key}, por fim, alimenta o KDF e gera as chaves para criptografar $k$ e autenticar $k'$ a mensagem a ser enviada.
+Quando um ciclo de comunicação se fecha, a rechaveamos a raiz (exatamente como no OTR), mas quando a mesma parte envia mais de uma mensagem geramos uma nova {\em chain key} e esquecemos a anterior.
+As chaves mestras são armazenadas até que sua mensagem correspondente chegue (por isso as mensagem precisam ser numeradas), mas note que a partir delas não é possível derivar as chaves das próximas mensagens ou das mensagens anteriores.
+Esse esquema chama-se {\em ratchet}.
+
+Os servidores do Signal armazenam um número de {\em pré-chaves} $g^a$ para cada usuário para o caso em que um handshake ocorra quando eles estão offline.
+Para garantir a autenticidade da chave permanente o protocolo segue o modelo do SSH.
+Ou seja, é possível verificar manualmente o {\em fingerprint} da chave, mas principalmente o que ocorre é a confiança no primeiro acesso (TOFU) e um aviso com destaque caso a chave mude.
+Por fim, as mensagens armazenadas no aparelho são criptografadas localmente com uma cifra de bloco AES e autenticação HMAC cujas chaves são geradas aleatóriamente e armazenadas também de maneira criptografada usando o PBKDF2.
+
+O protocolo do Signal foi originalmente implementado em um aplicativo open source de troca de SMS chamado Textsecure.
+Em XXX o Textsecure incorporou a capacidade de envio de mensagens via internet e em XXX mudou de nome para Signal.
+Em XXX os desenvolvedores do Signal implementaram esse protocolo no Whatsapp.
+Além de ser um aplicativo de código aberto, o Signal se diferencia do Whatsapp por sua política de privacidade.
+Enquanto o aplicativo do Facebook se reserva o direito de usar os metadados da comunicação comercialmente, o Signal armazena o mínimo desses dados -- apenas a data e hora da instalação e a data e hora da última conexão.
 
 %\section{Telegram}
 %\label{sec:telegram}
 
-\section{Blockchain}
-\label{sec:blockchain}
+%\section{Blockchain}
+%\label{sec:blockchain}
 
 

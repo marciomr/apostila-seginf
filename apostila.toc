@@ -50,27 +50,28 @@
 \contentsline {subsection}{\numberline {9.2.3}Fun\IeC {\c c}\IeC {\~o}es de Deriva\IeC {\c c}\IeC {\~a}o de Chaves}{77}
 \contentsline {section}{\numberline {9.3}Exerc\IeC {\'\i }cios}{78}
 \contentsline {chapter}{\numberline {10}Fun\IeC {\c c}\IeC {\~o}es de M\IeC {\~a}o \IeC {\'U}nica*}{79}
-\contentsline {section}{\numberline {10.1}Exerc\IeC {\'\i }cios}{83}
-\contentsline {chapter}{\numberline {11}Distribui\IeC {\c c}\IeC {\~a}o de Chaves}{85}
-\contentsline {section}{\numberline {11.1}Centro de Distribui\IeC {\c c}\IeC {\~a}o de Chaves}{85}
-\contentsline {subsection}{\numberline {11.1.1}Kerberos}{86}
-\contentsline {section}{\numberline {11.2}Protocolo de Diffie-Hellman}{87}
-\contentsline {section}{\numberline {11.3}Exerc\IeC {\'\i }cios}{90}
-\contentsline {chapter}{\numberline {12}Criptografia Assim\IeC {\'e}trica}{91}
-\contentsline {section}{\numberline {12.1}El Gammal}{93}
-\contentsline {section}{\numberline {12.2}RSA}{94}
-\contentsline {subsection}{\numberline {12.2.1}N\IeC {\'u}meros Primos*}{99}
-\contentsline {section}{\numberline {12.3}Exerc\IeC {\'\i }cios}{101}
-\contentsline {chapter}{\numberline {13}Assinaturas Digitais}{103}
-\contentsline {section}{\numberline {13.1}Esquemas de Identifica\IeC {\c c}\IeC {\~a}o}{104}
-\contentsline {section}{\numberline {13.2}Assinatura RSA}{105}
-\contentsline {section}{\numberline {13.3}Algoritmo de Assinatura Digital (DSA)}{106}
-\contentsline {section}{\numberline {13.4}Infraestrutura de Chaves P\IeC {\'u}blicas}{107}
-\contentsline {section}{\numberline {13.5}Exerc\IeC {\'\i }cios}{109}
-\contentsline {chapter}{\numberline {14}Protocolos}{111}
-\contentsline {section}{\numberline {14.1}Transport Layer Security}{111}
-\contentsline {section}{\numberline {14.2}Secure Shell}{112}
-\contentsline {section}{\numberline {14.3}Pretty Good Privacy}{113}
-\contentsline {section}{\numberline {14.4}Off The Record}{114}
-\contentsline {section}{\numberline {14.5}Signal}{114}
-\contentsline {section}{\numberline {14.6}Blockchain}{114}
+\contentsline {section}{\numberline {10.1}Exerc\IeC {\'\i }cios}{85}
+\contentsline {chapter}{\numberline {11}Distribui\IeC {\c c}\IeC {\~a}o de Chaves}{87}
+\contentsline {section}{\numberline {11.1}Centro de Distribui\IeC {\c c}\IeC {\~a}o de Chaves}{87}
+\contentsline {subsection}{\numberline {11.1.1}Kerberos}{88}
+\contentsline {section}{\numberline {11.2}Protocolo de Diffie-Hellman}{89}
+\contentsline {section}{\numberline {11.3}Exerc\IeC {\'\i }cios}{94}
+\contentsline {chapter}{\numberline {12}Criptografia Assim\IeC {\'e}trica}{95}
+\contentsline {section}{\numberline {12.1}El Gammal}{96}
+\contentsline {section}{\numberline {12.2}RSA}{97}
+\contentsline {section}{\numberline {12.3}Exerc\IeC {\'\i }cios}{102}
+\contentsline {chapter}{\numberline {13}Sistemas H\IeC {\'\i }bridos}{103}
+\contentsline {section}{\numberline {13.1}El Gammal}{104}
+\contentsline {section}{\numberline {13.2}RSA}{105}
+\contentsline {chapter}{\numberline {14}Assinaturas Digitais}{107}
+\contentsline {section}{\numberline {14.1}Esquemas de Identifica\IeC {\c c}\IeC {\~a}o}{108}
+\contentsline {section}{\numberline {14.2}Assinatura RSA}{109}
+\contentsline {section}{\numberline {14.3}Algoritmo de Assinatura Digital (DSA)}{110}
+\contentsline {section}{\numberline {14.4}Infraestrutura de Chaves P\IeC {\'u}blicas}{111}
+\contentsline {section}{\numberline {14.5}Exerc\IeC {\'\i }cios}{113}
+\contentsline {chapter}{\numberline {15}Protocolos}{115}
+\contentsline {section}{\numberline {15.1}Transport Layer Security}{115}
+\contentsline {section}{\numberline {15.2}Secure Shell}{116}
+\contentsline {section}{\numberline {15.3}Pretty Good Privacy}{117}
+\contentsline {section}{\numberline {15.4}Off The Record}{119}
+\contentsline {section}{\numberline {15.5}Signal}{120}

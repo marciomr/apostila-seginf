@@ -20,7 +20,7 @@ Formalmente definimos função de mão única por meio do seguinte jogo:
 O desafio do adversário é produzir uma pré-imagem de $f$, ou seja, um $x'$ tal que $f(x') = y$:
 
 \begin{displaymath}
-  Invert_{\mathcal{A}, f}(n) := \left\{
+  Inv_{\mathcal{A}, f}(n) := \left\{
     \begin{array}{lcl}
       1 & \textrm{se} & f(x') = y\\
       0 & \textrm{c.c.} &\\
@@ -33,7 +33,7 @@ Uma função $f: \{0,1\}^n \to \{0,1\}^n$ é de mão única se:
 \item $f$ pode ser computada de maneira eficiente (polinomial) e
 \item Para todo adversário eficiente $\mathcal{A}$ existe $\varepsilon$ desprezível tal que:
 \begin{displaymath}
-  Pr[Invert_{\mathcal{A}, f}(n) = 1] \leq \varepsilon(n)
+  Pr[Inv_{\mathcal{A}, f}(n) = 1] \leq \varepsilon(n)
 \end{displaymath}
 \end{enumerate}
 
@@ -141,7 +141,44 @@ O teorema a seguir mostra a condição reversa, ou seja, que a existência de fu
 \end{theorem}
 
 \begin{proof}
-  % Esta pretendo fazer passo a passo
+Seja $\Pi = \langle Gen, E, D \rangle$ um sistema de criptografia seguro contra ataques ``ciphertext only''.
+Seja $|k| = n$, $|m| = 2n$ e $r$ os bits aleatórios usados em $E$ (nos casos que vimos seria o IV) com $|r| = l(n)$ onde $l$ é um polinômio qualquer.
+Construímos uma função da seguinte forma:
+\begin{displaymath}
+  f(k, m, r) := E(k, m||r)||m
+\end{displaymath}
+
+Vamos mostrar que $f$ é uma função de mão única.
+Seja $\mathcal{A}$ um adversário para o problema de inverter $f$.
+Vamos construir $\mathcal{A}'$ um adversário para $\Pi$ da seguinte forma:
+\begin{enumerate}
+\item Escolhe $m_0, m_1 \leftarrow \{0,1\}^{2n}$ e devolve $c$
+\item Roda $\mathcal{A}(c||m_0)$ para obter $k'$, $m'$ e $r'$.
+Se $f(k', m', r') = c ||m_0$ devolve $0$, se não devolve $1$.
+\end{enumerate}
+ 
+Note que se $E(k,m_0) = c$ então $c||m_0$ tem distribuição identica a $f(k, m_0, r)$.
+Portanto, temos que $\mathcal{A}'$ perde o jogo com probabilidade $Pr[Inv_{\mathcal{A}, f}(n) = 1]$.
+Por outro lado se $E(k, m_1) = c$ então $c$ é independente de $m_0$ e portanto a probabilidade de $D(k, c) = m_0 $ é $\frac{2^n}{2^{2n}} = 2^{-n}$.
+Temos então o seguinte:
+
+
+\begin{eqnarray*}
+  Pr[PrivK_{\Pi, \mathcal{A}'}^{eav}(n) = 1] & = & \frac{Pr[\mathcal{A}' = 0 | b = 0]}{2} + \frac{Pr[\mathcal{A}' = 1 | b = 1]}{2}\\
+  & \geq & \frac{Pr[Inv_{\mathcal{A},f}(n) = 1]}{2} + \frac{1 - 2^{-n}}{2}\\
+  & = & \frac{1}{2} + \frac{Pr[Inv_{\mathcal{A},f}(n) = 1] - 2^{-n}}{2}
+\end{eqnarray*}
+
+Nossa suposição de que $\Pi$ é seguro contra ataques do tipo ``chosen plaintext'' implica que existe $\varepsilon$ desprezível tal que $Pr[PrivK_{\Pi, \mathcal{A}'}^{eav}(n) = 1] \leq \frac{1}{2} + \varepsilon(n)$ e portanto:
+
+ \begin{eqnarray*}
+  \frac{1}{2} + \frac{Pr[Inv_{\mathcal{A},f}(n) = 1] - 2^{-n}}{2} & \leq & \frac{1}{2} + \varepsilon(n)\\
+  \frac{Pr[Inv_{\mathcal{A},f}(n) = 1] - 2^{-n}}{2} & \leq & \varepsilon(n)\\
+  Pr[Inv_{\mathcal{A},f}(n) = 1] & \leq & 2\varepsilon(n) + 2^{-n}\\
+\end{eqnarray*}
+
+Como $2\varepsilon(n) + 2^{-n}$ é desprezível, concluímos que $f$ é uma função de mão única.
+
 \end{proof}
 
 \begin{figure}[htbp]
@@ -156,8 +193,8 @@ Porém, não temos uma demonstração matemática desta afirmação.
 Suponha que conseguissemos mostrar que $f$ é uma função de mão única.
 Por definição temos que $f(x)$ deve ser computável em tempo polinomial.
 Se sabemos que $f^{-1}(x) = y$ então podemos verificar isso em tempo polinomial testando se $f(y) = x$.
-Em outras palavras, $f$ é um oráculo polinomial para $f^{-1}$, ou seja, $Invert_f(n) \in NP$.
-A definiçao de função de mão única estabelece que $Invert_f(n) \notin P$.
+Em outras palavras, $f$ é um oráculo polinomial para $f^{-1}$, ou seja, $Inv_f(n) \in NP$.
+A definiçao de função de mão única estabelece que $Inv_f(n) \notin P$.
 Portanto, se existe uma função de mão única temos que $P \neq NP$.
 A relação entre os problemas polinomais $P$ e os problemas para os quais existe um oráculo polinomial $NP$ é o problema em aberto mais importante na ciência da computação e um dos mais importantes em aberto na matemática.
 

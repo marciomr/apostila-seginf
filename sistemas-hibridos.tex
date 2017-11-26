@@ -1,0 +1,97 @@
+\chapter{Sistemas Híbridos}
+\label{cha:sistemas-hibridos}
+
+Os sistemas de criptografia assimétricos que vimos no capítulo anterior são pelo menos uma ordem de grandesa menos eficientes do que os sistemas de criptografia simétrica que vimos anteriormente.
+Além disso, é difícil garantir a segurança desses sistemas pra mensagens em qualquer distribuição de probabilidades.
+Por esses motivos, o modelos mais popular de criptografia assimétrica segue um modelo híbrido dividido em duas fases: uma fase de encapsulamento de chave (KEM) seguido de uma fase de encapsulamento dos dados (DEM).
+
+Um {\em mencanismo de encapsulamento de chave} (KEM) é um sistema $\Pi = \langle Gen, Encaps, Decaps \rangle$ tal que:
+\begin{itemize}
+\item $Gen(1^n) := \langle sk, pk \rangle$ em que $pk$ é uma chave pública e $sk$ uma chave secreta
+\item $Encaps$ recebe a chave pública $pk$ e o parâmetro de segurânça $1^n$ e produz uma cifra $c$ e uma chave $k \in \{0,1\}^{l(n)}$
+\item $Decaps$ recebe a chave secreta $sk$ e a cifra $c$ e produz uma chave.
+\end{itemize}
+ 
+Um sistema KEM em que $Encaps(pk, 1^n) = \langle c, k \rangle$ é {\em correto} se:
+\begin{displaymath}
+  Decaps(sk, c) =  k
+\end{displaymath}
+
+Um sistema KEM é {\em seguro contra CPA} se um adversário polinomial não é capaz de distinguir com probabilidade considerável a chave produzida por $Encaps$ de uma chave de mesmo tamanho escolhida aleatóriamente.
+Se $\Pi_K = \langle Gen_K, Encaps, Decaps \rangle$ é um KEM seguro contra CPA, e $\Pi' = \langle Gen', E', D' \rangle$ é um sistema de criptografia simétrica seguro contra ataques ``ciphertext only'' então o seguinte sistema $\Pi = \langle Gen, E, D \rangle$, chamado de {\em híbrido}, é seguro contra CPA:
+
+\begin{itemize}
+\item $Gen(1^n) := Gen_k(1^n) = \langle sk, pk \rangle$
+\item $E(pk, m) := \langle c_k, c \rangle$ em que: 
+\begin{itemize}
+\item $Encaps(pk, 1^n) = \langle c_k, k \rangle$ e
+\item $E'(k, m) = c$
+\end{itemize}
+\item $D(sk,\langle c_k, c \rangle) = m$ tal que:
+\begin{itemize}
+\item $Decaps(sk, c_k) = k$ e
+\item $D'(k, c) = m$
+\end{itemize}
+\end{itemize}
+
+Uma forma natural de produzir um KEM é produzir uma chave $k$ e usar um sistema de criptografia assimétrica $\Pi$ para criptografar a chave.
+Esse esquema é seguro desde que o sistema desde que $\Pi$ seja seguro, mas veremos que existem sistemas mais eficientes em determinados casos.
+
+\section{El Gammal}
+\label{sec:el-gammal}
+
+O principal inconveniente do sistema de El Gammal é que $M = \mathbb{G}$.
+Ou seja, as mensagens devem ser elementos do grupo e não sequências arbitrárias de bits.
+Não se deve restringir que mensagens os usuários devem ser capazes de trocar por conta de uma questão técnica como essa.
+Uma forma de resolver esse problema é utilizando um sistema híbrido.
+
+Uma forma de obter um sistema híbrido é simplemente usando o sistema de El Gamal para criptografar uma chave.
+Ao invés disso, porém, podemos construir o seguinte KEM:
+
+\begin{itemize}
+\item $Gen(1^n) := \langle sk, pk \rangle$ em que e $\mathcal{G}(1^n) := \langle \mathbb{G}, g \rangle$, 
+\begin{itemize}
+\item $sk = \langle \mathbb{G}, g, x \rangle$ com $x \leftarrow \mathbb{Z}_n$ e
+\item $pk = \langle \mathbb{G}, g, h, H \rangle$ com $H: \mathbb{G} \to \{0,1\}^{l(n)}$ e $h = g^x$
+\end{itemize}
+\item $Encaps(pk, 1^n) = \langle g^y, H(h^y)\rangle$ em que $y \leftarrow \mathbb{Z}_n$
+\item $Decaps(sk, c) = H(c^x)$
+\end{itemize}
+
+A função $H$ é simplesmente uma função de hash.
+Temos assim que $Decaps(sk, g^y) = H((g^y)^x) = H(g^{xy}) = k$, pois $k = H(h^y) = H(g^{xy})$.
+É possível provar que este mecanismo de encapsulamento de chaves é tão seguro quanto o protocolo de Diffie-Helmann.
+Usamos então $k$ como chave para criptografar uma mensagem com um sistema de criptografia simétrica para produzir um sistema híbrido.
+Como já enunciamos, se o sistema de criptografia simétrico usado for seguro contra ataques ``ciphertext only'' então o sistema híbrido será seguro sob CPA.
+
+\section{RSA}
+\label{sec:rsa}
+
+Como no caso da cifra de El Gamal, podemos construir um Mecanismo de Encapsulamento a partir do RSA.
+A construção segue os seguintes passos:
+\begin{itemize}
+\item $Gen(1^n) := \langle sk, pk \rangle$ em que:
+\begin{itemize}
+\item $pk = \langle N, e \rangle$
+\item $sk = \langle N, d' \rangle$ em que $d' = [d^n\ mod\ \phi(N)]$
+\end{itemize}
+\item $Encaps(pk, 1^n) = \langle c_{n+1}, k \rangle$ em que $c_1 \leftarrow \mathbb{Z}_N^\star$:
+\begin{itemize}
+\item $k_i := \textrm{\tt lsb}(c_i)$ e
+\item $c_{i+1} := [c_i^e\ mod\ N]$
+\end{itemize}
+\item $Decaps(sk, c) = k'$ em que $c_1' = [c^{d'}\ mod\ N]$ e:
+\begin{itemize}
+\item $k_i := \textrm{\tt lsb}(c_i)$ e
+\item $c_{i+1} := [c_i^e\ mod\ N]$
+\end{itemize}
+\end{itemize}
+
+Em palavras, a ideia é criptografar o primeiro bit de $k$ usando o último bit de $[c^e\ mod\ N]$ para um $c$ escolhido aleatóriamente em $\mathbb{Z}_N^\star$.
+O segundo bit de $k$ é computado usando o último de $[c^{e^2}\ mod\ N]$ e assim por diante.
+Ao final o algoritmo $Encaps$ devole o $k$ obtido e $[c^{e^n}\ mod\ N]$.
+Para decifrar partimos de $[c^{e^n}\ mod\ N]$ e elevamos a $d^n$ para recuperar o $c$ original e então repetimos exatamente o mesmo processo do algoritmo $Encaps$ para extrair cada um dos bits de $k$.
+
+É possível mostrar que esta construção produz um KEM seguro e, portanto, pode ser usado para produzir um sistema híbrido seguro contra CPA como vimos.
+Construir um sistema RSA seguro contra CCA requer uma série de modificações nos esquemas que vimos até aqui, cujos detalhes omitiremos.
+A especificação de um sistema RSA seguro contra CCA foi formalizada em um sistema chamado {\tt RSA PKCS \#1 v2.0}.
