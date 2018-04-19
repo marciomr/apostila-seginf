@@ -241,6 +241,23 @@ Mostre que o gerador $G$ com fator de expansão $l(n) = n + 1$ que recebe $s \in
 Mostre como construir um algoritmo eficiente $D$ capaz de distinguir as sequências de bits produzidas pelo RC4 de uma sequência realmente aleatória.
 \end{exercicio}
 
+
+\begin{exercicio}
+  Considere o seguinte par de algoritmos $\langle Init, GenBits \rangle$:
+\begin{itemize}
+\item $Init$ recebe $k \leftarrow \{0,1\}^{80}$ e produz o estado inicial $st_0 = k$.
+\item $GenBits$ recebe um estado $st_i$ e faz o seguinte:
+\begin{itemize}
+\item Produz um bit de saída $y$ como o {\tt xor} de todos os bits
+\item Move todos os bits de $st_i$ uma posição para a direita
+\item Insere $y$ na posição vazia mais a esquerda para produzir $st_{i+1}$
+\end{itemize}
+\end{itemize}
+
+Mostre que este par de algoritmos não é um gerador de números pseudo-aleatórios apresentando um algoritmo polinomial $D$ capaz uma sequência de bits produzida por ele de uma sequência aleatória com uma probablidade considerável.
+\end{exercicio}
+
+
 \begin{exercicio}
   Considere a seguinte implementação de uma cifra de fluxo:
 \begin{enumerate}
