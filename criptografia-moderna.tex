@@ -70,7 +70,7 @@ Estamos agora em condições de reescrever a definição de segurança formalmen
 \begin{definition}
   Considere o jogo apresentado no Capítulo \ref{cha:sigilo-perfeito}, um sistema $\Pi = \langle Gen, E, D \rangle$ é seguro contra ataques {\em ciphertext-only} se para todo adversário polinomial $\mathcal{A}$ existe uma função desprezível $\varepsilon$ tal que para todo $n$:
 \begin{displaymath}
-  Pr[PrivK^{eav}_{\Pi, \mathcal{A}}(n) = 1] \leq \frac{1}{n} + \varepsilon(n)
+  Pr[PrivK^{eav}_{\Pi, \mathcal{A}}(n) = 1] \leq \frac{1}{2} + \varepsilon(n)
 \end{displaymath}
 \end{definition}
 
@@ -91,4 +91,23 @@ Resta mostrar um sistema que satisfaça essa definição.
 \begin{exercicio}
   Seja $\varepsilon$ uma função desprezível e $p$ um polinômio. 
   Mostre que $p\varepsilon$ é desprezível.
+\end{exercicio}
+
+
+\begin{exercicio}
+  Quais as vantagens da abordagem assintótica na definição da garantia de segurança?
+\end{exercicio}
+
+\begin{exercicio}
+  Por que representamos o parâmetro de segurança em notação unária?
+\end{exercicio}
+
+\begin{exercicio}
+  Considere um sistema $\Pi$ seguro contra ataques {\em ciphertext only} cujo parâmetro de segurança tem $128$ bits ($n = 128$) e um adversário polinomial que derrota o sistema com probabilidade $\frac{1}{2} + \frac{1}{2^{n/4}}$.
+Com que probabilidade esse adversário derrotaria o sistema se dobrassemos $n$?
+\end{exercicio}
+
+\begin{exercicio}
+  Considere um sistema $\Pi$ seguro contra ataques {\em ciphertext only} cujo parâmetro de segurança tem $128$ bits ($n = 128$) e um adversário que roda um algoritmo que derrota o sistema com probabilidade $1$ em $2^{n/8}$ passos.
+  Quantos passos seriam necessários para esse algoritmo derrotar um sistema se dobrássemos $n$? E se quadrupicássemos $n$?
 \end{exercicio}
