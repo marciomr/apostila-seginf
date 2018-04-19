@@ -187,7 +187,8 @@ Seja $\Pi = \langle Gen, E, D \rangle$ um sistema que garante o sigilo perfeito,
 \end{theorem}
 \begin{proof}
   Consideraremos $M(c)$ como o conjuto de todas as mensagens que podem produzir $c$, ou seja, as mensagens $m \in M$ tal que $E(k, m) = c$ para algum $k \in K$.
-  É claro que $|M(c)| \leq |K|$.
+  Se existissem $m' \neq m''$ tais que $E(k, m') = E(k, m'') = c$ então $\Pi$ não poderia ser correto, pois $D(k, c)$ não poder ser $m'$ e $m''$ ao mesmo tempo. 
+  Portanto o número de mensagem que podem ser cifradas como $c$ é menor ou igual ao número de chave, ou em símbolos, $|M(c)| \leq |K|$.
   Agora suponha por absurdo que $|K| < |M|$.
   Neste caso existiria uma mensagem $m \notin M(c)$ e, portanto, $Pr[M = m] \neq 0$.
   Mas, por definição, temos que $Pr[C = c | M = m] = 0$ contradizendo a hipótese deu que $\Pi$ garante o sigilo perfeito. 
