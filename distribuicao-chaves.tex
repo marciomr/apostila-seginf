@@ -19,6 +19,23 @@ Quando Alice quer se comunicar com Bob os seguintes passos são seguidos:
 \item Alice então encaminha $E(k_B, k)$ para Bob.
 \end{enumerate}
 
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+\node (alice) at (0, 2){Alice};
+\node (bob) at (10, 2) {Bob};
+\node (servidor) at (5, 2) {Administrador};
+
+\node (k1) at (0,0) {$k$};
+\node (k2) at (10,-1) {$k$};
+
+\path[->] (0,1) edge node[above]{$Id_B$} (5,1);
+\path[->] (5,0) edge node[above]{$E(k_A,k), E(k_B,k)$} (k1);
+\path[->] (0,-1) edge node[above]{$E(k_B,k)$} (k2);
+\end{tikzpicture}
+\end{center}
+
+% Aqui eu devia colocar um diagrama
+
 Depois da conversa Alice deve descartar a chave efêmera e eventualmente pedir uma nova para o administrador quando precisar voltar a se comunicar com Bob.
 
 Uma implementação bastante popular do modelo KDC é o protocolo Kerberos.
