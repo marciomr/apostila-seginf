@@ -20,24 +20,11 @@ Quando Alice quer se comunicar com Bob os seguintes passos são seguidos:
 \end{enumerate}
 
 Depois da conversa Alice deve descartar a chave efêmera e eventualmente pedir uma nova para o administrador quando precisar voltar a se comunicar com Bob.
-Vamos descrever uma implementação popular do modelo KDC chamada Kerberos.
 
+Uma implementação bastante popular do modelo KDC é o protocolo Kerberos.
+Uma apresentação compreensível do protocolo está disponível no livro de Paar e Pelzl \cite{Paar09}\footnote{Ou em uma aula gravada e disponível em: https://www.youtube.com/watch?v=iaH8UG2yMg4}.
 
-\subsection{Kerberos}
-\label{sec:kerberos}
-
-O protocolo de Kerberos é uma implementação do modelo KDF.
-Para garantir que as partes tenham acesso à mesma chave efêmera, o protocolo precisa garantir a autenticidade na comunicação entre Alice e o administrador -- para isso é usada uma técnica chamada de {\em desafio-resposta} -- e precisa evitar ataques de repetição -- para isso o administrador estabelece um tempo de vida para a chave efêmera e cada mensagem deve conter um timestamp.
-O protocolo segue os seguintes passos:
-\begin{enumerate}
-\item Alice gera um valor aleatório $r$ ({\em desafio}) e envia este valor para o KDC junto com sua identidade $ID_A$ e a de Bob $ID_B$
-\item O KDC gera a chave efêmera $k$, o seu {\em tempo de vida} $t$ e envia para  Alice $E(k_A, r||ID_B||t) = c_A$ e $E(k_B, ID_A||t) = c_B$
-\item Alice decifra $c_A$, verifica o desafio, verifica $ID_B$ e $t$, gera um {\em timestamp} $t_S$, criptografa $E(k, ID_A||t_S) = c$ e envia $c_B, c$ para Bob
-\item Bob, então, decifra $c_B$ com sua chave e verifica $t$ e decifra $c$ com a chave efêmera e verifica $ID_A$ e $t_S$.
-\item As partes podem se comunicar usando a chave efêmera $k$ até que $t_S > t$.
-\end{enumerate}
-
-Além de pressupor a existência de um administrador confiável que gerencie todas as chaves permanentes, esse modelo possui o que chamamos de {\em ponto único de falha}.
+Além de pressupor a existência de um administrador confiável que gerencie todas as chaves permanentes, os modelo baseados em KDC possuem o que chamamos de {\em ponto único de falha}.
 Se o servidor do administrador sair do ar, por exemplo, todas as comunicações seguras ficarão impedidas.
 Ou seja, mesmo em um ambiente fechado e com hierarquia estabelecida esse modelo não é ideal, em um ambiente aberto ele é totalmente inadequado.
 
