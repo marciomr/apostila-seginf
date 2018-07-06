@@ -1,9 +1,6 @@
 \chapter{Criptografia Assimétrica}
 \label{cha:criptografia-assimetrica}
 
-% Pensando em reestruturar esse capítulo 
-% jogando toda a parte de KEM para um próximo
-
 Concluímos o capítulo anterior apresentando um protocolo de troca de chaves que não requer que as partes se encontrem pessoalmente -- ou com um terceiro confiável -- em nenhum momento.
 Essa ideia revolucionária foi proposta inicialmente em um artigo seminal de Diffie e Hellman \cite{Diffie76}.
 Neste mesmo artigo os autores propõe a possibilidade de construção de um esquema de {\em criptografia assimétrico}.
@@ -73,13 +70,6 @@ Isso não causa nenhum efeito deletério à segurança do sistema.
 
 \section{RSA}
 \label{sec:rsa}
-
-% Reorganizar essa seção
-% Lemma divisores comuns
-% Algoritmo Extendido de Euclides
-% Prova da Correção do Algoritmo
-% Condição para um número ter inverso em Zn
-% Teorema de Euler 
 
 Em 1978 Rivest, Shamir e Adelman apresentaram o primeiro sistema de criptografia assimétrica conforme concebido um ano antes por Diffie e Hellman \cite{Rivest78}.
 Diferente do protocolo de seus colegas e do sistema de El Gamal que se baseiam na dificuldade do problema do logaritmo discreto, o sistema RSA dependende da dificuldade de outro problema matemático, o problema da fatoração.
@@ -323,6 +313,47 @@ A construção apresentada acima é chamada de RSA simples ({\em plain RSA}) e �
 Um mecanismo para torná-la mais segura é sortear uma sequência de bits $r$ aleatóriamente e usar $m' = r||m$ como mensagem.
 O mecanismo segue de maneira identica, a única diferença é que ao decifrar se recupera $r||m$ e então é preciso descartar os primeiros bits.
 Essa versão é chamada {\em padded RSA} e uma adaptação dela é usada no padrão {\tt RSA PKCS \#1 v1.5} usada na prática.
+
+\section{Sistemas Híbridos}
+\label{sec:sistemas-hibridos}
+
+Os sistemas de criptografia assimétricos que vimos são pelo menos uma ordem de grandesa menos eficientes do que os sistemas de criptografia simétrica que vimos anteriormente.
+Além disso, é difícil garantir a segurança desses sistemas pra mensagens em qualquer distribuição de probabilidades.
+Por esses motivos, o modelos mais popular de criptografia assimétrica segue um modelo híbrido dividido em duas fases: uma fase de encapsulamento de chave (KEM) seguido de uma fase de encapsulamento dos dados (DEM).
+
+Um {\em mencanismo de encapsulamento de chave} (KEM) é um sistema $\Pi = \langle Gen, Encaps, Decaps \rangle$ tal que:
+\begin{itemize}
+\item $Gen(1^n) := \langle sk, pk \rangle$ em que $pk$ é uma chave pública e $sk$ uma chave secreta
+\item $Encaps$ recebe a chave pública $pk$ e o parâmetro de segurânça $1^n$ e produz uma cifra $c$ e uma chave $k \in \{0,1\}^{l(n)}$
+\item $Decaps$ recebe a chave secreta $sk$ e a cifra $c$ e produz uma chave.
+\end{itemize}
+ 
+Um sistema KEM em que $Encaps(pk, 1^n) = \langle c, k \rangle$ é {\em correto} se:
+\begin{displaymath}
+  Decaps(sk, c) =  k
+\end{displaymath}
+
+Um sistema KEM é {\em seguro contra CPA} se um adversário polinomial não é capaz de distinguir com probabilidade considerável a chave produzida por $Encaps$ de uma chave de mesmo tamanho escolhida aleatóriamente.
+Se $\Pi_K = \langle Gen_K, Encaps, Decaps \rangle$ é um KEM seguro contra CPA, e $\Pi' = \langle Gen', E', D' \rangle$ é um sistema de criptografia simétrica seguro contra ataques ``ciphertext only'' então o seguinte sistema $\Pi = \langle Gen, E, D \rangle$, chamado de {\em híbrido}, é seguro contra CPA:
+
+\begin{itemize}
+\item $Gen(1^n) := Gen_k(1^n) = \langle sk, pk \rangle$
+\item $E(pk, m) := \langle c_k, c \rangle$ em que: 
+\begin{itemize}
+\item $Encaps(pk, 1^n) = \langle c_k, k \rangle$ e
+\item $E'(k, m) = c$
+\end{itemize}
+\item $D(sk,\langle c_k, c \rangle) = m$ tal que:
+\begin{itemize}
+\item $Decaps(sk, c_k) = k$ e
+\item $D'(k, c) = m$
+\end{itemize}
+\end{itemize}
+
+Uma forma natural de produzir um KEM é produzir uma chave $k$ e usar um sistema de criptografia assimétrica $\Pi$ para criptografar a chave.
+Esse esquema é seguro desde que o sistema desde que $\Pi$ seja seguro, mas veremos que existem sistemas mais eficientes em determinados casos.
+O Apêndice \ref{cha:sistemas-hibridos} apresenta dois sistemas híbridos: um baseado no problema do logartimo discreto e outro no problema da fatoração.
+
 
 
 \section{Exercícios}
