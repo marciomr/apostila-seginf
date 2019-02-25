@@ -257,6 +257,11 @@ Outra possível solução para o terceiro problema é manter duas chaves indepen
 Tanto o contador $ctr_{AB}$ quanto o bit de direção $b_{AB}$ devem ser concatenados a mensagem antes de criptografá-la.
 No Capítulo \ref{} veremos protocolos completos de segurança e voltaremos nesses detalhes.
 
+Aqui encerramos os sistemas de criptografias que se baseiam no modelo simétrico. 
+Seguindo a abordagem moderna explicitamos as suposições necessária para provar a segurança de diversos sistemas de criptografia e autenticação.
+O apêndice \ref{cha:owf} busca encontrar a suposição mínima que precisamos fazer para conseguir construir os sistemas que vimos até aqui, a saber, a existência de {\em funções de mão única}.
+Além de servir como um bom resumo do que vimos até aqui, o apêndice procure justificar o porquê precisamos partir de determinadas suposições e não simplesmente provamos essas propriedades para cada sistema.
+
 \section{Exercicios}
 \label{sec:exercicios}
 
@@ -271,3 +276,13 @@ No Capítulo \ref{} veremos protocolos completos de segurança e voltaremos ness
   Mostre que a função $encode$ que insere o tamanho da mensagem no começo e completa o último bloco com uma sequência de $0$s não admite prefixo.
 \end{exercicio}
 
+\begin{exercicio}
+  Seja $f$ uma função pseudo-aleatória e considere o sistema $\Pi = \langle Gen, E, D \rangle$ uma cifra de bloco que aplica $f$ no modo contador.
+  Suponha que Alice e Bob compartilham uma chave secreta $k$.
+  Considere os seguintes cenários:
+  \begin{enumerate}
+  \item Alice enviar $E(k, m)$ para Bob que descriptografa usando a chave $k$
+  \item Alice gera um checksum $H(m)$ da mensagem e envia $H(m)||m$ para Bob que pode verificar o checksum antes de ler a mensagem
+  \end{enumerate}
+  Algum desses cenários garante que a mensagem lida por Bob é idêntica a mensagem que foi enviada por Alice? Por que? Caso nenhum dos cenários garanta isso, descreva como poderíamos fazê-lo. 
+\end{exercicio}

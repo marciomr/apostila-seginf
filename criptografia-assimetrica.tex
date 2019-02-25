@@ -1,9 +1,6 @@
 \chapter{Criptografia Assimétrica}
 \label{cha:criptografia-assimetrica}
 
-% Pensando em reestruturar esse capítulo 
-% jogando toda a parte de KEM para um próximo
-
 Concluímos o capítulo anterior apresentando um protocolo de troca de chaves que não requer que as partes se encontrem pessoalmente -- ou com um terceiro confiável -- em nenhum momento.
 Essa ideia revolucionária foi proposta inicialmente em um artigo seminal de Diffie e Hellman \cite{Diffie76}.
 Neste mesmo artigo os autores propõe a possibilidade de construção de um esquema de {\em criptografia assimétrico}.
@@ -74,13 +71,6 @@ Isso não causa nenhum efeito deletério à segurança do sistema.
 \section{RSA}
 \label{sec:rsa}
 
-% Reorganizar essa seção
-% Lemma divisores comuns
-% Algoritmo Extendido de Euclides
-% Prova da Correção do Algoritmo
-% Condição para um número ter inverso em Zn
-% Teorema de Euler 
-
 Em 1978 Rivest, Shamir e Adelman apresentaram o primeiro sistema de criptografia assimétrica conforme concebido um ano antes por Diffie e Hellman \cite{Rivest78}.
 Diferente do protocolo de seus colegas e do sistema de El Gamal que se baseiam na dificuldade do problema do logaritmo discreto, o sistema RSA dependende da dificuldade de outro problema matemático, o problema da fatoração.
 
@@ -128,6 +118,7 @@ Podemos considerar $\langle \mathbb{Z}_n, \cdot \rangle$ em que a multiplicaçã
 A seguinte proposição estabelece uma condição necessária e suficiente para que $a$ possua inverso em $\langle \mathbb{Z}_n, \cdot \rangle$:
 
 \begin{proposition}
+\label{prop:inverso}
 Um número $a$ possui inverso em $\langle \mathbb{Z}_n, \cdot \rangle$ se e somente se $mdc(a,n) = 1$.
 \end{proposition}
 \begin{proof}
@@ -216,7 +207,7 @@ Note que se $mdc(a,n) = 1$ então o Algoritmo Extendido de Euclides devolve $X$ 
 Se fizermos essa conta em $\mathbb{Z}_n$ temos que $Xa \equiv 1\ (mod\ n)$.
 Ou seja, para os elementos $a \in \mathbb{Z}_n^\star$ o AEE nos dá uma forma de computar o inverso.
  
-Não é difícil mostrar que $\langle \mathbb{Z}_n^\star, \cdot \rangle$ (Exercício \ref{}) é um grupo visto que todos os elementos possuem inverso por definição.
+Não é difícil mostrar que $\langle \mathbb{Z}_n^\star, \cdot \rangle$ é um grupo visto que todos os elementos possuem inverso por definição (Exercício \ref{ex:euler}).
 A {\em função de Euler} atribui a cada $n$ o tamanho de $\mathbb{Z}_n^\star$:
 
 \begin{displaymath}
@@ -256,8 +247,8 @@ Se lembrarmos o algoritmo que $\proc{FastExp}$ notaremos que uma boa escolha par
 Dois valores usados na prática são $3$ e $2^{16}+1$.
 
 Vimos que para calcular $d$ basta usar o Algoritmo Extendido de Euclides.
-Falta uma forma eficiente de sortear primos de tamanho $n$.
-Voltaremos a este problema na Seção \ref{}.
+Falta uma forma eficiente de sortear primos de tamanho $n$, o que está fora do escopo destas notas.
+%Voltaremos a este problema na Seção \ref{}.
 
 Em sua versão crua, o sistema de RSA é definido pela seguinte tripla de algoritmos:
 
@@ -290,6 +281,7 @@ Esse resultado é chamado de {\em Teorema de Euler}.
 
 
 \begin{corollary}
+\label{cor:euler}
 Seja $x \in \mathbb{Z}_n^\star$, $e > 0$ tal que $mdc(e, \phi(n)) = 1$ e $d \equiv e^{-1}\ (mod\ \phi(n))$ então $(x^e)^d \equiv x\ (mod\ n)$
 \end{corollary}
 
@@ -323,12 +315,59 @@ Um mecanismo para torná-la mais segura é sortear uma sequência de bits $r$ al
 O mecanismo segue de maneira identica, a única diferença é que ao decifrar se recupera $r||m$ e então é preciso descartar os primeiros bits.
 Essa versão é chamada {\em padded RSA} e uma adaptação dela é usada no padrão {\tt RSA PKCS \#1 v1.5} usada na prática.
 
+\section{Sistemas Híbridos}
+\label{sec:sistemas-hibridos}
+
+Os sistemas de criptografia assimétricos que vimos são pelo menos uma ordem de grandesa menos eficientes do que os sistemas de criptografia simétrica que vimos anteriormente.
+Além disso, é difícil garantir a segurança desses sistemas pra mensagens em qualquer distribuição de probabilidades.
+Por esses motivos, o modelos mais popular de criptografia assimétrica segue um modelo híbrido dividido em duas fases: uma fase de encapsulamento de chave (KEM) seguido de uma fase de encapsulamento dos dados (DEM).
+
+Um {\em mencanismo de encapsulamento de chave} (KEM) é um sistema $\Pi = \langle Gen, Encaps, Decaps \rangle$ tal que:
+\begin{itemize}
+\item $Gen(1^n) := \langle sk, pk \rangle$ em que $pk$ é uma chave pública e $sk$ uma chave secreta
+\item $Encaps$ recebe a chave pública $pk$ e o parâmetro de segurânça $1^n$ e produz uma cifra $c$ e uma chave $k \in \{0,1\}^{l(n)}$
+\item $Decaps$ recebe a chave secreta $sk$ e a cifra $c$ e produz uma chave.
+\end{itemize}
+ 
+Um sistema KEM em que $Encaps(pk, 1^n) = \langle c, k \rangle$ é {\em correto} se:
+\begin{displaymath}
+  Decaps(sk, c) =  k
+\end{displaymath}
+
+Um sistema KEM é {\em seguro contra CPA} se um adversário polinomial não é capaz de distinguir com probabilidade considerável a chave produzida por $Encaps$ de uma chave de mesmo tamanho escolhida aleatóriamente.
+Se $\Pi_K = \langle Gen_K, Encaps, Decaps \rangle$ é um KEM seguro contra CPA, e $\Pi' = \langle Gen', E', D' \rangle$ é um sistema de criptografia simétrica seguro contra ataques ``ciphertext only'' então o seguinte sistema $\Pi = \langle Gen, E, D \rangle$, chamado de {\em híbrido}, é seguro contra CPA:
+
+\begin{itemize}
+\item $Gen(1^n) := Gen_k(1^n) = \langle sk, pk \rangle$
+\item $E(pk, m) := \langle c_k, c \rangle$ em que: 
+\begin{itemize}
+\item $Encaps(pk, 1^n) = \langle c_k, k \rangle$ e
+\item $E'(k, m) = c$
+\end{itemize}
+\item $D(sk,\langle c_k, c \rangle) = m$ tal que:
+\begin{itemize}
+\item $Decaps(sk, c_k) = k$ e
+\item $D'(k, c) = m$
+\end{itemize}
+\end{itemize}
+
+Uma forma natural de produzir um KEM é produzir uma chave $k$ e usar um sistema de criptografia assimétrica $\Pi$ para criptografar a chave.
+Esse esquema é seguro desde que o sistema desde que $\Pi$ seja seguro, mas veremos que existem sistemas mais eficientes em determinados casos.
+O Apêndice \ref{cha:sistemas-hibridos} apresenta dois sistemas híbridos: um baseado no problema do logartimo discreto e outro no problema da fatoração.
+
+
 
 \section{Exercícios}
 \label{sec:exercicios}
 
 
 \begin{exercicio}
-  % sobre a distribuição dos primos
+  \label{ex:euler}
+  Mostre que para qualquer $n \in \mathbb{Z}$ a estrutra $\langle \mathbb{Z_n}^\star, \cdot \rangle$ é um grupo.
 \end{exercicio}
+
+
+%\begin{exercicio}
+  % sobre a distribuição dos primos
+%\end{exercicio}
 

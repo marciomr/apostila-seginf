@@ -10,7 +10,7 @@ Informalmente, um {\em gerador de números pseudoaleatórios} (PRG) é essa fun�
 Sistemas de cifra de fluxo foram estudados extensamente nos anos 80 \cite{Blum84,Yao82}.
 A abordagem para verificar se o gerador de números pseudoaleatórios é suficientemente forte consistia em aplicar uma série de testes estatísticos na sequência gerada para tentar distinguí-lo de uma sequência aleatória.
 Assim, por exemplo, um teste pode verificar se a probabilidade de o primeiro bit da sequência ser igual $1$ é $\frac{1}{2}$ ou que a probabilidade de ocorrência de pelos menos três $0$s em qualquer subsequência de tamanho $4$ deve ser $\frac{5}{16}$ -- existem uma sequência em que o $0$ ocorre quatro vezes e mais quatro sequências possíveis em que ele ocorre três vezes.
-Um teste como recebe uma sequencia produzida por um PRG e deve retornar $1$ se o teste passou e $0$ caso contrário.
+Um teste recebe uma sequencia produzida por um PRG e deve retornar $1$ se o passar e $0$ se falhar.
 O objetivo do teste é distinguir as sequências de bits produzidas por um PRG de uma sequência realmente aleatória.
 Por este motivo, esses testes são chamados {\em distinguidores}.
 
@@ -224,6 +224,12 @@ Esse tipo de vulnerabilidade do protocolo WEP levou-o a ser substituído em pelo
 \label{sec:exercicios}
 
 \begin{exercicio}
+  O que precisamos assumir para que um sistema de criptografia baseado em cifra de fluxo seja seguro?
+
+  Em que sentido podemos considerá-lo seguro?
+\end{exercicio}
+
+\begin{exercicio}
 Mostre que o gerador $G$ com fator de expansão $l(n) = n + 1$ que recebe $s \in \{0,1\}^n$ e devolve $s$ concatenado com $\bigoplus_{i=0}^ns_i$ não é um PRG.  
 \end{exercicio}
 
@@ -252,3 +258,5 @@ Mostre como construir um algoritmo eficiente $D$ capaz de distinguir as sequênc
 
   Descreva duas vulnerabilidades deste protocolo.
 \end{exercicio}
+
+

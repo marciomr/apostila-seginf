@@ -6,78 +6,90 @@ Um {\em protocolo} propriamente dito deveria descrever os passos de comunicaçã
 Este não é nosso propósito.
 Pretendemos aqui apenas apresentar aplicações práticas de uso de criptografia forte e como as primitivas são usadas para resolver problemas de comunicação digital.
 
-\section{Transport Layer Security}
-\label{sec:tls}
+% Ao invés de tentar cobrir todos os protocolos, acho melhos focar
+% PGP -> OTR -> Signal
+% PGP é um excelente exemplo de PKI, aqui vale a pena citar o TLS como modelo alternativo
+% quando falar do Signal mencionar TOFU do SSH que é no fundo a única parte que interessa desse protocolo
 
-O {\em Transport Layer Security} (TLS) é a evolução do protobolo {\em Secure Socket Layer} (SSL) usado amplamente em todo o mundo nas conexões web suguras (sempre que conectamos em um site {\tt https}).
-A primeira versão do SSL data de meados dos anos 90 e foi desenvolvida por programadores da Netscape.
-A primeira versão do TLS é de 1999 e sua versão atual é de 2006.
+%\section{Transport Layer Security}
+%\label{sec:tls}
 
-O protocolo se divide em duas fases: {\em handshake} responsável por estabelecer as chaves de critpografia simétrica entre cliente e servidor e {\em record-layer} responsavel por garantir a confidencialidade, integridade e autenticidade na comunicação. 
-Na comunicação usando TLS o cliente possui a chave pública de uma série de autoridades certificadoras que tipicamente vem junto do navegador e o servidor deve possuir um certificado $cert_{CA \to S}$ que obteve junto a alguma dessas entidades certificadoras para um par de chaves $\langle sk_S, pk_S \rangle$.
-O {\em handshake} consiste dos seguintes passos:
+%O {\em Transport Layer Security} (TLS) é a evolução do protobolo {\em Secure Socket Layer} (SSL) usado amplamente em todo o mundo nas conexões web suguras (sempre que conectamos em um site {\tt https}).
+%A primeira versão do SSL data de meados dos anos 90 e foi desenvolvida por programadores da Netscape.
+%A primeira versão do TLS é de 1999 e sua versão atual é de 2006.
 
-\begin{enumerate}
-\item O Cliente $C$ envia uma mensagem a $S$ contendo informando a versão do protocolo e os esquemas de criptografia suportados e um {\em nonce} $N_C$
-\item $S$ seleciona a última versão do protocolo compatível com $C$ e envia de volta sua chave pública $pk_S$ com o certificado $cert_{CA \to S}$ e outro nonce $N_S$
-\item $C$ verifica o certificado $cert_{CA \to S}$ então usa $pk_S$ para encapsular uma chave ({\em pre-master key}) $Encaps(pk_S, 1^k) = \langle c_{pmk}, pmk \rangle$.
-  Por meio de uma função de derivação de chave $KDF$ é então produzida outra chave $mk$ ({\em master key}) usando $pmk$, $N_C$ e $N_S$.
-Um PRG é usado para gerar quatro chaves $k_C$, $k_C'$, $k_S$ e $k_S'$.
-Por fim, $C$ produz um mac $t_C$ com a chave $mk$ de toda a comunicação entre as partes até este ponto e envia $t_C$ e $c_{pmk}$ para $S$.
-\item $S$ computa $Decaps(sk_S, c_{pmk})$ para gerar $pmk$ e então segue os mesmos passos de $C$ para recuperar $k_C$, $k_C'$, $k_S$ e $k_S'$.
-Em seguida $S$ verifica $t_C$ e aborta o processo em caso de falha.
-Por fim, $S$ produz outro mac $t_S$ de toda a comunicação até aqui com a chave $mk$ e envia para $C$.
-\item $C$ verifica $t_S$ e aborta o processo se falhar.
-\end{enumerate}
+%O protocolo se divide em duas fases: {\em handshake} responsável por estabelecer as chaves de critpografia simétrica entre cliente e servidor %e {\em record-layer} responsavel por garantir a confidencialidade, integridade e autenticidade na comunicação. 
+%Na comunicação usando TLS o cliente possui a chave pública de uma série de autoridades certificadoras que tipicamente vem junto do navegador e o servidor deve possuir um certificado $cert_{CA \to S}$ que obteve junto a alguma dessas entidades certificadoras para um par de chaves $\langle sk_S, pk_S \rangle$.
+%O {\em handshake} consiste dos seguintes passos:
+
+%\begin{enumerate}
+%\item O Cliente $C$ envia uma mensagem a $S$ contendo informando a versão do protocolo e os esquemas de criptografia suportados e um {\em nonce} $N_C$
+%\item $S$ seleciona a última versão do protocolo compatível com $C$ e envia de volta sua chave pública $pk_S$ com o certificado $cert_{CA \to S}$ e outro nonce $N_S$
+%\item $C$ verifica o certificado $cert_{CA \to S}$ então usa $pk_S$ para encapsular uma chave ({\em pre-master key}) $Encaps(pk_S, 1^k) = \langle c_{pmk}, pmk \rangle$.
+%  Por meio de uma função de derivação de chave $KDF$ é então produzida outra chave $mk$ ({\em master key}) usando $pmk$, $N_C$ e $N_S$.
+%Um PRG é usado para gerar quatro chaves $k_C$, $k_C'$, $k_S$ e $k_S'$.
+%Por fim, $C$ produz um mac $t_C$ com a chave $mk$ de toda a comunicação entre as partes até este ponto e envia $t_C$ e $c_{pmk}$ para $S$.
+%\item $S$ computa $Decaps(sk_S, c_{pmk})$ para gerar $pmk$ e então segue os mesmos passos de $C$ para recuperar $k_C$, $k_C'$, $k_S$ e $k_S'$.
+%Em seguida $S$ verifica $t_C$ e aborta o processo em caso de falha.
+%Por fim, $S$ produz outro mac $t_S$ de toda a comunicação até aqui com a chave $mk$ e envia para $C$.
+%\item $C$ verifica $t_S$ e aborta o processo se falhar.
+%\end{enumerate}
 
 %% DIAGRAMA ?
 
-No fim deste processo $S$ e $C$ compartilham dois pares de chaves autênticos.
-Quando $C$ envia uma mensagem para $S$ ele a autentica com $k_C'$ e a criptografa com $k_C$ e quando $S$ responde ele autentica a mensagem com $k_S'$ e criptografa tudo com $k_S$.
-Note que o protocolo segue o paradigma {\em mac then encrypt} que não é demononstradamente seguro.
+%No fim deste processo $S$ e $C$ compartilham dois pares de chaves autênticos.
+%Quando $C$ envia uma mensagem para $S$ ele a autentica com $k_C'$ e a criptografa com $k_C$ e quando $S$ responde ele autentica a mensagem com $k_S'$ e criptografa tudo com $k_S$.
+%Note que o protocolo segue o paradigma {\em mac then encrypt} que não é demononstradamente seguro.
 
 
-\section{Secure Shell}
-\label{sec:ssh}
+%\section{Secure Shell}
+%\label{sec:ssh}
 
-O protocolo {\em Secure Shell} (SSH) para comunicação segura para login e transferência de arquivos em servidores remotos.
+%O protocolo {\em Secure Shell} (SSH) para comunicação segura para login e transferência de arquivos em servidores remotos.
 
-Antes da fase de troca de chaves, as partes passam por uma fase de negociação de algoritmos.
-Nesta fase cada qual envia para a outra parte uma lista dos algortimos de criptografia suportados $I_S$ e $I_C$.
-Nesta fase eles definem um grupo $\mathbb{G}$ com ordem $n$ e gerador $g$ e uma função de hash $H$.
-A fase de troca de chaves segue os seguintes passos:
-\begin{enumerate}
-\item $C$ sorteia $x \leftarrow \{2, \dots, n-1\}$ e envia $e = g^x$ para $S$.
-\item $S$ sorteia $y \leftarrow \{2, \dots, n-1\}$, calcula $f = g^y$ e computa $k = e^y$, $h = H(Id_C || Id_S || I_C || I_S || pk_S || e || f || k)$ e $s = Sign(sk_S, H)$.
-$S$ então envia $pk_S$, $f$ e $s$ para $C$
-\item $C$ pode verificar a autenticidade de $pk_S$ neste passo, então computa $k = f^x$ e $h = H(Id_C || Id_S || I_C || I_S || pk_S || e || f || k)$ e, por, fim verifica a assinatura $Ver(pk_S, h, s)$.
-\end{enumerate}
+%Antes da fase de troca de chaves, as partes passam por uma fase de negociação de algoritmos.
+%Nesta fase cada qual envia para a outra parte uma lista dos algortimos de criptografia suportados $I_S$ e $I_C$.
+%Nesta fase eles definem um grupo $\mathbb{G}$ com ordem $n$ e gerador $g$ e uma função de hash $H$.
+%A fase de troca de chaves segue os seguintes passos:
+%\begin{enumerate}
+%\item $C$ sorteia $x \leftarrow \{2, \dots, n-1\}$ e envia $e = g^x$ para $S$.
+%\item $S$ sorteia $y \leftarrow \{2, \dots, n-1\}$, calcula $f = g^y$ e computa $k = e^y$, $h = H(Id_C || Id_S || I_C || I_S || pk_S || e || f || k)$ e $s = Sign(sk_S, H)$.
+%$S$ então envia $pk_S$, $f$ e $s$ para $C$
+%\item $C$ pode verificar a autenticidade de $pk_S$ neste passo, então computa $k = f^x$ e $h = H(Id_C || Id_S || I_C || I_S || pk_S || e || f || k)$ e, por, fim verifica a assinatura $Ver(pk_S, h, s)$.
+%\end{enumerate}
 
-O protocolo SSH permite o uso de certificados para verificar $pk_S$.
-Tipicamente, porém, o modelo de segurança que é seguido é chamado de {\em Trust On First Use} (TOFU): a primeira vez que o cliente $C$ se conecta com o servidor $S$ uma aviso é exibido e a identidade do servidor é salva em uma base de dados no cliente, assim as próximas conexões podem verificar a autenticidade da chave apenas verificando essa base.
-A conexão apresenta também um {\em fingreprint} da chave pública que pode ser enviado de maneira segura para verificação manual.
+%O protocolo SSH permite o uso de certificados para verificar $pk_S$.
+%Tipicamente, porém, o modelo de segurança que é seguido é chamado de {\em Trust On First Use} (TOFU): a primeira vez que o cliente $C$ se conecta com o servidor $S$ uma aviso é exibido e a identidade do servidor é salva em uma base de dados no cliente, assim as próximas conexões podem verificar a autenticidade da chave apenas verificando essa base.
+%A conexão apresenta também um {\em fingreprint} da chave pública que pode ser enviado de maneira segura para verificação manual.
 
-No final da fase de troca de chaves servidor e cliente compartilham $k$, $h$ e uma identificação da seção $Id$.
-A partir desses valores são geradas as chaves de criptografia $k_S$ e $k_C$, as chaves de autenticação $k_S'$ e $k_C'$ e os vetores inciais $IV_S$ e $IV_C$.
-Todos valores são obtidos usando um hash $H$ com $k$, $h$, $Id$ e uma constante diferente para cada chave.
+%No final da fase de troca de chaves servidor e cliente compartilham $k$, $h$ e uma identificação da seção $Id$.
+%A partir desses valores são geradas as chaves de criptografia $k_S$ e $k_C$, as chaves de autenticação $k_S'$ e $k_C'$ e os vetores inciais $IV_S$ e $IV_C$.
+%Todos valores são obtidos usando um hash $H$ com $k$, $h$, $Id$ e uma constante diferente para cada chave.
 
-Antes das partes começarem a fase de troca de mensagens {\em protocolo de conexão}, o servidor precisa autenticar o cliente.
-Isso é feito na fase de {\em autenticação} de três formas alternativas:
-\begin{itemize}
-\item {\em chave pública}: $C$ envia uma mensagem assinada para $S$ contendo $pk_C$. 
-O servidor então verifica se a chave é aceitável para a autenticação e então verifica a assinatura.
-\item {\em senha}: $C$ envia uma mensagem com uma senha protegida pelo esquema apresentado acima.
-\item {\em hostbased}: O host de $C$ realiza a autenticação por meio de algum protocolo de verificação de assinatura.
-O servidor verifica o host e confia que ele autenticou $C$.
-\end{itemize}
+%Antes das partes começarem a fase de troca de mensagens {\em protocolo de conexão}, o servidor precisa autenticar o cliente.
+%Isso é feito na fase de {\em autenticação} de três formas alternativas:
+%\begin{itemize}
+%\item {\em chave pública}: $C$ envia uma mensagem assinada para $S$ contendo $pk_C$. 
+%O servidor então verifica se a chave é aceitável para a autenticação e então verifica a assinatura.
+%\item {\em senha}: $C$ envia uma mensagem com uma senha protegida pelo esquema apresentado acima.
+%\item {\em hostbased}: O host de $C$ realiza a autenticação por meio de algum protocolo de verificação de assinatura.
+%O servidor verifica o host e confia que ele autenticou $C$.
+%\end{itemize}
 
 \section{Pretty Good Privacy}
 \label{sec:pgp}
 
 O PGP foi desenvolvido no começo dos anos 90 por Phil Zimmermann, um ativista do movimento contra o uso de armas nucleares.
-O protocolo utiliza criptografia assimétrica e o modelo de rede de confiança para certificação das chaves públicas.
-Assim cada usuário possui um par de chaves $\langle sk, pk \rangle$ e disponibiliza $pk$ em um servidor de chaves.
-Qualquer um pode verificar a autenticidade de uma chave -- conferindo seu fingerprint manualmente e a identidade do titula -- e publicar no mesmo servidor de chaves um certificado.
+A intenção do autor era combinar tecnologias conhecidas para construir um protocolo seguro e livre para proteção dos ativistas.
+No começo dos anos 90 o algoritmo RSA era patenteado -- algo pouco convencional e alvo de controversas.
+Depois que a RSA Security, dona da patente, entrou em uma disputa legal com Zimmermann, o governo dos EUA o processou por tráfico de armamento militar.
+Em 1996 os EUA desistiram do caso.
+
+Contrastando com o protocolo TLS/SSL que utiliza o modelo de delegação de autoridade, o protocolo PGP é o protótipo de protocolo que utiliza o modelo de {\em rede de confiança} para certificação das chaves públicas.
+Em poucas palavras, o protocolo combina o mais simples modelo híbrido de criptografia, compactação de arquivos, assinaturas digitais e o modelo de rede de confiança para certificação de chaves.
+
+Concretamente, cada usuário possui um par de chaves $\langle sk, pk \rangle$ e disponibiliza $pk$ em um servidor de chaves.
+Qualquer um pode verificar a autenticidade de uma chave -- conferindo seu {\em fingerprint} manualmente e a identidade do titular -- e publicar no mesmo servidor de chaves um certificado.
 Apesar da idade, o PGP é ainda hoje o principal protocolo de criptografia ponta a ponta para e-mails.
 
 Com protocolo PGP um usuário pode: criptografar uma mensagem, assinar uma mensagem ou assinar e criptografar a mensagem.
@@ -130,6 +142,8 @@ O ponto importante aqui é que $t_1$ já cumpriu seu papel e então sua chave po
 O {\em perfect foward secrecy} é garantido no processo de troca e esquecimento de chaves ({\em rechaveamento}).
 Já a {\em negação plausível} é ao se revelar a chave de do MAC e no uso de um esquema de criptografia maleável.
 
+Além de poder conferir manualmente o {\em fingerprint} dos usuários, a comunicação síncrona, pressoposta pelo protocolo, permite formas mais sofisticadas de certificação de chaves.
+Uma dessas formas é a implementação do protocolo do {\em milionário socialista} cuja descrição foge ao escopo dessas notas.
 
 \section{Signal}
 \label{sec:signal}
@@ -164,13 +178,14 @@ As chaves mestras são armazenadas até que sua mensagem correspondente chegue (
 Esse esquema chama-se {\em ratchet}.
 
 Os servidores do Signal armazenam um número de {\em pré-chaves} $g^a$ para cada usuário para o caso em que um handshake ocorra quando eles estão offline.
-Para garantir a autenticidade da chave permanente o protocolo segue o modelo do SSH.
-Ou seja, é possível verificar manualmente o {\em fingerprint} da chave, mas principalmente o que ocorre é a confiança no primeiro acesso (TOFU) e um aviso com destaque caso a chave mude.
+O modelo de certificação de chaves é chamado de {\em Trust On First Use} (TOFU): a primeira vez que o cliente $C$ se conecta com o servidor $S$ uma aviso é exibido e a identidade do servidor é salva em uma base de dados no cliente, assim as próximas conexões podem verificar a autenticidade da chave apenas verificando essa base.
+Esse é o modelo seguido pelo protocolo SSH.
+Alternativamente é possível verificar manualmente o {\em fingerprint} da chave.
 Por fim, as mensagens armazenadas no aparelho são criptografadas localmente com uma cifra de bloco AES e autenticação HMAC cujas chaves são geradas aleatóriamente e armazenadas também de maneira criptografada usando o PBKDF2.
 
 O protocolo do Signal foi originalmente implementado em um aplicativo open source de troca de SMS chamado Textsecure.
-Em XXX o Textsecure incorporou a capacidade de envio de mensagens via internet e em XXX mudou de nome para Signal.
-Em XXX os desenvolvedores do Signal implementaram esse protocolo no Whatsapp.
+Em 2014 o Textsecure incorporou a capacidade de envio de mensagens via internet e em 2015 mudou de nome para Signal.
+Em 2016 os desenvolvedores do Signal implementaram esse protocolo no Whatsapp.
 Além de ser um aplicativo de código aberto, o Signal se diferencia do Whatsapp por sua política de privacidade.
 Enquanto o aplicativo do Facebook se reserva o direito de usar os metadados da comunicação comercialmente, o Signal armazena o mínimo desses dados -- apenas a data e hora da instalação e a data e hora da última conexão.
 

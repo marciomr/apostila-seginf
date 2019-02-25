@@ -28,48 +28,6 @@ Neste caso, para verificar a integridade e autenticidade da mensagem, basta gera
 Essa construção é chamada de {\em paradigma Hash-and-Sign}.
 É possível provar a segurança contra falsificação em uma construção como essa no caso em que o esquema de assinatura usado é seguro contra falsificação e o hash é resistente à colisão.
 
-\section{Esquemas de Identificação}
-\label{sec:esqu-de-ident}
-
-Um esquema de identificação é um protocolo em que uma parte tem como objetivo provar sua identidade para a outra.
-Chamamos de {\em provador} aquele que deseja provar sua identidade e {\em verificador} aquele que deseja verificá-la.
-Assumimos que o verificador possui a chave pública do provador e vamos focar em protocolos com três interações e três algoritmos $langle \mathcal{P}_1, \mathcal{P}_2, \mathcal{V} \rangle$:
-\begin{enumerate}
-\item O provador usa $\mathcal{P}_1$ com sua chave secreta $sk$ para gerar uma {\em mensagem inicial} $I$ e um estado $st$ e envia $I$ para o verificador.
-\item O Verificador escolhe um {\em desafio} $r$ aleatoriamente de um conjunto $\Omega_{pk}$ gerado a partida da chave pública do Provador e envia $r$  de volta.
-\item O Provador usa $\mathcal{P}_2$ com entradas $sk$, $st$ e $r$ para gerar uma resposta $s$ que ele envia para o Verificador.
-\item Por fim, o Verificador testa se $\mathcal{V}(pk, r, s)$ computa $I$.
-\end{enumerate}
-
-% DIAGRAMA!!!
-
-A ideia por trás do esquema de identificação é que apenas que possui a chave secreta seria capaz de $s$ a partir do desafio $r$.
-A mensagem $I$ e o estado $st$ servem para garantir que um adversário não copie os mesmos passos de identificação e seja bem sucedido.
-Um esquema de identificação seguro deve garantir que seja computacionalmente inviável para um adversário enganar o sistema de identificação mesmo que ele observe vários processos similares.
-
-A partir de um sistema de identificação seguro é possível gerar um sistema de assinatura digital seguro usando a {\em transformação de Fiat-Shamir} \cite{Fiat87}.
-Na hora de assinar uma mensagem $I$ e $st$ são computados e calculamos $H(I, m)$ para gerar $r$ e usamos $r$, $sk$ e $st$ para gerar $s$.
-A assinatura será exatamente o par $\langle r, s \rangle$.
-O algoritmo de verificação deve rodar $\mathcal{V}$ com $pk$, $r$ e $s$ como entrada para produzir $I$ e então verifica-se se $H(I, m) = r$: 
-
-\begin{itemize}
-\item $Gen(1^n) := \langle sk, pk \rangle$ e assumimos que $H: \{0,1\}^* \to \Omega_{pk}$ é uma função de hash específica
-\item $Sign(sk, m) = \langle r, s \rangle$ tal que
-\begin{itemize}
-\item $\mathcal{P}_1(sk) := \langle I, st \rangle$,
-\item $r := H(I, m)$ e
-\item $s := \mathcal{P}_2(sk, st, r)$
-\end{itemize}
-\item $Ver(pk, m, \langle r, s \rangle) = \left\{
-    \begin{array}{lcl}
-      1 & \textrm{se} & H(\mathcal{V}(pk, r, s), m) = r\\
-      0 & \textrm{c.c.} &\\
-    \end{array}
-    \right.$
-\end{itemize}
-
-Considerando que o esquema de identificação $\langle \mathcal{P}_1, \mathcal{P}_2, \mathcal{V} \rangle$ seja seguro, podemos provar que o sistema de assinatura digital acima também é seguro, mas para esta prova é necessário supor não que $H$ seja resistente a colisões, mas que ele seja um {\em oráculo aleatório}, uma suposição muito mais forte e difícil de validar empiricamente.
-
 
 \section{Assinatura RSA}
 \label{sec:assinatura-rsa}
@@ -96,55 +54,6 @@ O esquema todo segue:
 A correção deste sistema segue os mesmos passos da correção do sistema de criptografia RSA que vimos no capítulo anterior.
 Além disso, podemos provar que se o sistema RSA é seguro e o hash $H$ usado é resistente à colisão então o sistema acima é seguro contra falsificação.
 Esse sistema é a base do sistema de assinatura do protocolo {\tt RSA PKCS \#1 v2.1}.
-
-\section{Algoritmo de Assinatura Digital (DSA)}
-\label{sec:dsa}
-
-O esquema de assinatura RSA depende da dificuldade do problema da fatoração.
-Podemos também construir sistemas que dependem da dificuldade do problema do logaritmo discreto.
-Este é o caso do popular esquema DSA e do ECDSA que usa curvas elípticas.
-Antes de apresentar o sistema de assinatura digital, apresentaremos um esquema de identificação em que assumimos que a chave secreta é $x$ e a chave pública é $\langle \mathbb{G}, g, y, n \rangle$ com $\mathbb{G}$ um grupo cíclico, $g$ um gerador e $y = g^x$:
-
-\begin{enumerate}
-\item O Provador sorteia $k \leftarrow \mathbb{Z}_n^\star$ e envia $I := g^k$ para o Verificador.
-\item O Verificador sorteia $a, r \leftarrow \mathbb{Z}_q$ como desafios e envia de volta.
-\item O Provador envia $s := [k^{-1} \cdot (\alpha + xr)\ mod\ q]$ como resposta.
-\item O Verificador aceita se $s \neq 0$ e $g^{\alpha s^{-1}} \cdot y^{rs^{-1}} = I$
-\end{enumerate}
-
-A probabilidade de $s = 0$ é desprezível.
-Se assumirmos que $s \neq 0$ a correção do esquema segue, pois:
-\begin{displaymath}
-  g^{\alpha s^{-1}} \cdot y^{rs^{-1}} = g^{\alpha s^{-1}} \cdot g^{xrs^{-1}} = g^{(\alpha + xr)\cdot s^{-1}} = g^{(\alpha + xr)\cdot k \cdot (\alpha + xr)^{-1}} = g^k = I
-\end{displaymath}
-
-É possível provar que este esquema é seguro considerando que o problema do logaritmo discreto seja seguro.
-
-Podemos transformar esse esquema de identificação em um sistema de assinatura usando a transformação de Fiat-Shamir, mas o popular esquema DSA segue um caminho um pouco diferente.
-Assumiremos a existência de duas funções $H: \{0,1\}^* \to \mathbb{Z}_n$ e $F: \mathbb{G} \to \mathbb{Z}_n$:
-
-\begin{itemize}
-\item $Gen(1^n) = \langle sk, pk \rangle$ em que:
-\begin{itemize}
-\item $sk := x \leftarrow \mathbb{Z}_n$ e
-\item $pk := \langle \mathbb{G}, g, y, n \rangle$ com $y = g^x$
-\end{itemize}
-\item $Sign(sk, m) = \langle r, s \rangle$ em que:
-  \begin{itemize}
-  \item $r := F(g^k)$ com $k \leftarrow \mathbb{Z}_n$ e
-  \item $s := [k^{-1} \cdot (H(m) + xr)\ mod\ q]$ (sorteamos outro $r$ caso $s = 0$)
-  \end{itemize}
-\item $Ver(pk, m, t) := \left\{
-    \begin{array}{lcl}
-      1 & \textrm{se} & r = F(g^{H(m) \cdot s^{-1}} y^{r \cdot s^{-1}})\\
-      0 & \textrm{c.c.} &\\
-    \end{array}
-    \right.$
-\end{itemize}
-
-A correção desse sistema é muito similar ao esquema de identificação apresentado anteriormente.
-É possível provar sua segurança assumindo a dificuldade do problema do logaritmo discreto e tratando $H$ e $F$ como oráculos aleatórios.
-No caso de $F$ isso é particularmente difícil de aceitar e não se conhece uma prova de segurança melhor do que essa até hoje.
 
 \section{Infraestrutura de Chaves Públicas}
 \label{sec:pki}
@@ -183,9 +92,10 @@ Um certificado pode e deve conter uma {\em data de expiração} que limite seu t
 Depois dessa data o certificado não dever ser mais considerado válido e precisa ser renovado.
 Em alguns modelos o portador pode comprovar sua identidade com a autoridade que emitiu o certificado e esta pode assinar e publicar um {\em certificado de revogação} anunciando que a chave não deve mais ser considerada válida -- por exemplo no caso de ela ser perdida ou roubada.
 
+Veja o apêndice \ref{cha:dsa} para outros exemplos de assinatura digital e esquemas de identificação.
 
-\section{Exercícios}
-\label{sec:exercicios}
+%\section{Exercícios}
+%\label{sec:exercicios}
 
 
 

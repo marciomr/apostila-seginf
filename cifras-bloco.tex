@@ -357,7 +357,18 @@ Mostre que a operação $R_i \xor f_i(R_{i-1})$ na rede de Feistel de fato recup
 \end{exercicio}
 
 \begin{exercicio}
-  Mostre a corretude dos modos CBC e Ctr, ou seja, que em ambos os casos $D(k, E(k,m)) = m$;
+  Mostre que os modos CBC e Ctr são corretos, ou seja, que em ambos os casos $D(k, E(k,m)) = m$;
+\end{exercicio}
+
+\begin{exercicio}
+  Suponha que $f$ seja uma função pseudo-aleatória com chave e blocos ambos de 128 bits e considere o seguinte sistema:
+  \begin{enumerate}
+  \item Seleciona aleatoriamente duas sequência de 128 bits, a chave $k$ e o vetor inicial $IV$
+  \item Divide a mensagem $m$ em blocos de 128 bits: $m_0, m_1, \dots, m_{n-1}$ (podemos supor que $|m|$ é múltiplo de 128).
+  \item A cifra $c = c_0 || c_1 || \dots || c_{n-1}$ é tal que $c_i = m_i \oplus f_k(IV)$ para $i = 0, ..., n-1$
+  \item Para descriptografar fazemos $c_i \oplus f_k(IV)$ para $i = 0, \dots, n-1$.
+  \end{enumerate}
+  Esse sistema é seguro? Por que?
 \end{exercicio}
 
 \begin{exercicio}
