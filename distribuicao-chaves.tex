@@ -34,8 +34,6 @@ Quando Alice quer se comunicar com Bob os seguintes passos são seguidos:
 \end{tikzpicture}
 \end{center}
 
-% Aqui eu devia colocar um diagrama
-
 Depois da conversa Alice deve descartar a chave efêmera e eventualmente pedir uma nova para o administrador quando precisar voltar a se comunicar com Bob.
 
 Uma implementação bastante popular do modelo KDC é o protocolo Kerberos.
@@ -90,6 +88,7 @@ Nos será útil expressar a operação de {\em exponenciação} de um elemento d
 
 
 \begin{theorem}
+\label{theo:gen-euler}
   Seja $\mathbb{G} = \langle G, \circ \rangle$ um grupo abeliano finito e $m = |G|$, então para qualquer $g \in G$ temos que $g^m = 1$.
 \end{theorem}
 \begin{proof}
@@ -248,7 +247,7 @@ Dizemos que o {\em problema do logaritmo discreto é difícil} se para todo adve
 
 A dificuldade do problema do logaritmo discreto é condição necessária, porém insuficiente, para a segurança do protocolo de Diffie-Hellman.
 Algumas estruturas matemáticas são adequadas para produzir grupos cíclicos cujo problema do logaritmo discreto é considerado difícil.
-Duas muito usadas na prática são os {\em resíduos quadráticos de grupos de tamanho primo} e as {\em curvas elípticas}.
+Duas muito usadas na prática são os {\em resíduos quadráticos de grupos de tamanho primo} e as {\em curvas elípticas} (Apêndice \ref{cha:ciclicos}).
 A apresentação dessas estruturas foge ao escopo dessas notas.
 
 
@@ -263,11 +262,11 @@ Isso não deve afetar de nenhuma forma na segurança do sistema.
 
 O protocolo de Diffie-Hellman permite às partes compartilharem uma chave secreta sem a necessidade de se encontrarem pessoalmente, ou de confiarem em alguma autoridade que as encontrou separadamente.
 Uma limitação do protocolo, porém, é que ele não garante que as partes saibam se a chave que receberam foi de fato enviada por quem eles imaginam que as enviou.
-No Capítulo \ref{} voltaremos a este problema chamado de {\em ataque Man In The Middle}.
+No Capítulo \ref{cha:assinaturas-digitais} voltaremos a este problema chamado de {\em ataque Man In The Middle}.
 
 
-\section{Exercícios}
-\label{sec:exercicios}
+%\section{Exercícios}
+%\label{sec:exercicios}
 
 %\begin{exercicio}
 %  Mostre que se $n|a$ e $n|b$ então para quaisquer $r$ e $s$ temos que $n|(a \cdot r + b \cdot s)$.

@@ -194,7 +194,6 @@ B_0\\ B_5\\ B_{10}\\ B_{15}\\\end{array} \right)
 \left( \begin{array}{c}
 C_0\\ C_1\\ C_2\\ C_3\\\end{array} \right)
 \end{displaymath}  
-\end{example}
 
 Para facilitar as contas suponha que todos os bytes selecionados ($B_0, B_5, B_{10}$ e $B_{15}$)são $25_{16}$.
 Neste caso precisamos calcular $02_{16} \cdot 25_{16}$ e $03 \cdot 25_{16}$:
@@ -219,5 +218,6 @@ Neste caso, como todos $B_i$ são iguais, todos os $C_i$ também o são e são c
     C_i & = & & x^5 + & & & x^2 + &  & 1\\
   \end{array}
 \end{displaymath}
+\end{example}
 
 No processo de descriptografia uma outra matriz é usada para calcular o {\em MixCloumn}, uma que reverte o que foi calculado neste passo.

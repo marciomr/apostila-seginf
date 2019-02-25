@@ -12,6 +12,7 @@
 \newtheorem{theorem}{Teorema}
 \newtheorem{proposition}{Proposição}
 \newtheorem{corollary}{Corolário}
+\newtheorem{lemma}{Lema}
 
 \newcommand{\xor}{\oplus}
 
@@ -39,18 +40,18 @@
 \include{cifras-bloco}
 \include{mac}
 \include{hash}
-\include{owf}
 \include{distribuicao-chaves}
 \include{criptografia-assimetrica}
-\include{sistemas-hibridos}
-%\include{primos}
 \include{assinaturas-digitais}
 \include{protocolos}
-  % SSL
-  % PGP
-  % OTR
-  % Signal
-  % Block-chain
+
+\appendix
+\include{owf}
+\include{corpos-finitos}
+%\include{primos}
+\include{sistemas-hibridos}
+\include{ciclicos}
+\include{dsa}
 
 \bibliography{ref}
 \end{document}

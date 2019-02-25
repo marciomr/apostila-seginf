@@ -32,7 +32,8 @@ Essa estratégia dá origem ao algoritmo de Miller-Rabin \cite{Miller75,Rabin80}
 \li \If $n$ for par
 \li   \Then \Return {\tt composto}
     \End
-\li \If $n = n'^e$ para algum $n'$ e algum $e$
+\li \If \proc{EhPotenciaPerfeita}(n)
+%$n = n'^e$ para algum $n'$ e algum $e$
 \li   \Then \Return {\tt composto}
     \End
 \li  Calcule $r$ e $u$ tais que $n-1 = 2^ru$
@@ -47,4 +48,59 @@ Essa estratégia dá origem ao algoritmo de Miller-Rabin \cite{Miller75,Rabin80}
 \li \Return {\tt primo}
 \end{codebox}
 
+% Daqui para baixo ainda não está bom
 
+Para mostrar que o algoritmo de Miller-Rabin é correto precisamos mostrar que pelo menos metade dos elementos em $\mathbb{Z}_n$ são testemunhas de que $n$ é primo.
+Para tanto precisamos provar alguns resultados preliminares.
+
+
+\begin{lemma}
+  Se $H \subseteq G$ e $H$ é fechado então $H$ é um subgrupo de $G$. 
+\end{lemma}
+\begin{proof}
+  Associatividade segue do fato de $H \subseteq G$ a existência de inverso e da identidade seguem do fecho.
+\end{proof}
+
+\begin{lemma}
+Seja $H$ um subgrupo de $G$ tal que $H \neq G$, então $|H| \leq \frac{|G|}{2}$  
+\end{lemma}
+\begin{proof}
+Como $H \neq G$ então existe $g \in G$ tal que $g \notin H$.
+Considere o conjunto $\bar{H} := \{gh : h \in H\}$.
+
+Se $gh_1 = gh_2$ então $h_1 = h_2$ (basta multiplicar os dois lados por $g^{-1}$), portanto, cada elemento distinto de $H$ corresponde a um elemento distinto em $\bar{H}$.
+Ou seja, $|H| = |\bar{H}|$.
+
+Agora suponha que $gh \in H$ para algum $h$.
+Neste caso $gh = h'$ para algum $h' \in H$ e, portanto, $g = h'h^{-1}$.
+Como $h', h^{-1} \in H$ e como $H$ é um grupo então $g \in H$, mas isso contradiz a definição de $g$ e portanto não existe $gh \in H$ para nenhum $h$.
+Em outras palavras $\bar{H} \cap H = \emptyset$.
+
+Juntando tudo temos que $H \subseteq G$ e $\bar{H} \subseteq G$ e, portanto, $|G| \geq |H| + |\bar{H}|$.
+Como $|H| = |\bar{H}|$, concluimos que   $|G| \geq 2|H|$.
+\end{proof}
+
+Seja $i \in \{0, \dots r-1\}$ o maior inteiro tal que existe $a$ que não é testemunha e $a^{2^iu} \equiv -1\ mod\ n$.
+Note que $i$ deve existir, pois $-1$ não é testemunha e $(-1)^{2^0u} \equiv -1\ mod\ n$ 
+Vamos agora construir um conjunto $B$ que é um subgrupo de $\mathbb{Z}_n^\star$ e que $B \neq \mathbb{Z}_n^\star$:
+
+\begin{displaymath}
+  B := \{a : a^{2^iu} \equiv \pm 1\ mod\ n\}
+\end{displaymath}
+
+Seja $a$ um elemento que não é testemunha de que $n$ é primo i.e. $a^u \equiv 1\ mod\ n$ ou $a^{2^ju} \equiv -1\ mod\ n$ para algum $j \in \{0, \dots, r-1\}$.
+No primeiro caso $a \in B$.
+No segundo caso $j \leq i$.
+Se $i =j$ então $a \in B$, caso contrário, $a^{2^iu} \equiv (2^{2^ju})^{2^{i-j}} \equiv 1\ mod\ n$ e temos que $a \in B$.
+Concluímos que todo elemento que não é testemunha pertence a $B$.
+
+Resta mostrar que $B$ é um subgrupo de $\mathbb{Z}_n^\star$ e que $B \neq \mathbb{Z}_n^\star$.
+Para o primeiro basta notar que para quaisquer $a,b \in B$ temos que $a \cdot b \equiv (\pm 1)(\pm 1) \equiv \pm 1\ mod\ n$.
+A demostração de que $B \neq \mathbb{Z}_n^\star$ é mais complicada e será omitida.
+
+
+
+% concluimos que existem no máximo n/2 elementos de Z_n^* não são testemunhas de que n é primo
+% provar a correção do algoritmo de Miller-Rabin
+
+% mostrar o algoritmo EhPotenciaPerfeita e sua complexidade

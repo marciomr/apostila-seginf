@@ -207,7 +207,7 @@ Note que se $mdc(a,n) = 1$ então o Algoritmo Extendido de Euclides devolve $X$ 
 Se fizermos essa conta em $\mathbb{Z}_n$ temos que $Xa \equiv 1\ (mod\ n)$.
 Ou seja, para os elementos $a \in \mathbb{Z}_n^\star$ o AEE nos dá uma forma de computar o inverso.
  
-Não é difícil mostrar que $\langle \mathbb{Z}_n^\star, \cdot \rangle$ (Exercício \ref{}) é um grupo visto que todos os elementos possuem inverso por definição.
+Não é difícil mostrar que $\langle \mathbb{Z}_n^\star, \cdot \rangle$ é um grupo visto que todos os elementos possuem inverso por definição (Exercício \ref{ex:euler}).
 A {\em função de Euler} atribui a cada $n$ o tamanho de $\mathbb{Z}_n^\star$:
 
 \begin{displaymath}
@@ -247,8 +247,8 @@ Se lembrarmos o algoritmo que $\proc{FastExp}$ notaremos que uma boa escolha par
 Dois valores usados na prática são $3$ e $2^{16}+1$.
 
 Vimos que para calcular $d$ basta usar o Algoritmo Extendido de Euclides.
-Falta uma forma eficiente de sortear primos de tamanho $n$.
-Voltaremos a este problema na Seção \ref{}.
+Falta uma forma eficiente de sortear primos de tamanho $n$, o que está fora do escopo destas notas.
+%Voltaremos a este problema na Seção \ref{}.
 
 Em sua versão crua, o sistema de RSA é definido pela seguinte tripla de algoritmos:
 
@@ -281,6 +281,7 @@ Esse resultado é chamado de {\em Teorema de Euler}.
 
 
 \begin{corollary}
+\label{cor:euler}
 Seja $x \in \mathbb{Z}_n^\star$, $e > 0$ tal que $mdc(e, \phi(n)) = 1$ e $d \equiv e^{-1}\ (mod\ \phi(n))$ então $(x^e)^d \equiv x\ (mod\ n)$
 \end{corollary}
 
@@ -361,6 +362,12 @@ O Apêndice \ref{cha:sistemas-hibridos} apresenta dois sistemas híbridos: um ba
 
 
 \begin{exercicio}
-  % sobre a distribuição dos primos
+  \label{ex:euler}
+  Mostre que para qualquer $n \in \mathbb{Z}$ a estrutra $\langle \mathbb{Z_n}^\star, \cdot \rangle$ é um grupo.
 \end{exercicio}
+
+
+%\begin{exercicio}
+  % sobre a distribuição dos primos
+%\end{exercicio}
 
