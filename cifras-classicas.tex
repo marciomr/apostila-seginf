@@ -257,14 +257,13 @@ Cifra:    LVNUSHEELNUMNWUTHVJAGTNJIVEQKPJMIHDS
 
 Para fechar o capítulo vamos fazer o exercício de formalizar a cifra de Vigenère.
 A chave consiste em uma sequência de letras, tipicamente escolhidas em um dicionário, mas vamos aqui supor que a escolha seja aleatória e com um tamanho fixado $l$.
-A partir dessa semente, podemos gerar uma chave auxiliar $k'$ obtida repetindo $k$ quantas vezes forem necessárias até que $|k'| = |m| = n$.
-Para criptografar basta desolcar $m_i$ por $k_i'$ posições.
+Para criptografar basta desolcar $m_i$ por $k_{[i\ mod\ n]}$ posições.
 Formalmente temos que $\Pi = \langle Gen, E, D \rangle$
 
 \begin{itemize}
 \item $Gen := k \leftarrow \mathbb{Z}_{26}^l$
-\item $E(k, m) = [m_0 + {k_0}'\ mod\ 26] \dots [m_n + {k_n}'\ mod\ 26]$
-\item $D(k, c) = [c_0 - {k_0}'\ mod\ 26] \dots [c_n - {k_n}'\ mod\ 26]$
+\item $E(k, m) = [m_0 + k_{[0\ mod\ l]}\ mod\ 26] \dots [m_n + k_{[n\ mod\ l]}\ mod\ 26]$
+\item $D(k, c) = [c_0 - k_{[0\ mod\ l]}\ mod\ 26] \dots [c_n - k_{[n\ mod\ l]}\ mod\ 26]$
 \end{itemize}
 
 \section{Máquinas de Criptografar}
