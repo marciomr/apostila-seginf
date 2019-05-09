@@ -1,13 +1,13 @@
-\chapter{Sigilo Perfeito}
+﻿\chapter{Sigilo Perfeito}
 \label{cha:sigilo-perfeito}
 
 No final dos anos 40, com o desenvolvimento dos primeiros computadores e a experiência da quebra das cifras mecanicamente produzidas por poderosas máquinas desenvolvidas pelo esforço de guerra do nazismo, alguns cientístas se voltaram para um problema central no campo da criptografia: o que torna um sistema de criptografia seguro?
-As cifras que vimos até agora são conhecidas como ``cifras clássicas'' extamente porque elas precedem desse debate moderno, e não a toa foram todas derrotadas cedo ou tarde.
+As cifras que vimos até agora são conhecidas como ``cifras clássicas'' exatamente porque elas precedem desse debate moderno, e não a toa foram todas derrotadas cedo ou tarde.
 Informalmente, poderíamos dizer que o problema dos esquemas clássicos de criptografia é que eles guardam muita informação sobre a mensagem (frequência das letras, dos dígrafos, letras duplas etc.). 
 Não é uma coincidência, portanto, que a primeira tentativa de formalizar o conceito de segurança tenha sido proposto por Claude Shannon, o fundador da teoria da informação.
 Shannon definiu o que hoje chamamos de {\em sigilo perfeito}.
 Um esquema de criptografia garante o sigilo perfeito se a cifra não guarda nenhuma informação sobre a mensagem que a gerou.
-Ou, de maneira um pouco mais descritiva, se a probabilidades da cifra ocorrer é independente da probabilidade da mensagem:
+Ou, de maneira um pouco mais descritiva, se a probabilidade da cifra ocorrer é independente da probabilidade da mensagem:
 
 \begin{definition}
   Um esquema de criptografia simétrica $\Pi = \langle Gen, E, D \rangle$ garante o {\em sigilo perfeito} se, supondo que $Pr[C=c] > 0$, para toda distribuição de probabilidade sobre $M$ temos que:
@@ -39,7 +39,7 @@ O jogo funciona da seguinte maneira:
 \begin{enumerate}
 \item $\mathcal{A}$ escolhe duas mensagens $m_0$ e $m_1$ com o mesmo tamanho ($|m_0| = |m_1|$) e envia para o sistema $\Pi$.
 \item O sistema gera uma chave $k$ usando o algoritmo $Gen$ e sorteia aleatoriamente uma das mensagens para criptografar ($\Pi$ sorteia $b \leftarrow \{0, 1\}$ e criptografa $m_b$).
-\item A cifra produzida $E(k, m_b) = c$ e enviada de volta para o adversário.
+\item A cifra produzida $E(k, m_b) = c$ é enviada de volta para o adversário.
 \item O adversário $\mathcal{A}$ produz um bit $b' \in \{0,1\}$.
 \end{enumerate}
 
@@ -78,18 +78,18 @@ Formalmente temos que:
 Pr[PrivK^{eav}_{\Pi, \mathcal{A}} = 1] = \frac{1}{2}
 \end{displaymath}
 
-Em palavras, o sistema possui sigilo perfeito se nenhum adversário é capaz de acertar qual ads mensagens produziu a cifra $c$ com probabilidade melhor do que um meio.
+Em palavras, o sistema possui sigilo perfeito se nenhum adversário é capaz de acertar qual das mensagens produziu a cifra $c$ com probabilidade melhor do que um meio.
 
 \section{One Time Pad}
 \label{sec:otp}
 
 Temos agora uma definição formal de segurança.
-Vimos que a cifra de substituição não satisfaz essa definição, mas na verdade nenhuma das cifras clássica a satisfaz.
+Vimos que a cifra de substituição não satisfaz essa definição, mas na verdade nenhuma das cifras clássicas a satisfaz.
 Não seria desejável que essas cifras satisfizessem a definição, pois vimos no capítulo anterior que nenhuma das cifras clássicas é segura e todas podem ser derrotadas se o adversário tiver acesso a uma cifra de tamanho suficientemente grande.
 Ficamos então com o desafio de encontrar algum sistema que satisfaça essa definição, caso tal sistema exista.
 
-No que segue apresentaremos um sistema chamado {\em One Time Pad} (OTP), também conhecida como {\em cifra de Vernan}, e mostraremos que ele garante o sigilo perfeito.
-A partir deste ponto, conforme começaremos a investigar sistemas a serem implementados computacionalmente, consideraremos que o espaço $M$ das mensagens (assim como o espaço $C$ das cifras) será representado como sequências de bits.
+No que segue, apresentaremos um sistema chamado {\em One Time Pad} (OTP), também conhecido como {\em cifra de Vernan}, e mostraremos que ele garante o sigilo perfeito.
+A partir deste ponto, conforme começarmos a investigar sistemas a serem implementados computacionalmente, consideraremos que o espaço $M$ das mensagens (assim como o espaço $C$ das cifras) será representado como sequências de bits.
 No caso específico do OTP assumiremos que as mensagens e a cifras possuem um tamanho fixo $n$.
 Mais importante é o fato de que o universo das chaves é também um conjunto de sequências de bits do mesmo tamanho.
 Assim temos que $M = C = K = \{0,1\}^n$.
@@ -142,7 +142,7 @@ Como antecipado, é possível, e relativamente simples provar que o OTP possui s
             & = & c
   \end{eqnarray*}
 
-Como existe exatamente uma chave possível que faz com que $E(k,m) = c$, temos que a probabilidade se produzir $c$ dado uma mensagem qualquer $m$ é igual a probabilidade de sortear uma chave específica no universo $K = \{0,1\}^n$ que é $\frac{1}{2^n}$:
+Como existe exatamente uma chave possível que faz com que $E(k,m) = c$, temos que a probabilidade de se produzir $c$ dado uma mensagem qualquer $m$ é igual a probabilidade de sortear uma chave específica no universo $K = \{0,1\}^n$ que é $\frac{1}{2^n}$:
 \begin{displaymath}
   Pr[C = c | M = c] = \frac{1}{2^n}
 \end{displaymath}
@@ -153,8 +153,8 @@ Portanto, temos que $Pr[C = c| M = m_0] = Pr[C = c | M = m_1] = \frac{1}{2^n}$.
 
 O {\em One Time Pad} possui duas severas limitações.
 A primeira é indicada pelo próprio nome do sistema.
-A sistema supõe que a chave de criptografia $k$ seja usada exatamente uma vez (``one time'').
-Caso o mesmo $k$ seja usada para criptografar duas mensagens distintas $m_1$ e $m_2$, o sistema se torna completamente inseguro.
+O sistema supõe que a chave de criptografia $k$ seja usada exatamente uma vez (``one time'').
+Caso a mesma chave $k$ seja usada para criptografar duas mensagens distintas $m_1$ e $m_2$, o sistema se torna completamente inseguro.
 
 Para ilustrar essa limitação considere que duas cifras $c_0$ e $c_1$ foram produzidas usando a mesma chave $k$.
 Assim temos que $c_0 = k \xor m_0$ e $c_1 = k \xor m_1$.
@@ -167,7 +167,7 @@ Note o que acontece quando aplicamos o ou exclusivo entre as duas cifras elimina
               & = & m_0 \xor m_1
 \end{eqnarray*}
 
-Uma vez eliminada a chave, é fácil separar as mensagens $m_0$ de $m_1$ utilizando um técnica similar ao ataque de frequência.
+Uma vez eliminada a chave, é fácil separar as mensagens $m_0$ de $m_1$ utilizando uma técnica similar ao ataque de frequência.
 
 A segunda e mais crítica limitação do OTP é o tamanho de sua chave.
 A suposição que fizemos é que o tamanho da chave deve ser tão grande quanto a mensagem a ser cifrada.
@@ -178,7 +178,7 @@ Deixamos os detalhes sobre a distribuição de chaves para o Capítulo \ref{cha:
 Enfim, um sistema cuja a chave seja tão grande quanto a mensagem é de muito pouca utilidade prática.
 
 Encerramos este capítulo mostrando que esta segunda limitação do OTP infelizmente não é uma peculiaridade do sistema.
-Na verdade todo sistema que possua sigilo perfeito está fadado a ter chaves tão grandes o maiores do que a mensagem.
+Na verdade todo sistema que possua sigilo perfeito está fadado a ter chaves tão grandes ou maiores do que a mensagem.
 Esse resultado negativo foi proposto e demonstrado pelo próprio Shannon ainda nos anos 40.
 
 
@@ -188,7 +188,7 @@ Seja $\Pi = \langle Gen, E, D \rangle$ um sistema que garante o sigilo perfeito,
 \begin{proof}
   Consideraremos $M(c)$ como o conjuto de todas as mensagens que podem produzir $c$, ou seja, as mensagens $m \in M$ tal que $E(k, m) = c$ para algum $k \in K$.
   Se existissem $m' \neq m''$ tais que $E(k, m') = E(k, m'') = c$ então $\Pi$ não poderia ser correto, pois $D(k, c)$ não poder ser $m'$ e $m''$ ao mesmo tempo. 
-  Portanto o número de mensagem que podem ser cifradas como $c$ é menor ou igual ao número de chave, ou em símbolos, $|M(c)| \leq |K|$.
+  Portanto o número de mensagens que podem ser cifradas como $c$ é menor ou igual ao número de chaves, ou em símbolos, $|M(c)| \leq |K|$.
   Agora suponha por absurdo que $|K| < |M|$.
   Neste caso existiria uma mensagem $m \notin M(c)$ e, portanto, $Pr[M = m] \neq 0$.
   Mas, por definição, temos que $Pr[C = c | M = m] = 0$ contradizendo a hipótese deu que $\Pi$ garante o sigilo perfeito. 
