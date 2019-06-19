@@ -5,7 +5,7 @@ Concluímos o capítulo anterior apresentando um protocolo de troca de chaves qu
 Essa ideia revolucionária foi proposta inicialmente em um artigo seminal de Diffie e Hellman \cite{Diffie76}.
 Neste mesmo artigo os autores propõe a possibilidade de construção de um esquema de {\em criptografia assimétrico}.
 O modelo sugerido pela dupla se assemelha ao esquema de um cadeado em que qualquer um pode usar para trancar, mas apenas o dono da chave possui a forma de abrir.
-No modelo assimétrico cada ator possui duas chaves: uma pública que pode ser exposta no meio inseguro e uma secreta.
+No modelo assimétrico cada ator possui duas chaves: uma pública (cadeado) que pode ser exposta no meio inseguro e uma secreta.
 Quando Alice quer se comunicar com Bob ela precisa acessar a chave pública $pk$ de Bob que pode estar disponível publicamente em um site ou Bob pode enviá-la por qualquer canal inseguro.
 Com a chave pública de Bob, Alice pode criptografar uma mensagem que apenas ele será capaz de descifrar com sua chave secreta $sk$.
 O esquema está representado no digrama a seguir:
