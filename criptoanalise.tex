@@ -1,4 +1,4 @@
-\chapter{Criptoanálise}
+﻿\chapter{Criptoanálise}
 \label{cha:criptoanalise}
 
 Nos capítulos anteriores vimos uma série de cifras que a história deu conta de mostrar que não são seguras.
@@ -81,7 +81,8 @@ Em português, faz sentido separar as letras em cinco blocos, com frequência de
 \section{Ataques à ``Cifra Invencível''}
 \label{sec:criptoanalise-vegenere}
 
-Apesar da fama de ``inquebrável'' que a cifra de Vigenère oustentou até o começo do século XX, desde a metade do século anterior já eram conhecidos métodos de criptoanálise capazes de detorratar esse tipo de cifra.
+Apesar da fama de ``inquebrável'' que a cifra de Vigenère ostentou até o começo do século XX, desde a metade do século anterior já eram conhecidos métodos de criptoanálise capazes de derrotar esse tipo de cifra.
+
 Em 1854 John Hall Brock Thwaites submeteu um texto cifrado utilizando uma cifra supostamente por ele inventada.
 Charles Babbage, o inventor das máquinas que precederam o computador moderno, mostrou que no fundo a cifra de Thwaites era equivalente a cifra de Vigenère.
 Após ser desafiado, Babbage, decifrou uma mensagem criptografada por Thwaites duas vezes com chaves diferentes.
@@ -109,17 +110,17 @@ Com esta informação, podemos aplicar um ataque de frequência nos caracteres d
 
 
 \begin{exercicio}
-Calculo o tamanho do universo das chaves em uma cifra de Vigenère da forma como usada normalmente (escolhendo um palavra) e na forma como apresentamos formalmente (sequência aleatória com tamanho fixo $l$)?  
+Calcule o tamanho do universo das chaves em uma cifra de Vigenère da forma como usada normalmente (escolhendo um palavra) e na forma como apresentamos formalmente (sequência aleatória com tamanho fixo $l$)?  
 \end{exercicio}
 
 
 \begin{exercicio}
-Construa um script que extraia um corpus do português moderno (por exemplo, textos da wikipedia) e calucule a frequência de ocorrência das letras do alfabeto. 
+Construa um script que extraia um corpus do português moderno (por exemplo, textos da wikipedia) e calcule a frequência de ocorrência das letras do alfabeto. 
 \end{exercicio}
 
 \begin{exercicio}
 Em 2017 um rapaz que ficou conhecido como menino do Acre ficou dias desaparecido e deixou uma serie de livros criptografados com cifra de substituição em seu quarto.
-A Figura \ref{fig:menino-do-acre} está reproduzida uma página de um desses livros. 
+Na Figura \ref{fig:menino-do-acre} está reproduzida uma página de um desses livros. 
 Utilize a análise de frequência para decifrar o texto.
 \end{exercicio}
 
@@ -130,7 +131,7 @@ Utilize a análise de frequência para decifrar o texto.
   \label{fig:menino-do-acre}
 \end{figure}
 
-% Colocar aqui a frequência das letras em portugês, de preferência com um gráfico
+% Colocar aqui a frequência das letras em português, de preferência com um gráfico
 % Inserir o exemplo do menino do Acre a partir do trabalho que eles enviarem
 % Técnica para quebrar a cifra de Vigenère
 

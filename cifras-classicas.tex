@@ -1,4 +1,4 @@
-\chapter{Cifras Clássicas}
+﻿\chapter{Cifras Clássicas}
 \label{cha:cifras-classicas}
 
 Como argumentamos no primeiro capítulo, a internet é um meio de comunicação promíscuo.
@@ -46,7 +46,7 @@ Mensagem: transparenciapublicaopacidadeprivada
 Cifra:    XUDQVSDUHQFLDSXEOLFDRSDFLGDGHSULYDGD
 \end{verbatim}
 
-Como descrito Suetônio, a regra para encriptar uma mensagem consiste em substituir cada letra da mensagem por aquela que está três posições a sua frente na ordem alfabética.
+Como descrito por Suetônio, a regra para encriptar uma mensagem consiste em substituir cada letra da mensagem por aquela que está três posições a sua frente na ordem alfabética.
 Para descriptografar a cifra, substituir cada letra por aquela que está três posições atrás.
 O problema com este tipo de sistema é que basta conhecer a regra de criptografia para decifrá-lo.
 Em outras palavras, o segredo da cifra é sua própria regra.
@@ -59,7 +59,7 @@ No fim do século XIX Auguste Kerckhoff estabeleceu seis princípios que as cifr
 \item Deve ser possível memorizar uma chave sem ter que anotá-la e deve ser possível modificá-la se necessário.
 \item Deve ser possível aplicar a sistemas telegráficos.
 \item O aparato deve ser portátil e não deve necessitar de muitas pessoas para manipulá-lo e operá-lo.
-\item Por fim, dadas ascircunstâcias em que ele será usado, o sistema deve ser fácil de usar e não deve ser estressante usá-lo e não deve exigir que o usuário conheça e siga uma longa lista de regras.
+\item Por fim, dadas as circunstâcias em que ele será usado, o sistema deve ser fácil de usar, não deve ser estressante usá-lo e não deve exigir que o usuário conheça e siga uma longa lista de regras.
 \end{enumerate}
 
 O segundo princípio ficou conhecido como {\em princípio de Kerckhoff}.
@@ -176,7 +176,7 @@ Em 1567 a residência da rainha da Mary da Escócia foi destruída por uma explo
 O principal suspeito do assinato foi dispensado da pena e se casou com Mary no mês seguinte.
 O episódio levou-a a prisão na Inglaterra.
 Neste tempo, para a maioria dos católicos, Mary era a legítima herdeira do trono inglês - ocupado pela protestante Elizabeth I.
-Durante o tempo na prisão Mary consiporou com aliados pela morte de Elizabeth.
+Durante o tempo na prisão Mary conspirou com aliados pela morte de Elizabeth.
 Em 1587 Mary foi executada pelo que ficou conhecido como a conspiração de Babington.
 A principal prova utilizada para a condenação foi uma troca de cartas cifradas interceptadas e decifradas \cite{Singh04}.
 
@@ -204,7 +204,7 @@ Assim, a chave desse tipo de cifra é um alfabeto.
 
 O desfecho da história da conspiração de Babington sugere que a cifra monoalfabética não é muito segura.
 De fato, no próximo capítulo discutiremos melhor as técnicas de criptonálise para este tipo de cifra.
-Não obstante, até o desenvolvimento das primeiras máquinas de criptografar, versões das cifras monoalfabéticas foram eram as cifras mais populares no mundo todo.
+Não obstante, até o desenvolvimento das primeiras máquinas de criptografar, versões das cifras monoalfabéticas eram as cifras mais populares no mundo todo.
 Nos anos 70 a editora abril publicou no Brasil o famoso Manual do Escoteiro Mirim da Disney que apresentava uma cifra monoalfabética.
 Mais recentemente, o curioso caso do desaparecimento de um rapaz no Acre viralizou quando seus familiares revelaram que no seu quarto havia uma coleção de livros que ele havia escrito de maneira criptografada.
 Mais tarde foi descoberto que o rapaz usara uma cifra de substituição cuja chave foi eventualmente encontrada.
@@ -277,12 +277,12 @@ Dessa forma, essas {\em máquinas rotoras} se comportam como uma sofisticada cif
 Para descriptografar a mensagem, o operador precisa ajustar a máquina em modo de descriptografia, ajustar a configuração inicial com a chave secreta e digitar o texto cifrado.
 A máquina então irá se rearrajar para produzir o texto original quando digitado.
 
-As máquinas rotora mais conhecida são da série {\em Enigma}.
+As máquinas rotoras mais conhecidas são da série {\em Enigma}.
 Elas foram criadas por um inventor alemão no final da primeira guerra mundial e versões mais modernas foram extensamente usadas durante a segunda guerra pelo exército nazista.
-As versões mais simples da máquina possuiam três rotores capazes de gerar $26^3 \approx 175.000$ possíveis configurações iniciais.
-Além disso, era possível trocar a ordem dos rotores multiplicando por $6$ o número de combinações possíveis e chegando a um total de cerca de $105$ mil possibilidades.
+As versões mais simples da máquina possuiam três rotores capazes de gerar $26^3 \approx 17.500$ possíveis configurações iniciais.
+Além disso, era possível trocar a ordem dos rotores multiplicando por $6$ o número de combinações possíveis, chegando a um total de cerca de $105$ mil possibilidades.
 A versão utilizada pelo exercito nazista, porém, permitia cerca de $150$ trilhões de possibilidades.
-Em 1939 Alan Turing desenvolveu uma máquina eletromecânica chamada {\em Bombe} capaz de decifrar algumas cifras de máquinas Enigma com 3 rotores e, posterioirmente foi melhorada para decifrar mensagens de máquinas Enigma mais sofisticadas.
+Em 1939 Alan Turing desenvolveu uma máquina eletromecânica chamada {\em Bombe} capaz de decifrar algumas cifras de máquinas Enigma com 3 rotores e, posteriormente foi melhorada para decifrar mensagens de máquinas Enigma mais sofisticadas.
 
 A história da computação esbarra na história da criptografia neste ponto.
 Poucos anos antes da guerra, Alan Turing demonstrara que a satisfatibilidade da lógica de primeira ordem é um {\em problema indecidível}.
@@ -292,7 +292,7 @@ Além disso, Turing mostrou que era possível construir com seu modelo uma {\em 
 Esse resultado magnífico é o que dá origem a computação.
 O primeiro modelo de computador desenvolvido por Turing e sua equipe em Bechley Park foi batizado de {\em Colossus} e tinha como principal propósito quebrar outra cifra usada pelos nazistas durante a guerra, a {\em cifra de Lorenz}.
 A cifra de Lorenz é uma versão do que estudaremos com o nome de {\em cifra de fluxo}.
-Para decifrar os códigos das máquinas Enigma e da cifra de Lorenz os ingleses tiveram que contar, não apenas com o texto criptografado que interceptavam sem grandes dificuldades, mas também com uma série cifras cujas mensagens eles conheciam previamente.
+Para decifrar os códigos das máquinas Enigma e da cifra de Lorenz os ingleses tiveram que contar, não apenas com o texto criptografado que interceptavam sem grandes dificuldades, mas também com uma série de cifras cujas mensagens eles conheciam previamente.
 Veremos mais pra frente a importância desta informação. 
 A capacidade dos aliados de decifrar as mensagens de seus adversários foi central para sua vitória. 
 
@@ -343,6 +343,6 @@ Ou seja, para qualquer $a, b, c, n \in \mathbb{Z}$ temos que:
 \end{exercicio}
 
 \begin{exercicio}
-  Proponhe um sistema de criptografia simétrica e argumento porque ele é mais seguro do que os sistemas que vimos até aqui.
+  Proponha um sistema de criptografia simétrica e argumente porque ele é mais seguro do que os sistemas que vimos até aqui.
 \end{exercicio}
 
