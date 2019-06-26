@@ -2,12 +2,12 @@
 \label{cha:cifras-de-bloco}
 
 No capítulo anterior mostramos que somos capazes de construir um sistema seguro contra ataques do tipo {\em ciphertext only}.
-Para isso precisamos supor a existência um gerador de números pseudo-aleatórios, ou seja, um algoritmo capaz de gerar uma sequência de bits indintinguível, para todos efeitos práticos, de uma sequência aleatória.
+Para isso precisamos supor a existência um gerador de números pseudo-aleatórios, ou seja, um algoritmo capaz de gerar uma sequência de bits indistinguível, para todos efeitos práticos, de uma sequência aleatória.
 Nossa definição de ataque é um pouco mais fraca do que a apresentada no Capítulo \ref{cha:sigilo-perfeito}, mas nosso sistema não requer chaves tão grandes.
 As cifras de fluxo, porém, compartilham com o OTP dois problemas: são totalmente inseguras caso haja repetição de chaves e não apresentam qualquer garantia de segurança caso o adversário conheça partes do mensagem.
 
 O modelo das cifras de fluxo é adequado para descrever as Máquinas Enigma utilizadas pelo exército nazista nos anos 40.
-Sua cifra, porém, foi derrotada não apenas pelo desenvolvimento tecnológico que levou a contrução da máquina Bombe e do Colossus, mas porque os aliados tiveram acesso a trechos de mensagens descriptografas.
+Sua cifra, porém, foi derrotada não apenas pelo desenvolvimento tecnológico que levou a construção da máquina Bombe e do Colossus, mas porque os aliados tiveram acesso a trechos de mensagens descriptografadas.
 Com a teoria da criptografia moderna, diríamos hoje que o tipo de ataque que os ingleses fizeram foi do tipo {\em known plaintext}.
 
 Neste capítulo nos voltaremos para um modelo de ataque ainda mais poderoso.
@@ -44,12 +44,12 @@ Para construir um sistema seguro contra CPA assumiremos a existência de {\em fu
 Considere o conjunto de todas as funções $f: \{0,1\}^n \to \{0,1\}^n$.
 Chamaremos esse conjunto de $Func_n$ e não é difícil calcular que $|Func_n| = 2^{n2^n}$.
 Gostaríamos de escolher aleatoriamente uma função $f \leftarrow Func_n$, mas isso não é possível, o melhor que podemos fazer é escolher uma chave $k \leftarrow \{0,1\}^n$ e tentar produzir uma função $f_k: \{0,1\}^n \to \{0,1\}^n$ que se pareça com uma função escolhida aleatoriamente.
-Assim, como um PRG, uma {\em função pseudoaleatória} (PRF) é tal que não existe algoritmo efeciente capaz de distingui-la de uma função aleatória com probabilidade considerável \cite{Goldreich86}.
+Assim, como um PRG, uma {\em função pseudoaleatória} (PRF) é tal que não existe algoritmo eficiente capaz de distingui-la de uma função aleatória com probabilidade considerável \cite{Goldreich86}.
 
 Uma {\em cifra de bloco} é uma {\em permutação pseudoaleatória} (PRP), uma função bijetora $p_k: \{0,1\}^n \to \{0,1\}^n$ (permutação), cuja inversa $p_k^{-1}$ pode ser calculado de maneira eficiente e não existe algoritmo polinomial capaz de distinguir $p_k$ de uma permutação aleatória com probabilidade não desprezível.
 
 Uma {\em cifra de bloco} é capaz de criptografar uma mensagem de tamanho fixo $m \in \{0,1\}^n$, chamado de {\em bloco}, de maneira trivial $p_k(m) = c$ e decifrar usando sua inversa $p_k^{-1}(p_k(m)) = m$.
-Na Seção \ref{sec:modos-de-operacao-bloco} mostraremos como combinar os blocos para criptografar um mensagem de tamanho arbitrário e provaremos a segurança desses sistemas.
+Na Seção \ref{sec:modos-de-operacao-bloco} mostraremos como combinar os blocos para criptografar uma mensagem de tamanho arbitrário e provaremos a segurança desses sistemas.
 Antes disso, porém, vamos apresentar algumas construções usadas na prática.
 
 \section{Construções Práticas}
@@ -58,10 +58,10 @@ Como explicitamos na seção anterior, um PRP é uma permutação $p: \{0,1\}^n 
 Assim, dado $k \leftarrow \{0,1\}^n$ construímos $p_k$ que deve ser indistinguível na prática de $p \leftarrow Perm(\{0,1\}^l)$.
 Não conhecemos um sistema demonstradamente pseudoaleatório, mas os sistemas que apresentaremos, especialmente o AES, tem sido validado na prática.
 
-Nosso desafio será construir um algoritmo em que a mudança de um único bit, seja na mensagem ou na chave, afeta -- mas não necessarimante altera -- todos os bits da cifra.
+Nosso desafio será construir um algoritmo em que a mudança de um único bit, seja na mensagem ou na chave, afeta -- mas não necessariamente altera -- todos os bits da cifra.
 Para essa tarefa partiremos do paradigma proposto por Shannon chamado de {\em confusão e difusão} \cite{Shannon49}.
 
-A ideia da {\em confusão} é dividir o bloco em partes menores, digamos de 8 bits cada, e aplicar uma tabela que indique para cada sequência de 8 bits da entrada qual seria a saída.
+A ideia da {\em confusão} é dividir o bloco em partes menores, digamos de 8 bits cada, e aplicar uma tabela que que para cada sequência de 8 bits da entrada qual seria a saída.
 Apenas a confusão não é suficiente para nosso objetivo, pois a alteração do primeiro bit, por exemplo, afetaria apenas os 8 primeiros bits da cifra.
 A {\em difusão} então seria responsável por embaralhar os bits, espalhando a mudança de uma partes nas demais partes.
 Nas cifras de bloco fases de confusão e difusão são repetidas um número de vezes.
@@ -72,7 +72,7 @@ Nas cifras de bloco fases de confusão e difusão são repetidas um número de v
 O Data Encryption Standard (DES) foi o padrão para a cifras de bloco do fim dos anos 70 até o fim dos anos 90.
 Projetado pela IBM o algoritmos sofreu importantes alterações pela NSA antes de se tornar um padrão internacional.
 
-O DES utiliza uma técnica chamada {\em rede de Feistel} (Figura \ref{fig:feistel}) que utiliza uma serie de funções $f_i:\{0,1\}^{l/2} \to \{0,1\}^{l/2}$ para produzir umafunção eficientemente inversível \cite{Feistel73}.
+O DES utiliza uma técnica chamada {\em rede de Feistel} (Figura \ref{fig:feistel}) que utiliza uma serie de funções $f_i:\{0,1\}^{l/2} \to \{0,1\}^{l/2}$ para produzir uma função eficientemente inversível \cite{Feistel73}.
 A entrada $m = \in \{0,1\}^l$ da rede é dividia ao meio $L := m_0 \dots m_{(l/2)-1}$ e $R := m_{l/2} \dots m_l$ e em cada rodada $i$ é produzido $L_iR_i$ da seguinte forma:
 \begin{displaymath}
   L_i := R_{i-1} \textrm{ e } R_i := L_{i-1} \xor f_i(R_{i-1})
@@ -96,7 +96,7 @@ Esse procedimento pode ser repetido para todas as rodadas da rede para inverter 
 O DES é uma rede de Feistel com 16 rodadas.
 Ela recebe uma chave de 64 e prontamente descarta 8, portanto, e criptografa blocos de 64 bits, ou seja, $DES: \{0,1\}^{56} \times \{0,1\}^{64} \to \{0,1\}^{64}$.
 A chave de 56 passa por um processo chamado {\em key schedule} que produz 16 subchaves de 48 bits.
-As funções em cada rodada do DES são identicas, recebem uma subchave de 48 bits e um bloco de 32 bits (metade do bloco total) e produz um bloco de 32 bits $f: \{0,1\}^{48} \times \{0,1\}^{32} \to \{0,1\}^{32}$.
+As funções em cada rodada do DES são idênticas, recebem uma subchave de 48 bits e um bloco de 32 bits (metade do bloco total) e produz um bloco de 32 bits $f: \{0,1\}^{48} \times \{0,1\}^{32} \to \{0,1\}^{32}$.
 Resta, portanto, apresentar a função $f$ (Figura \ref{fig:feistel-function}):
 \begin{enumerate}
 \item o bloco é expandido para uma sequência de 48 bits,
@@ -129,13 +129,13 @@ Hoje em dia o algoritmo DES é considerado totalmente inseguro.
 
 Além do pequeno tamanho da chave, e mais suspeito, os S-Boxes foram alterados pela NSA sem grandes explicações antes do algoritmos ser adotado como padrão.
 Anos mais tarde pesquisadores apresentaram uma técnica chamada criptoanálise diferencial.
-Diversas cifras se tornaram inseguras com o anúncio desta técnica, mas supreendentemente o DES não.
+Diversas cifras se tornaram inseguras com o anúncio desta técnica, mas surpreendentemente o DES não.
 Desconfia-se que os pesquisadores da NSA conheciam a técnica e alteraram a cifra de forma que ela se torna-se segura contra este tipo de ataque.
 
 \subsection{Advanced Encryption Standard (AES)}
 \label{sec:aes}
 
-As desconfianças em torno do DES e o ataque força bruta iminete contra sua chave levaram o orgão estadunidense responsável pela estabelecimento de padrões internacionais (NIST) a propor um concurso acadêmico em 1997 para elaboração de um novo padrão.
+As desconfianças em torno do DES e o ataque força bruta iminete contra sua chave levaram o órgão estadunidense responsável pela estabelecimento de padrões internacionais (NIST) a propor um concurso acadêmico em 1997 para elaboração de um novo padrão.
 Cada concorrente, além de propor o algoritmo tinha a tarefa de encontrar vulnerabilidades nos demais algoritmos propostos.
 Cinco finalistas foram considerados adequados e em abril de 2000 o algoritmos {\em Rijndael} foi anunciado como vencedor e passou a ser chamado de AES.
 
@@ -175,7 +175,7 @@ Em cada rodada o algoritmo repete os seguintes passos (Figura \ref{fig:aes}).
 \end{figure}
 
 Na última rodada a fase {\em MixColumn} é substituída pela {\em AddRoundKey}.
-O AES é construído cuidadosamente de forma ser efecientemente inversível na presença da chave.
+O AES é construído cuidadosamente de forma ser eficientemente inversível na presença da chave.
 Até a escrita destas notas não se conhece um ataque contra o AES mais eficiente do que o ataque força bruta.
 
 
