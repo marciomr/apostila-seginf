@@ -61,7 +61,7 @@ Não conhecemos um sistema demonstradamente pseudoaleatório, mas os sistemas qu
 Nosso desafio será construir um algoritmo em que a mudança de um único bit, seja na mensagem ou na chave, afeta -- mas não necessariamente altera -- todos os bits da cifra.
 Para essa tarefa partiremos do paradigma proposto por Shannon chamado de {\em confusão e difusão} \cite{Shannon49}.
 
-A ideia da {\em confusão} é dividir o bloco em partes menores, digamos de 8 bits cada, e aplicar uma tabela que que para cada sequência de 8 bits da entrada qual seria a saída.
+A ideia da {\em confusão} é dividir o bloco em partes menores, digamos de 8 bits cada, e aplicar uma tabela que indique para cada sequência de 8 bits da entrada qual seria a saída.
 Apenas a confusão não é suficiente para nosso objetivo, pois a alteração do primeiro bit, por exemplo, afetaria apenas os 8 primeiros bits da cifra.
 A {\em difusão} então seria responsável por embaralhar os bits, espalhando a mudança de uma partes nas demais partes.
 Nas cifras de bloco fases de confusão e difusão são repetidas um número de vezes.
