@@ -4,10 +4,10 @@
 Como argumentamos no primeiro capítulo, a internet é um meio de comunicação promíscuo.
 As partes que se comunicam pela rede não tem controle sobre por quais caminhos sua comunicação irá trafegar.
 Essa característica, porém, não se restringe a esse meio.
-Durante o século XVIII, por exemplo, toda correspondência que passava pelo serviço de correios de Viena na Austria era encaminhada para um escritório -- {\em black chamber} -- que derretia o selo, copiava seu conteúdo, recolocava o selo e reincaminhava para o destinatário.
+Durante o século XVIII, por exemplo, toda correspondência que passava pelo serviço de correios de Viena na Áustria era encaminhada para um escritório -- {\em black chamber} -- que derretia o selo, copiava seu conteúdo, recolocava o selo e reincaminhava para o destinatário.
 Todo esse processo durava cerca de três horas para não atrasar a entrega.
 Como a Áustria, todas as potências européias desse período operavam suas {\em back-chambers}.
-As invenções do telegrafo e do rádio só facilitaram a capacidade de criar grampos, no primeiro caso, ou simplesmente captar a comunicação no segundo \cite{Kahn96}.
+As invenções do telégrafo e do rádio só facilitaram a capacidade de criar grampos, no primeiro caso, ou simplesmente captar a comunicação no segundo \cite{Kahn96}.
 
 Partiremos, portanto, do seguinte modelo de comunicação.
 Duas partes, o remetente e o destinatário, buscam se comunicar.
@@ -46,12 +46,12 @@ Mensagem: transparenciapublicaopacidadeprivada
 Cifra:    XUDQVSDUHQFLDSXEOLFDRSDFLGDGHSULYDGD
 \end{verbatim}
 
-Como descrito por Suetônio, a regra para encriptar uma mensagem consiste em substituir cada letra da mensagem por aquela que está três posições a sua frente na ordem alfabética.
+Como descrito por Suetônio, a regra para encriptar uma mensagem consiste em substituir cada letra da mensagem por aquela que está três posições à sua frente na ordem alfabética.
 Para descriptografar a cifra, substituir cada letra por aquela que está três posições atrás.
 O problema com este tipo de sistema é que basta conhecer a regra de criptografia para decifrá-lo.
 Em outras palavras, o segredo da cifra é sua própria regra.
  
-Embora técnicas de criptografia e criptoanálise existam desde o império romano, foi com o advento do teléfgrafo e sua capacidade de comunicação eficiente, que o campo se estruturou.
+Embora técnicas de criptografia e criptoanálise existam desde o império romano, foi com o advento do telégrafo e sua capacidade de comunicação eficiente, que o campo se estruturou.
 No fim do século XIX Auguste Kerckhoff estabeleceu seis princípios que as cifras militares deveriam satisfazer:
 \begin{enumerate}
 \item O sistema deve ser indecifrável, se não matematicamente, pelo menos na prática.
@@ -59,7 +59,7 @@ No fim do século XIX Auguste Kerckhoff estabeleceu seis princípios que as cifr
 \item Deve ser possível memorizar uma chave sem ter que anotá-la e deve ser possível modificá-la se necessário.
 \item Deve ser possível aplicar a sistemas telegráficos.
 \item O aparato deve ser portátil e não deve necessitar de muitas pessoas para manipulá-lo e operá-lo.
-\item Por fim, dadas as circunstâcias em que ele será usado, o sistema deve ser fácil de usar, não deve ser estressante usá-lo e não deve exigir que o usuário conheça e siga uma longa lista de regras.
+\item Por fim, dadas as circunstâncias em que ele será usado, o sistema deve ser fácil de usar, não deve ser estressante usá-lo e não deve exigir que o usuário conheça e siga uma longa lista de regras.
 \end{enumerate}
 
 O segundo princípio ficou conhecido como {\em princípio de Kerckhoff}.
@@ -73,9 +73,9 @@ Whitfield Diffie coloca o debate nos seguintes termos:
 
 Ou seja, em uma comunicação confidencial as partes devem compartilhar algo que deve ser ``possível de modificar caso necessário''.
 Esse segredo compartilhado é o que chamaremos de {\em chave} da comunicação e assumiremos que ela é a única parte sigilosa do sistema.
-Trazendo o debate para uma discução mais moderna, o sigilo do código-fonte de um sistema não deve em hipótese alguma ser aquilo que garanta sua segurança.
+Trazendo o debate para uma discussão mais moderna, o sigilo do código-fonte de um sistema não deve em hipótese alguma ser aquilo que garanta sua segurança.
 
-O modelo de {\em criptografia simétrica}, portanto, pode ser descrito da seguite maneira:
+O modelo de {\em criptografia simétrica}, portanto, pode ser descrito da seguinte maneira:
 o remetente usa um algoritmo público ($E$) que, dada uma chave ($k$), transforma uma mensagem ($m$) em um texto incompreensível chamado de {\em cifra} ($c$), a cifra é enviada para o destinatário por um meio assumidamente inseguro (hipótese da comunicação hacker) e o destinatário utiliza a mesma chave em um algoritmo ($D$) que recupera a mensagem a partir da cifra.
 
 \begin{center}
@@ -113,7 +113,7 @@ O mecanismo para criptografar uma mensagem será o de deslocar cada letra $k$ po
 Para formalizar este mecanismo vamos assumir que cada letra do alfabeto seja representada por um número: a letra {\tt a} será representada pelo $0$, a letra {\tt b} pelo $1$ e assim por diante.
 O universo de todas as chaves possíveis é o conjunto $K = \{0 ... 23\}$ (chamaremos este conjunto de $\mathbb{Z}_{26}$ ou de maneira mais genérica $\mathbb{Z}_n = \{0, 1, \dots, n - 1\}$) e o universo de todas as mensagens possíveis é representado pelo conjunto $M = {\mathbb{Z}_{26}}^\star$, ou seja, todas as sequências de números entre $0$ e $23$.
 Além disso, o conjunto das possíveis cifras é $C = M$.
-Precisamos descrever três algorítmos:
+Precisamos descrever três algoritmos:
 \begin{itemize}
 \item $Gen$ que gera a chave $k \in K$,
 \item $E$ que recebe uma chave $k \in K$ e uma mensagem $m \in M$ e produz uma cifra $c \in C$ (i.e.: $E: K \times M \to C$) e
@@ -143,7 +143,7 @@ Para evitar este problema utilizaremos não a aritmética convencional, mas a {\
 
 Dizemos que um número $a$ divide $b$ (escrevemos $a|b$) se existe um número inteiro $n$ tal que $a.n = b$.
 Dois números são equivalentes módulo $n$ (escrevemos $a \equiv b\ (mod\ n)$) se $n|(b-a)$.
-Em outras palavras, dois números são equivalentes módulo $n$ se o resto da divisão de cada um por $n$ for o mesmo reultado.
+Em outras palavras, dois números são equivalentes módulo $n$ se o resto da divisão de cada um por $n$ for o mesmo resultado.
 O conjunto de todos os números equivalentes módulo $n$ forma uma classe de equivalência que representaremos como $[a\ mod\ n] = \{b \in \mathbb{Z} : a \equiv (b\ mod\ n)\}$.
 Por exemplo $[5 + 7\ mod\ 10] = [2\ mod\ 10]$ pois $5 + 7 = 12$ e o resto de $12$ por $10$ é $2$.
 
@@ -173,7 +173,7 @@ Estamos finalmente em condições de formalizar o sistema da cifra de deslocamen
 \label{sec:cifra-monoalfabetica}
 
 Em 1567 a residência da rainha da Mary da Escócia foi destruída por uma explosão que levou a morte do então rei, primo de Mary.
-O principal suspeito do assinato foi dispensado da pena e se casou com Mary no mês seguinte.
+O principal suspeito do assassinato foi dispensado da pena e se casou com Mary no mês seguinte.
 O episódio levou-a a prisão na Inglaterra.
 Neste tempo, para a maioria dos católicos, Mary era a legítima herdeira do trono inglês - ocupado pela protestante Elizabeth I.
 Durante o tempo na prisão Mary conspirou com aliados pela morte de Elizabeth.
@@ -203,7 +203,7 @@ Assim, a chave desse tipo de cifra é um alfabeto.
 \end{example}
 
 O desfecho da história da conspiração de Babington sugere que a cifra monoalfabética não é muito segura.
-De fato, no próximo capítulo discutiremos melhor as técnicas de criptonálise para este tipo de cifra.
+De fato, no próximo capítulo discutiremos melhor as técnicas de criptoanálise para este tipo de cifra.
 Não obstante, até o desenvolvimento das primeiras máquinas de criptografar, versões das cifras monoalfabéticas eram as cifras mais populares no mundo todo.
 Nos anos 70 a editora abril publicou no Brasil o famoso Manual do Escoteiro Mirim da Disney que apresentava uma cifra monoalfabética.
 Mais recentemente, o curioso caso do desaparecimento de um rapaz no Acre viralizou quando seus familiares revelaram que no seu quarto havia uma coleção de livros que ele havia escrito de maneira criptografada.
@@ -257,7 +257,7 @@ Cifra:    LVNUSHEELNUMNWUTHVJAGTNJIVEQKPJMIHDS
 
 Para fechar o capítulo vamos fazer o exercício de formalizar a cifra de Vigenère.
 A chave consiste em uma sequência de letras, tipicamente escolhidas em um dicionário, mas vamos aqui supor que a escolha seja aleatória e com um tamanho fixado $l$.
-Para criptografar basta desolcar $m_i$ por $k_{[i\ mod\ n]}$ posições.
+Para criptografar basta deslocar $m_i$ por $k_{[i\ mod\ n]}$ posições.
 Formalmente temos que $\Pi = \langle Gen, E, D \rangle$
 
 \begin{itemize}
@@ -275,13 +275,13 @@ A configuração inicial dos rotores contém a chave da criptografia.
 Cada vez que o operador pressiona uma tecla o rotor embaralha as letras.
 Dessa forma, essas {\em máquinas rotoras} se comportam como uma sofisticada cifra polialfabética.
 Para descriptografar a mensagem, o operador precisa ajustar a máquina em modo de descriptografia, ajustar a configuração inicial com a chave secreta e digitar o texto cifrado.
-A máquina então irá se rearrajar para produzir o texto original quando digitado.
+A máquina então irá se rearranjar para produzir o texto original quando digitado.
 
 As máquinas rotoras mais conhecidas são da série {\em Enigma}.
 Elas foram criadas por um inventor alemão no final da primeira guerra mundial e versões mais modernas foram extensamente usadas durante a segunda guerra pelo exército nazista.
-As versões mais simples da máquina possuiam três rotores capazes de gerar $26^3 \approx 17.500$ possíveis configurações iniciais.
+As versões mais simples da máquina possuíam três rotores capazes de gerar $26^3 \approx 17.500$ possíveis configurações iniciais.
 Além disso, era possível trocar a ordem dos rotores multiplicando por $6$ o número de combinações possíveis, chegando a um total de cerca de $105$ mil possibilidades.
-A versão utilizada pelo exercito nazista, porém, permitia cerca de $150$ trilhões de possibilidades.
+A versão utilizada pelo exército nazista, porém, permitia cerca de $150$ trilhões de possibilidades.
 Em 1939 Alan Turing desenvolveu uma máquina eletromecânica chamada {\em Bombe} capaz de decifrar algumas cifras de máquinas Enigma com 3 rotores e, posteriormente foi melhorada para decifrar mensagens de máquinas Enigma mais sofisticadas.
 
 A história da computação esbarra na história da criptografia neste ponto.
