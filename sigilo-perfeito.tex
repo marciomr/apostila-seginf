@@ -26,10 +26,10 @@ O exemplo a seguir mostra que a cifra de substituição não garante o sigilo pe
 
 \begin{example}
   Seja $\Pi = \langle Gen, E, D \rangle$ o sistema de criptografia de substituição e sejam $c = \textrm{\tt ANA}$, $m_0 = \textrm{\tt OVO}$ e $m_1 = \textrm{\tt EVA}$.
-Como o sistema $\Pi$ substitui cada letra da mensagem por uma letra na cifra, existem chaves $k$ tal que $E(k, m_0) = c$ -- basta que $k(\textrm{\tt O}) = \textrm{\tt A}$ e $k(\textrm{\tt V}) = \textrm{\tt N}$, de fato a chance de escolher uma chave assim é $\frac{1}{26^2} = \frac{1}{676}$ --, mas não existe nenhuma chave $k'$ tal que $E(k', m_1) = c$.
+Como o sistema $\Pi$ substitui cada letra da mensagem por uma letra na cifra, existem chaves $k$ tal que $E(k, m_0) = c$ -- basta que $k(\textrm{\tt O}) = \textrm{\tt A}$ e $k(\textrm{\tt V}) = \textrm{\tt N}$, de fato a chance de escolher uma chave assim é $\frac{1}{26 \cdot 25} = \frac{1}{650}$ --, mas não existe nenhuma chave $k'$ tal que $E(k', m_1) = c$.
 Portanto temos que:
 \begin{displaymath}
-Pr[C = c | M = m_0] =  \frac{1}{676} \neq Pr[C = c | M = m_1] = 0  
+Pr[C = c | M = m_0] =  \frac{1}{650} \neq Pr[C = c | M = m_1] = 0  
 \end{displaymath}
 \end{example}
 
@@ -209,7 +209,7 @@ Nos próximos capítulos apresentaremos definições de segurança mais fracas e
 \end{exercicio}
 
 \begin{exercicio}
-  Mostre que a operação $\xor$ é {\em comutativa}, ou seja, que para todo $x,y \in \{0,1\}^*$ temos que $x \xor y = x \xor y$.
+  Mostre que a operação $\xor$ é {\em comutativa}, ou seja, que para todo $x,y \in \{0,1\}^*$ temos que $x \xor y = y \xor x$.
 \end{exercicio}
 
 \begin{exercicio}
