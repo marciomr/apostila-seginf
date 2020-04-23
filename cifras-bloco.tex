@@ -109,7 +109,7 @@ Considere o seguinte adversário $\mathcal{A}$ que derrota esta cifra:
 \end{figure}
 
 Essa maneira ingênua de combinar os blocos não garante a segurança contra o modelos de ataque mais simples que apresentamos.
-Queremos um sistema que seja seguro contra CPA.
+O que estamos buscando é um sistema que seja seguro contra CPA.
 
 Pela definição de segurança contra CPA que apresentamos, o adversário possui acesso a um oráculo que ele pode consultar para verificar como uma mensagem seria criptografada.
 Essa definição força o algoritmo $E$ de criptografia a ser não determinístico.
@@ -123,19 +123,8 @@ O algoritmo $E(k,m) := c_0 c_1 \dots c_l$ onde cada $c_i$ tem o tamanho de um bl
 
 \begin{eqnarray*}
   c_0 & := & IV \leftarrow \{0,1\}^n \\
-  c_i & := & p_k(c_{i-1} \xor m_i) \textrm{ para cada } i = 0, \dots, l
+  c_i & := & p_k(c_{i-1} \xor m_i) \textrm{ para } i = 1, \dots, l
 \end{eqnarray*}
-
-Para descriptografar precisamos aplicar $D(k,c) := m_0 \dots m_l$ da seguinte forma:
-\begin{eqnarray*}
-  m_{i} & := & p_k^{-1}(c_{i+1}) \xor c_{i} \textrm{ para cada } i = 0, \dots, l-1
-\end{eqnarray*}
-
-É possível provar que este sistema é seguro contra CPA.
-
-\begin{theorem}
-  Se $p$ é uma PRP então o sistema $\Pi$ tal qual apresentado acima, modo CBC, é seguro contra CPA.
-\end{theorem}
 
 \begin{center}
 \begin{tikzpicture}[node distance=2cm,auto,>=latex]
@@ -166,6 +155,18 @@ Para descriptografar precisamos aplicar $D(k,c) := m_0 \dots m_l$ da seguinte fo
 \end{center}
 
 
+Para descriptografar precisamos aplicar $D(k,c) := m_0 \dots m_l$ da seguinte forma:
+\begin{eqnarray*}
+  m_{i} & := & p_k^{-1}(c_{i+1}) \xor c_{i} \textrm{ para } i = 0, \dots, l-1
+\end{eqnarray*}
+
+É possível provar que este sistema é seguro contra CPA.
+
+\begin{theorem}
+  Se $p$ é uma PRP então o sistema $\Pi$ tal qual apresentado acima, modo CBC, é seguro contra CPA.
+\end{theorem}
+
+
 A principal limitação do modo CBC é que os blocos precisam ser processados em sequência, ou seja, o algoritmo não é paralelizável.
 O {\em modo contador} (Ctr), por outro lado, não tem essa limitação.
 Este modo opera de maneira muito similar a uma cifra de fluxo.
@@ -174,14 +175,8 @@ Para ada bloco é calculado somando o índice do bloco com $IV$ e aplicado uma f
 Calculamos por fim o XOR do valor obtido com o bloco da mensagem:
 \begin{eqnarray*}
   c_0 & := & IV \leftarrow \{0,1\}^n \\
-  c_i & := & m_i \xor f_k(IV + i) \textrm{ para cada } i = 1, \dots, l
+  c_i & := & m_i \xor f_k(IV + i) \textrm{ para } i = 1, \dots, l
 \end{eqnarray*} 
-
-O algoritmo $D(k,c)$ é exatamente a mesma coisa, como se poderia esperar:
-\begin{eqnarray*}
-  m_i & := & c_{i+1} \xor f_k(c_0 + i) \textrm{ para cada } i = 0, \dots, l-1
-\end{eqnarray*} 
-
 
 \begin{center}
 \begin{tikzpicture}[node distance=2cm,auto,>=latex]
@@ -210,6 +205,12 @@ O algoritmo $D(k,c)$ é exatamente a mesma coisa, como se poderia esperar:
   \draw[->] (xorl) -> (cl);
 \end{tikzpicture}
 \end{center}
+
+O algoritmo $D(k,c)$ é exatamente a mesma coisa, como se poderia esperar:
+\begin{eqnarray*}
+  m_i & := & c_i \xor f_k(c_0 + i) \textrm{ para } i = 1, \dots, l
+\end{eqnarray*} 
+
 
 A segurança do modo contador exige apenas uma função pseudoaleatória que não precisa ser inversível:
 
@@ -285,9 +286,9 @@ Pr[PrivK^{cpa}_{\mathcal{A},\Pi'}(n) = 1] < \frac{1}{2} + \frac{2q(n) - 1}{2^n}
 \end{proof}
 
 A demonstração indica que o tamanho dos blocos também influencia em sua segurança.
-Isso ocorre, pois quanto menos os blocos maior a chance de gerar vetores inciais idênticos, e portanto, de criptografar duas mensagens distintas com a mesma chave.
-Como exemplo, tomando o caso concreto do DES, seu bloco tem tamanho $64$ e,portanto, esperamos uma colisão depois de $2^{32}$ blocos (ver Capítulo \ref{cha:hash}), ou cerca de 4Gb.
-No momento em que estas notas são escritas, este valor é alto, mas plausível em muitas aplicações práticas.
+Isso ocorre, pois quanto menores os blocos maior a chance de gerar vetores inciais idênticos, e portanto, de criptografar duas mensagens distintas com a mesma chave.
+%Como exemplo, tomando o caso concreto do DES, seu bloco tem tamanho $64$ e,portanto, esperamos uma colisão depois de $2^{32}$ blocos (ver Capítulo \ref{cha:hash}), ou cerca de 4Gb.
+%No momento em que estas notas são escritas, este valor é alto, mas plausível em muitas aplicações práticas.
 
 \section{Construções Práticas}
 \label{sec:construcoes-praticas}
