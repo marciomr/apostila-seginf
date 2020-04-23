@@ -317,12 +317,55 @@ A entrada $m = \in \{0,1\}^l$ da rede é dividia ao meio $L := m_0 \dots m_{(l/2
 \end{displaymath}
 
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=.8\textwidth]{imagens/feistel.png}
-  \caption{Rede de Feistel}
-  \label{fig:feistel}
-\end{figure}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+  \node (R0) at (0,0)  {$R_0$};
+  \node (L0) at (0,-2)  {$L_0$};
+  \node (F0) at (1,-1)  {$f$};
+  \node (xor0) at (1,-2)  {$\bigoplus$};
+  \node (R1) at (3,0)  {$R_1$};
+  \node (L1) at (3,-2)  {$L_1$};
+  \node (F1) at (4,-1) {$f$};
+  \node (xor1) at (4,-2)  {$\bigoplus$};
+  \node (R2) at (6,0)  {$R_2$};
+  \node (L2) at (6,-2) {$L_2$};
+  \node at (7,0) {\dots};
+  \node at (7,-2) {\dots};
+  \node (Rr1) at (8,0) {$R_{r-1}$};
+  \node (Lr1) at (8,-2)  {$L_{r-1}$};
+  \node (Fr) at (9,-1) {$f$};
+  \node (xorr) at (9,-2)  {$\bigoplus$};
+  \node (Rr) at (11,0) {$R_{r}$};
+  \node (Lr) at (11,-2)  {$L_{r}$};
+
+  \draw[-] (R0) -> (2,0);
+  \draw[->] (1,0) -> (F0);
+  \draw[->] (L0) -> (xor0);
+  \draw[->] (0.5,-1) -> node[above]{\tiny{$k_1$}} (F0);
+  \draw[->] (F0) -> (xor0);
+  \draw[-] (xor0) -> (2,-2);
+  \draw[->] (2,0) -> (L1);
+  \draw[->] (2,-2) -> (R1);
+
+  \draw[-] (R1) -> (5,0);
+  \draw[->] (4,0) -> (F1);
+  \draw[->] (L1) -> (xor1);
+  \draw[->] (3.5,-1) -> node[above]{\tiny{$k_2$}} (F1);
+  \draw[->] (F1) -> (xor1);
+  \draw[-] (xor1) -> (5,-2);
+  \draw[->] (5,0) -> (L2);
+  \draw[->] (5,-2) -> (R2);
+
+  \draw[-] (Rr1) -> (10,0);
+  \draw[->] (9,0) -> (Fr);
+  \draw[->] (Lr1) -> (xorr);
+  \draw[->] (8.5,-1) -> node[above]{\tiny{$k_r$}} (Fr);
+  \draw[->] (Fr) -> (xorr);
+  \draw[-] (xorr) -> (10,-2);
+  \draw[->] (10,0) -> (Lr);
+  \draw[->] (10,-2) -> (Rr);
+\end{tikzpicture}
+\end{center}
 
 Dada a saída $\langle L_i, R_i \rangle$ da $i$-ésima rodada de uma rede de Feistel, podemos recuperar o valor de $\langle L_{i-1}, R_{i-1} \rangle$ primeiro fazendo $R_{i-1} := L_i$ e em seguinda calculando:
 \begin{displaymath}
