@@ -46,10 +46,10 @@ Formalmente temos o seguinte:
 
 A restrição de que o distinguidor seja eficiente é extritamente necessária.
 Em particular é sempre possível construir um distinguidor usando uma espécie de ataque de força bruta.
-Dado uma sequência $w$, o algoritmo $D$ testa todos as possíveis sementes $s$ e verifica se $G(s) = w$ e devolve $1$ caso exista e $0$ caso contrário.
-Esse teste é eficaz pois $Pr[D(G(s)) = \frac{1}{2^n}] = 1$, mas $Pr[D(r) = 1] = \frac{1}{2^{l(n)}}$.
+Dado uma sequência $w$, o algoritmo $D$ testa todos as possíveis sementes $s$, verifica se $G(s) = w$ e devolve $1$ caso essa semente exista e $0$ se todas falharem.
+Esse teste é eficaz pois $Pr[D(G(s)) = 1] =  \frac{1}{2^n}$, mas $Pr[D(r) = 1] = \frac{1}{2^{l(n)}}$ -- existem muito menos sequências em $\{0,1\}^{l(n)}$ geradas por alguma semente do que geradas aleatóriamente.
 Porém, o teste não é eficiente.
-De fato $D$ não é polinomial, mas exponencial, pois o tempo esperado para testar todos os valores de $s$ é $2^{n-1}$. 
+De fato o tempo esperado para testar todos os valores de $s$ é exponencial, mais precisamente $2^{n-1}$. 
 
 \section{Segurança das Cifras de Fluxo}
 \label{sec:streamcipher-sec}
@@ -69,7 +69,7 @@ Neste caso vamos reduzir o problema de construir um sistema seguro contra ataque
 \end{itemize}
 \end{theorem}
 \begin{proof}
-Seja $\mathcal{A}$ um algoritmo polinomial.
+  Seja $\mathcal{A}$ um algoritmo polinomial.
 Construiremos um distinguidor $D$ que recebe um string $w \in \{0,1\}^{l(n)}$ e faz o seguinte:
 \begin{itemize}
 \item Roda $\mathcal{A}(1^n)$ para obter o par de mensagens $m_0, m_1 \in \{0,1\}^{l(n)}$
@@ -103,23 +103,52 @@ Algoritmos validados empiricamente como bons PRG podem ser usados portanto para 
 Nos próximos capítulos exploraremos definições mais fortes de segurança e suas respectivas suposições.
 Para fechar este capítulo lembramos que as cifras de fluxo sofrem do mesmo problema do OTP quanto à repetição do uso de uma mesma chave.
 
+\section{Modos de Operação}
+\label{sec:modos-de-operacao}
+
+Há uma pequena distância entre o resultado do Teorema \ref{theo:stream} e as aplicações práticas das cifras de fluxo da seção \ref{sec:lfsr}, pois o resultado do teorema vale apenas para mensagens de tamanho fixo previamente conhecido.
+Em todas situações práticas estamos interessados em criptografar cifras de tamanho arbitrário.
+Há duas possíveis soluções para este problema, dois {\em modos de operação} para as cifras de fluxo: síncrono e assíncrono.
+
+Tipicamente, um PRG é formado por um par de algoritmos $\langle Init, GenBits \rangle$.
+O primeiro recebe a semente $s$ como entrada e opcionalmente um vetor inicial $IV$ (ver seção seguinte) e devolve um estado inicial $st_0$.
+O segundo algoritmo recebe como entrada o estado atual $st_i$, devolve um bit $y$ e atualiza o estado para $st_{i+1}$.
+Para cada semente, então, o algoritmo produz um {\em fluxo} de bits -- sendo os $l(n)$ primeiros bits geram $G(s)$.
+
+No modo {\em síncrono} consideramos uma sequência de mensagens $m_0, m_1, \dots$ como uma única grande mensagem $m$.
+O algoritmo $Init(s)$ gera o estado inicial $st_0$ e a cada comunicação $GetBits$ parte do estado anterior e gera os bits necessários para encriptar a nova parte da mensagem enviada na comunicação.
+A limitação desta abordagem é que as partes precisam mater o estado atual sincronizado, ou seja, quando Alice atualiza $st$, Bob precisa atualizar também.
+
+O outro modo é {\em assíncrono}.
+Neste assumimos que além da semente $s$ a algoritmo $G$ recebe uma sequência de bits chamada {\em vetor inicial} $IV$.
+O vetor inicial não é sigiloso, mas deve mudar cada vez que uma nova mensagem é criptografada.
+Desta forma garantimos que a sequência produzida por $G$ com a mesma chave seja distinta e assim impedimos que ataques de repetição de chaves como mostramos no Capítulo \ref{cha:sigilo-perfeito}.
+
+% CITAR OS ARTIGOS QUE APRESENTAM O TRIVIUM, O RC4 E O ATAQUE CONTRA O WEP
+
+\begin{example}
+O Wired Equivalent Privacy (WEP) era o padrão para segurança em conexões WiFi desde 97 e é essencialmene uma cifra de fluxo que opera de modo assíncrono.
+Para gerar um fluxo de bits pseudo-aleatórios o WEP utiliza o RC4 \cite{Rivest16} -- um PRG proposto por Ron Rivest em 87 -- que recebe como entrada a semente de 40 ou 104 bits e um vetor inicial não sigiloso de 24 bits.
+Para cada pacote transimitido, o WEP gera um novo $IV$ e utiliza a mesma chave para criptografar seu conteúdo.
+Acontece que 24 bits é um tamanho consideravelmente pequeno e se repete com 50\% de chance a cada 5000 pacotes tornando-o completamente inseguro \cite{Fluhrer01}.
+
+Hoje em dia, um script que implementa este tipo de ataque chamado {\tt aircrack-ng}\footnote{http://www.aircrack-ng.org/} é capaz de quebrar uma senha WEP usando uma computador pessoal em questão de minutos.
+Esse tipo de vulnerabilidade do protocolo WEP levou-o a ser substituído em pelo protocolo WPA e em seguida pelo WPA2 entre 2004 e 2006.
+\end{example}
+
 \section{Construções Práticas}
 \label{sec:construcoes-praticas}
 
 A existência de PRGs não foi demonstrada matematicamente.
-No Capítulo \ref{cha:owf} mostraremos porque é tão difícil encontrar uma PRG demonstradamente seguro.
-Assim, a abordagem utilizada em relação a PRG é empírica.
-Ou seja, os candidatos a PRG são empiricamente validados a cada tentativa frustrada de construir um distinguidor empírico para eles.
+No Apêndice \ref{cha:owf} mostraremos porque é tão difícil encontrar uma PRG demonstradamente seguro.
+O importante por enquanto é que é difícil demonstrar a segurança de um sistema e, portanto, a abordagem utilizada em relação a PRG é empírica.
+Ou seja, os candidatos a PRG são empiricamente validados a cada tentativa frustrada de construir um distinguidor para eles.
 
-Assim, na prática utilizamos um par de algoritmos $\langle Init, GenGits \rangle$.
-O primeiro algoritmo recebe a semente $s$ como entrada e opcionalmente um vetor inicial $IV$ (ver seção seguinte) e devolve um estado inicial $st_0$.
-O segundo algoritmo recebe como entrada o estado atual $st_i$, devolve um bit $y$ e atualiza o estado para $st_{i+1}$.
-Assim para cada semente, o algoritmo produz um {\em fluxo} infinito de bits -- sendo os $l(n)$ primeiros bits geram $G(s)$.
 
 \subsection{Linear-Feedback Shift Registers}
 \label{sec:lfsr}
 
-Um exemplo deste tipo de algoritmo são os chamados {\em Linear-Feedback Shift Registers} (LFSRs).
+Uma classe de exemplos deste tipo de algoritmo são os chamados {\em Linear-Feedback Shift Registers} (LFSRs).
 Um LFSR consiste de um vetor de registradores $s_{n-1} \dots s_0$, que guardam exatamente um bit cada, e uma sequência de bits $c_{n-1} \dots c_0$ chamada {\em coeficientes de feedback}.
 A cada passo o estado é atualizado deslocando todo vetor uma posição para a direita e produzindo um novo bit que é calculado como
 \begin{displaymath}
@@ -139,8 +168,9 @@ Se a configuração inicial dos registradores é $\langle 0,0,1,1 \rangle$ os pr
 \end{example}
 
 Um LSFR com $n$ registradores é capaz de gerar no máximo $2^n$ bits até começar a repetir sua sequência.
+Bons LFSR são aqueles que geram a maior quantidade de bits antes de começar a repetir -- essa quantidade de bits é chamada de {\em tamanho do ciclo}.
 
-O único segredo do LFSR são os coeficientes de feedback $c_{n-1} \dots c_0$.
+O segredo do LFSR, sua ``chave'', é a semente $s_{n-1} \dots s_0$ -- lembrem que assumimos que o mecanismo (neste caso os coeficiente de feedback) são sempre conhecidos. 
 Um ataque relativamente simples a um LFSR consiste em observar os $n$ primeiros bits gerados $y_{n+1} \dots y_{2n}$ e resolver o seguinte sistema linear:
 
 \begin{eqnarray*}
@@ -149,10 +179,12 @@ Um ataque relativamente simples a um LFSR consiste em observar os $n$ primeiros 
   y_{2n}  &    =   & c_{n-1}y_{2n-1} \xor \dots \xor c_0 y_n\\      
 \end{eqnarray*}
 
-É possível mostrar que essas equações são linearmente independentes e, portanto, elas determinam unicamente os coefientes.
-Uma vez determinados os coeficientes, podemos prever cada novo bit o que torna simples a tarefa de construir um distinguidor para o gerador.
 
-Resumindo, o LFSR não é seguro pois a operação que gera novos bits é linear o que permite que ela seja previsível.
+É possível mostrar que essas equações são linearmente independentes e, portanto, elas determinam unicamente os coefientes.
+Uma vez determinados os valores $y_0 \dots y_n = s_0 \dots s_n$, podemos prever cada novo bit da sequência.
+Com isso torna-se simples a tarefa de construir um distinguidor para o gerador.
+
+Resumindo, o LFSR não é seguro pois a operação que gera novos bits é linear, o que permite que ela seja previsível.
 LFSRs não são PRG seguros, mas muitos PRGs nada mais são do que versões alteradas deste esquema geral.
 Tipicamente os PRGs usados na prática substituem a operação de ou exclusivo por alguma operação não linear.
 
@@ -190,34 +222,6 @@ Até a escrita destas notas, não existem ataques conhecidos ao algoritmo mais e
 A escolha de um bom gerador de números pseudo-aleatórios é central para a segurança de uma cifra de fluxo.
 Um erro típico é utilizar funções padrão, como a função {\tt rand} da biblioteca padrão do {\tt C}, que não são adequadas para aplicações de segurança.
 A orientação geral é buscar os geradores selecionados pelo projeto eSTREAM como o Trivium mencionado nesta seção ou o SALSA20.
-
-\section{Modos de Operação}
-\label{sec:modos-de-operacao}
-
-Há uma pequena distância entre o resultado do Teorema \ref{theo:stream} e as aplicações práticas das cifras de fluxo da seção \ref{sec:lfsr}, pois o resultado do teorema vale apenas para mensagens de tamanho fixo previamente conhecido.
-Em todas situações práticas estamos interessados em criptografar cifras de tamanho arbitrário.
-Há duas possíveis soluções para este problema, dois {\em modos de operação} para as cifras de fluxo: síncrono e assíncrono.
-
-No modo {\em síncrono} consideramos uma sequência de mensagens $m_0, m_1, \dots$ como uma única grande mensagem $m$.
-O algoritmo $Init(s)$ gera o estado inicial $st_0$ e a cada comunicação $GetBits$ parte do estado anterior e gera os bits necessários para encriptar a nova parte da mensagem enviada na comunicação.
-A limitação desta abordagem é que as partes precisam mater o estado atual sincronizado, ou seja, quando Alice atualiza $st$, Bob precisa atualizar também.
-
-O outro modo é {\em assíncrono}.
-Neste assumimos que além da semente $s$ a algoritmo $G$ recebe uma sequência de bits chamada {\em vetor inicial} $IV$.
-O vetor inicial não é sigiloso, mas deve mudar cada vez que uma nova mensagem é criptografada.
-Desta forma garantimos que a sequência produzida por $G$ com a mesma chave seja distinta e assim impedimos que ataques de repetição de chaves como mostramos no Capítulo \ref{cha:sigilo-perfeito}.
-
-% CITAR OS ARTIGOS QUE APRESENTAM O TRIVIUM, O RC4 E O ATAQUE CONTRA O WEP
-
-\begin{example}
-O Wired Equivalent Privacy (WEP) era o padrão para segurança em conexões WiFi desde 97 e é essencialmene uma cifra de fluxo que opera de modo assíncrono.
-Para gerar um fluxo de bits pseudo-aleatórios o WEP utiliza o RC4 \cite{Rivest16} -- um PRG proposto por Ron Rivest em 87 -- que recebe como entrada a semente de 40 ou 104 bits e um vetor inicial não sigiloso de 24 bits.
-Para cada pacote transimitido, o WEP gera um novo $IV$ e utiliza a mesma chave para criptografar seu conteúdo.
-Acontece que 24 bits é um tamanho consideravelmente pequeno e se repete com 50\% de chance a cada 5000 pacotes tornando-o completamente inseguro \cite{Fluhrer01}.
-
-Hoje em dia, um script que implementa este tipo de ataque chamado {\tt aircrack-ng}\footnote{http://www.aircrack-ng.org/} é capaz de quebrar uma senha WEP usando uma computador pessoal em questão de minutos.
-Esse tipo de vulnerabilidade do protocolo WEP levou-o a ser substituído em pelo protocolo WPA e em seguida pelo WPA2 entre 2004 e 2006.
-\end{example}
 
 
 \section{Exercicios}
