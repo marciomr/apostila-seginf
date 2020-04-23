@@ -12,7 +12,7 @@ Com a teoria da criptografia moderna, diríamos hoje que o tipo de ataque que os
 
 Neste capítulo nos voltaremos para um modelo de ataque ainda mais poderoso.
 Ataques do tipo {\em chosen plaintext} (CPA) supõe que o adversário, além de acessar o texto cifrado, é capaz de fazer com que o sistema produza as cifras de mensagens produzidas por ele \cite{Bellare97}.
-É evidente que ataques do tipo {\em known plaintext} são um caso particular deste, mas existem situações em que devemos assumir esse poder maior por parte do adversário.
+É evidente que um ataques do tipo {\em known plaintext} são casos particulares deste, mas existem situações em que devemos assumir esse poder maior por parte do adversário.
 
 Vamos formalizar segurança contra ataques CPA de forma análoga à segurança contra ataques {\em ciphertext only}.
 Considere o seguinte jogo.
@@ -37,7 +37,7 @@ Chamamos o experimento de $PrivK^{cpa}_{\Pi, \mathcal{A}}$:
 
 Um sistema $\Pi$ é {\em seguro contra CPA} se para todo adversário polinomial $\mathcal{A}$ temos que existe uma função desprezível $\varepsilon$ tal que:
 \begin{displaymath}
-  Pr[PrivK^{cap}_{\Pi, \mathcal{A}} = 1] = \frac{1}{2} + \varepsilon(n)
+  Pr[PrivK^{cap}_{\Pi, \mathcal{A}} = 1] \leq \frac{1}{2} + \varepsilon(n)
 \end{displaymath}
 
 Para construir um sistema seguro contra CPA assumiremos a existência de {\em funções pseudoaleatórias}.
@@ -51,133 +51,6 @@ Uma {\em cifra de bloco} é uma {\em permutação pseudoaleatória} (PRP), uma f
 Uma {\em cifra de bloco} é capaz de criptografar uma mensagem de tamanho fixo $m \in \{0,1\}^n$, chamado de {\em bloco}, de maneira trivial $p_k(m) = c$ e decifrar usando sua inversa $p_k^{-1}(p_k(m)) = m$.
 Na Seção \ref{sec:modos-de-operacao-bloco} mostraremos como combinar os blocos para criptografar um mensagem de tamanho arbitrário e provaremos a segurança desses sistemas.
 Antes disso, porém, vamos apresentar algumas construções usadas na prática.
-
-\section{Construções Práticas}
-\label{sec:construcoes-praticas}
-Como explicitamos na seção anterior, um PRP é uma permutação $p: \{0,1\}^n \times \{0,1\}^l \to \{0,1\}^l$ em que $n$ é o tamanho da chave e $l$ o tamanho do bloco.
-Assim, dado $k \leftarrow \{0,1\}^n$ construímos $p_k$ que deve ser indistinguível na prática de $p \leftarrow Perm(\{0,1\}^l)$.
-Não conhecemos um sistema demonstradamente pseudoaleatório, mas os sistemas que apresentaremos, especialmente o AES, tem sido validado na prática.
-
-Nosso desafio será construir um algoritmo em que a mudança de um único bit, seja na mensagem ou na chave, afeta -- mas não necessarimante altera -- todos os bits da cifra.
-Para essa tarefa partiremos do paradigma proposto por Shannon chamado de {\em confusão e difusão} \cite{Shannon49}.
-
-A ideia da {\em confusão} é dividir o bloco em partes menores, digamos de 8 bits cada, e aplicar uma tabela que indique para cada sequência de 8 bits da entrada qual seria a saída.
-Apenas a confusão não é suficiente para nosso objetivo, pois a alteração do primeiro bit, por exemplo, afetaria apenas os 8 primeiros bits da cifra.
-A {\em difusão} então seria responsável por embaralhar os bits, espalhando a mudança de uma partes nas demais partes.
-Nas cifras de bloco fases de confusão e difusão são repetidas um número de vezes.
-
-\subsection{Data Encryption Standard (DES)}
-\label{sec:des}
-
-O Data Encryption Standard (DES) foi o padrão para a cifras de bloco do fim dos anos 70 até o fim dos anos 90.
-Projetado pela IBM o algoritmos sofreu importantes alterações pela NSA antes de se tornar um padrão internacional.
-
-O DES utiliza uma técnica chamada {\em rede de Feistel} (Figura \ref{fig:feistel}) que utiliza uma serie de funções $f_i:\{0,1\}^{l/2} \to \{0,1\}^{l/2}$ para produzir umafunção eficientemente inversível \cite{Feistel73}.
-A entrada $m = \in \{0,1\}^l$ da rede é dividia ao meio $L := m_0 \dots m_{(l/2)-1}$ e $R := m_{l/2} \dots m_l$ e em cada rodada $i$ é produzido $L_iR_i$ da seguinte forma:
-\begin{displaymath}
-  L_i := R_{i-1} \textrm{ e } R_i := L_{i-1} \xor f_i(R_{i-1})
-\end{displaymath}
-
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=.8\textwidth]{imagens/feistel.png}
-  \caption{Rede de Feistel}
-  \label{fig:feistel}
-\end{figure}
-
-Dada a saída $\langle L_i, R_i \rangle$ da $i$-ésima rodada de uma rede de Feistel, podemos recuperar o valor de $\langle L_{i-1}, R_{i-1} \rangle$ primeiro fazendo $R_{i-1} := L_i$ e em seguinda calculando:
-\begin{displaymath}
-  L_{i-1} := R_i \xor f_i(R_{i-1})
-\end{displaymath}
-
-Esse procedimento pode ser repetido para todas as rodadas da rede para inverter a função.
-
-O DES é uma rede de Feistel com 16 rodadas.
-Ela recebe uma chave de 64 e prontamente descarta 8, portanto, e criptografa blocos de 64 bits, ou seja, $DES: \{0,1\}^{56} \times \{0,1\}^{64} \to \{0,1\}^{64}$.
-A chave de 56 passa por um processo chamado {\em key schedule} que produz 16 subchaves de 48 bits.
-As funções em cada rodada do DES são identicas, recebem uma subchave de 48 bits e um bloco de 32 bits (metade do bloco total) e produz um bloco de 32 bits $f: \{0,1\}^{48} \times \{0,1\}^{32} \to \{0,1\}^{32}$.
-Resta, portanto, apresentar a função $f$ (Figura \ref{fig:feistel-function}):
-\begin{enumerate}
-\item o bloco é expandido para uma sequência de 48 bits,
-\item aplica-se o XOR do bloco expandido com a subchave,
-\item o resultado é dividido em 8 pedaços de 6 bits cada,
-\item cada pedaço desses passa por um SBox diferente que substitui os 6 bits por 4 bits (fase de confusão),
-\item o resultado é reduzido para uma sequência de 32 bits e, por fim,
-\item os bits são misturados (fase de difusão).
-\end{enumerate}
-
-\begin{figure}[!htp]
-  \centering
-  \includegraphics[width=.4\textwidth]{imagens/feistel-function.png}
-  \caption{Função de Fiestel do DES}
-  \label{fig:feistel-function}
-\end{figure}
-
-
-A adoção do padrão DES foi cheia de controvérsias.
-Não foi esclarecido o motivo do descarte do 8 bits da chave.
-Uma chave de 56 bits é hoje considerada insegura contra um ataque de força bruta e estava no limite da segurança nos anos 70.
-Um artigo de 1993 propõe um projeto de hardware que, em teoria, seria capaz de aplicar um ataque força-bruta em uma chave de 56 bits em um dia e meio \cite{}.
-Em 1998 a {\em Eletronic Frontier Foundation} (EFF) construiu uma máquina que foi capaz de quebrar a cifra em 56 horas (cerca de dois dias e meio).
-A máquina chamada de {\em Deep Crack} custou pouco menos de 250 mil dólares.
-Em 2006 pesquisadores alemães desenvolveram um hardware de baixo custo -- cerca de dez mil dólares -- capaz de efetuar um ataque de força-bruta ao DES em menos de uma semana.
-Desconfia-se que nos anos 80 apenas governos de grandes potências mundiais tinham recursos necessários para construir máquinas com tal capacidade.
-Hoje em dia o algoritmo DES é considerado totalmente inseguro.
-
-% No livro do Paar tem uma definição formal de ataque força bruta e uma análise da probabilidade de coincidência de chaves
-
-Além do pequeno tamanho da chave, e mais suspeito, os S-Boxes foram alterados pela NSA sem grandes explicações antes do algoritmos ser adotado como padrão.
-Anos mais tarde pesquisadores apresentaram uma técnica chamada criptoanálise diferencial.
-Diversas cifras se tornaram inseguras com o anúncio desta técnica, mas supreendentemente o DES não.
-Desconfia-se que os pesquisadores da NSA conheciam a técnica e alteraram a cifra de forma que ela se torna-se segura contra este tipo de ataque.
-
-\subsection{Advanced Encryption Standard (AES)}
-\label{sec:aes}
-
-As desconfianças em torno do DES e o ataque força bruta iminete contra sua chave levaram o orgão estadunidense responsável pela estabelecimento de padrões internacionais (NIST) a propor um concurso acadêmico em 1997 para elaboração de um novo padrão.
-Cada concorrente, além de propor o algoritmo tinha a tarefa de encontrar vulnerabilidades nos demais algoritmos propostos.
-Cinco finalistas foram considerados adequados e em abril de 2000 o algoritmos {\em Rijndael} foi anunciado como vencedor e passou a ser chamado de AES.
-
-O AES criptografa blocos de 128 bits possui três versões: uma com chaves de 128 bits e 10 rodadas, uma com chaves de 196 bits e 12 rodadas e uma com chaves de 256 bits e 14 rodadas.
-Diferente do DES, o AES não usa uma rede de Feistel, mas uma técnica que chama-se {\em rede de substituição e permutação}.
-
-O bloco no AES é dividido em 8 sequência de 16 bits que é tratada com um quadrado de 4 por 4 chamado de {\em estado}.
-Em cada rodada o algoritmo repete os seguintes passos (Figura \ref{fig:aes}).
-
-\begin{enumerate}
-\item {\em AddRoundKey:} O {\em key schedule} do AES produz uma subchave de 128 bits para cada rodada e aplicamos o XOR dessa subchave com o estado.
-\item {\em SubBytes:} Cada byte do estado é substituído por um novo byte definido por um SBox único que é bijetor (fase de confusão).
-\item {\em ShiftRow:} Rotacionamos a segunda linha do estado em uma posição, a terceira em duas posições e a quarta e três posições para a direita.
-\item {\em MixColumns:} As quatro linhas do estado são interpretados com um vetor que é multiplicado por uma matriz específica e fixa. Essa transformação é de tal forma que garante que cada byte de entrada influencie quatro bytes de saída (fase de difusão). 
-\end{enumerate}
-
-\begin{figure}[!htp]
-  \centering
-  \begin{minipage}{.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{imagens/AddRoundKey.png}  
-  \end{minipage}
- \begin{minipage}{.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{imagens/SubBytes.png}
-  \end{minipage}
-  \begin{minipage}{.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{imagens/ShiftRows.png}  
-  \end{minipage}
- \begin{minipage}{.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{imagens/MixColumns.png}
-  \end{minipage}
-  \caption{Etapas do AES}
-  \label{fig:aes}
-\end{figure}
-
-Na última rodada a fase {\em MixColumn} é substituída pela {\em AddRoundKey}.
-O AES é construído cuidadosamente de forma ser efecientemente inversível na presença da chave.
-Até a escrita destas notas não se conhece um ataque contra o AES mais eficiente do que o ataque força bruta.
-
 
 \section{Modos de Operação}
 \label{sec:modos-de-operacao-bloco}
@@ -343,6 +216,135 @@ A demonstração indica que o tamanho dos blocos também influencia em sua segur
 Isso ocorre, pois quanto menos os blocos maior a chance de gerar vetores inciais idênticos, e portanto, de criptografar duas mensagens distintas com a mesma chave.
 Como exemplo, tomando o caso concreto do DES, seu bloco tem tamanho $64$ e,portanto, esperamos uma colisão depois de $2^{32}$ blocos (ver Capítulo \ref{cha:hash}), ou cerca de 4Gb.
 No momento em que estas notas são escritas, este valor é alto, mas plausível em muitas aplicações práticas.
+
+\section{Construções Práticas}
+\label{sec:construcoes-praticas}
+Como explicitamos na seção anterior, um PRP é uma permutação $p: \{0,1\}^n \times \{0,1\}^l \to \{0,1\}^l$ em que $n$ é o tamanho da chave e $l$ o tamanho do bloco.
+Assim, dado $k \leftarrow \{0,1\}^n$ construímos $p_k$ que deve ser indistinguível na prática de $p \leftarrow Perm(\{0,1\}^l)$.
+Não conhecemos um sistema demonstradamente pseudoaleatório, mas os sistemas que apresentaremos, especialmente o AES, tem sido validado na prática.
+
+Nosso desafio será construir um algoritmo em que a mudança de um único bit, seja na mensagem ou na chave, afeta -- mas não necessarimante altera -- todos os bits da cifra.
+Para essa tarefa partiremos do paradigma proposto por Shannon chamado de {\em confusão e difusão} \cite{Shannon49}.
+
+A ideia da {\em confusão} é dividir o bloco em partes menores, digamos de 8 bits cada, e aplicar uma tabela que indique para cada sequência de 8 bits da entrada qual seria a saída.
+Apenas a confusão não é suficiente para nosso objetivo, pois a alteração do primeiro bit, por exemplo, afetaria apenas os 8 primeiros bits da cifra.
+A {\em difusão} então seria responsável por embaralhar os bits, espalhando a mudança de uma partes nas demais partes.
+Nas cifras de bloco fases de confusão e difusão são repetidas um número de vezes.
+
+\subsection{Data Encryption Standard (DES)}
+\label{sec:des}
+
+O Data Encryption Standard (DES) foi o padrão para a cifras de bloco do fim dos anos 70 até o fim dos anos 90.
+Projetado pela IBM o algoritmos sofreu importantes alterações pela NSA antes de se tornar um padrão internacional.
+
+O DES utiliza uma técnica chamada {\em rede de Feistel} (Figura \ref{fig:feistel}) que utiliza uma serie de funções $f_i:\{0,1\}^{l/2} \to \{0,1\}^{l/2}$ para produzir umafunção eficientemente inversível \cite{Feistel73}.
+A entrada $m = \in \{0,1\}^l$ da rede é dividia ao meio $L := m_0 \dots m_{(l/2)-1}$ e $R := m_{l/2} \dots m_l$ e em cada rodada $i$ é produzido $L_iR_i$ da seguinte forma:
+\begin{displaymath}
+  L_i := R_{i-1} \textrm{ e } R_i := L_{i-1} \xor f_i(R_{i-1})
+\end{displaymath}
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=.8\textwidth]{imagens/feistel.png}
+  \caption{Rede de Feistel}
+  \label{fig:feistel}
+\end{figure}
+
+Dada a saída $\langle L_i, R_i \rangle$ da $i$-ésima rodada de uma rede de Feistel, podemos recuperar o valor de $\langle L_{i-1}, R_{i-1} \rangle$ primeiro fazendo $R_{i-1} := L_i$ e em seguinda calculando:
+\begin{displaymath}
+  L_{i-1} := R_i \xor f_i(R_{i-1})
+\end{displaymath}
+
+Esse procedimento pode ser repetido para todas as rodadas da rede para inverter a função.
+
+O DES é uma rede de Feistel com 16 rodadas.
+Ela recebe uma chave de 64 e prontamente descarta 8, portanto, e criptografa blocos de 64 bits, ou seja, $DES: \{0,1\}^{56} \times \{0,1\}^{64} \to \{0,1\}^{64}$.
+A chave de 56 passa por um processo chamado {\em key schedule} que produz 16 subchaves de 48 bits.
+As funções em cada rodada do DES são identicas, recebem uma subchave de 48 bits e um bloco de 32 bits (metade do bloco total) e produz um bloco de 32 bits $f: \{0,1\}^{48} \times \{0,1\}^{32} \to \{0,1\}^{32}$.
+Resta, portanto, apresentar a função $f$ (Figura \ref{fig:feistel-function}):
+\begin{enumerate}
+\item o bloco é expandido para uma sequência de 48 bits,
+\item aplica-se o XOR do bloco expandido com a subchave,
+\item o resultado é dividido em 8 pedaços de 6 bits cada,
+\item cada pedaço desses passa por um SBox diferente que substitui os 6 bits por 4 bits (fase de confusão),
+\item o resultado é reduzido para uma sequência de 32 bits e, por fim,
+\item os bits são misturados (fase de difusão).
+\end{enumerate}
+
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=.4\textwidth]{imagens/feistel-function.png}
+  \caption{Função de Fiestel do DES}
+  \label{fig:feistel-function}
+\end{figure}
+
+
+A adoção do padrão DES foi cheia de controvérsias.
+Não foi esclarecido o motivo do descarte do 8 bits da chave.
+Uma chave de 56 bits é hoje considerada insegura contra um ataque de força bruta e estava no limite da segurança nos anos 70.
+Um artigo de 1993 propõe um projeto de hardware que, em teoria, seria capaz de aplicar um ataque força-bruta em uma chave de 56 bits em um dia e meio \cite{}.
+Em 1998 a {\em Eletronic Frontier Foundation} (EFF) construiu uma máquina que foi capaz de quebrar a cifra em 56 horas (cerca de dois dias e meio).
+A máquina chamada de {\em Deep Crack} custou pouco menos de 250 mil dólares.
+Em 2006 pesquisadores alemães desenvolveram um hardware de baixo custo -- cerca de dez mil dólares -- capaz de efetuar um ataque de força-bruta ao DES em menos de uma semana.
+Desconfia-se que nos anos 80 apenas governos de grandes potências mundiais tinham recursos necessários para construir máquinas com tal capacidade.
+Hoje em dia o algoritmo DES é considerado totalmente inseguro.
+
+% No livro do Paar tem uma definição formal de ataque força bruta e uma análise da probabilidade de coincidência de chaves
+
+Além do pequeno tamanho da chave, e mais suspeito, os S-Boxes foram alterados pela NSA sem grandes explicações antes do algoritmos ser adotado como padrão.
+Anos mais tarde pesquisadores apresentaram uma técnica chamada criptoanálise diferencial.
+Diversas cifras se tornaram inseguras com o anúncio desta técnica, mas supreendentemente o DES não.
+Desconfia-se que os pesquisadores da NSA conheciam a técnica e alteraram a cifra de forma que ela se torna-se segura contra este tipo de ataque.
+
+\subsection{Advanced Encryption Standard (AES)}
+\label{sec:aes}
+
+As desconfianças em torno do DES e o ataque força bruta iminete contra sua chave levaram o orgão estadunidense responsável pela estabelecimento de padrões internacionais (NIST) a propor um concurso acadêmico em 1997 para elaboração de um novo padrão.
+Cada concorrente, além de propor o algoritmo tinha a tarefa de encontrar vulnerabilidades nos demais algoritmos propostos.
+Cinco finalistas foram considerados adequados e em abril de 2000 o algoritmos {\em Rijndael} foi anunciado como vencedor e passou a ser chamado de AES.
+
+O AES criptografa blocos de 128 bits possui três versões: uma com chaves de 128 bits e 10 rodadas, uma com chaves de 196 bits e 12 rodadas e uma com chaves de 256 bits e 14 rodadas.
+Diferente do DES, o AES não usa uma rede de Feistel, mas uma técnica que chama-se {\em rede de substituição e permutação}.
+
+O bloco no AES é dividido em 8 sequência de 16 bits que é tratada com um quadrado de 4 por 4 chamado de {\em estado}.
+Em cada rodada o algoritmo repete os seguintes passos (Figura \ref{fig:aes}).
+
+\begin{enumerate}
+\item {\em AddRoundKey:} O {\em key schedule} do AES produz uma subchave de 128 bits para cada rodada e aplicamos o XOR dessa subchave com o estado.
+\item {\em SubBytes:} Cada byte do estado é substituído por um novo byte definido por um SBox único que é bijetor (fase de confusão).
+\item {\em ShiftRow:} Rotacionamos a segunda linha do estado em uma posição, a terceira em duas posições e a quarta e três posições para a direita.
+\item {\em MixColumns:} As quatro linhas do estado são interpretados com um vetor que é multiplicado por uma matriz específica e fixa. Essa transformação é de tal forma que garante que cada byte de entrada influencie quatro bytes de saída (fase de difusão). 
+\end{enumerate}
+
+\begin{figure}[!htp]
+  \centering
+  \begin{minipage}{.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imagens/AddRoundKey.png}  
+  \end{minipage}
+ \begin{minipage}{.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imagens/SubBytes.png}
+  \end{minipage}
+  \begin{minipage}{.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imagens/ShiftRows.png}  
+  \end{minipage}
+ \begin{minipage}{.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{imagens/MixColumns.png}
+  \end{minipage}
+  \caption{Etapas do AES}
+  \label{fig:aes}
+\end{figure}
+
+Na última rodada a fase {\em MixColumn} é substituída pela {\em AddRoundKey}.
+O AES é construído cuidadosamente de forma ser efecientemente inversível na presença da chave.
+Até a escrita destas notas não se conhece um ataque contra o AES mais eficiente do que o ataque força bruta.
+
+
+
 
 \section{Exercícios}
 \label{sec:exercicios}
