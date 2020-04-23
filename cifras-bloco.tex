@@ -65,9 +65,8 @@ Assim, como um PRG, uma {\em função pseudoaleatória} (PRF) é tal que não ex
 
 Uma {\em cifra de bloco} é uma {\em permutação pseudoaleatória} (PRP), uma função bijetora $p_k: \{0,1\}^n \to \{0,1\}^n$ (permutação), cuja inversa $p_k^{-1}$ pode ser calculado de maneira eficiente e não existe algoritmo polinomial capaz de distinguir $p_k$ de uma permutação aleatória com probabilidade não desprezível.
 
-Uma {\em cifra de bloco} é capaz de criptografar uma mensagem de tamanho fixo $m \in \{0,1\}^n$, chamado de {\em bloco}, de maneira trivial $p_k(m) = c$ e decifrar usando sua inversa $p_k^{-1}(p_k(m)) = m$.
-Na Seção \ref{sec:modos-de-operacao-bloco} mostraremos como combinar os blocos para criptografar um mensagem de tamanho arbitrário e provaremos a segurança desses sistemas.
-Antes disso, porém, vamos apresentar algumas construções usadas na prática.
+Uma {\em cifra de bloco} é capaz de criptografar uma mensagem de tamanho fixo $m \in \{0,1\}^n$, chamado de {\em bloco}, $p_k(m) = c$ e decifrar usando sua inversa $p_k^{-1}(p_k(m)) = m$.
+Na próxima seção mostraremos como combinar os blocos para criptografar um mensagem de tamanho arbitrário e provaremos a segurança desses sistemas.
 
 \section{Modos de Operação}
 \label{sec:modos-de-operacao-bloco}
