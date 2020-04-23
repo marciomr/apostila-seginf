@@ -74,18 +74,33 @@ A maioria das funções de hash seguem uma construção chamada {\em Merkle-Damg
 Seja $\langle Gen, h \rangle$ um sistema de hash que comprime o tamanho de uma mensagem pela metade $h_s:\{0,1\}^{2n} \to \{0,1\}^n$.
 Construimos $\langle Gen, H \rangle$ da seguinte maneira:
 \begin{itemize}
-\item Sejam $x \in \{0,1\}^*$, $|x| = L < 2^n$ e $B := \lceil \frac{L}{n} \rceil$ o número de blocos de $x$ de tamanho $n$ (se o tamanho de $x$ não for múltiplo de $n$ complete-o com um {\em pad} de $0$s) e insira $L$ ao fim de $x$ i.e. $x = x_0 \dots x_B L$.
+\item Sejam $m \in \{0,1\}^*$, $|m| = L < 2^n$ e $l := \lceil \frac{L}{n} \rceil$ o número de blocos de $m$ de tamanho $n$ (se o tamanho de $m$ não for múltiplo de $n$ complete-o com um {\em pad} de $0$s) e insira $L$ ao fim de $x$ i.e. $x = x_0 \dots x_l L$.
 \item Defina $z_0 := 0^n$.
-\item Compute $z_i := h_s(z_{i-1}x_i)$ para $i = 1, \dots, B + 1$.
-\item Devolva $z_{B+1}$.
+\item Compute $z_i := h_s(z_{i-1}x_i)$ para $i = 1, \dots, l + 1$.
+\item Devolva $z_{l+1}$.
 \end{itemize}
 
-\begin{figure}[htbp]
-  \centering
-    \includegraphics[width=.5\textwidth]{imagens/Merkle-Damgard.png}
-  \caption{Diagrama da construção de Merkel Damgrad}
-  \label{fig:merkle-damgard}
-\end{figure}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+  \node (IV) at (0,-2)  {$0^n$};
+  \node (m1) at (2,0)  {$m_1$};
+  \node (h1) at (2,-2)  {$h_s$};
+  \node (m2) at (4,0) {$m_2$};
+  \node (h2) at (4,-2)  {$h_s$};
+  \node at (6,0) {\dots};
+  \node at (6,-2) {\dots};
+  \node (ml) at (8,0) {$m_{l+1} = L$};
+  \node (hl) at (8,-2)  {$h_s$};
+  \node (H) at (10,-2)  {$H_s(m)$};
+  \draw[->] (IV) -> node[above]{$z_0$}(h1);
+  \draw[->] (m1) -> (h1);
+  \draw[->] (h1) -> node[above]{$z_1$}(h2);
+  \draw[->] (m2) -> (h2);
+  \draw[->] (ml) -> (hl);
+  \draw[->] (7,-2) -> node[above]{$z_l$}(hl);
+  \draw[->] (hl) ->  node[above]{$z_{l+1}$}(H);
+\end{tikzpicture}
+\end{center}
 
 
 \begin{theorem}[Merkle-Damgard]
