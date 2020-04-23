@@ -71,12 +71,12 @@ Na próxima seção mostraremos como combinar os blocos para criptografar um men
 \section{Modos de Operação}
 \label{sec:modos-de-operacao-bloco}
 
-Uma cifra de bloco é usada para criptografar um bloco de tamanho fixo, por exemplo 128 bits no caso do AES e 64 bits no caso do DES.
+Uma cifra de bloco é usada para criptografar um bloco de tamanho fixo.
 Tipicamente, porém, desejamos criptografar uma mensagem de tamanho arbitrário $m \in \{0,1\}^*$.
 Para tanto temos que combinar de alguma forma os blocos criptografados pelas cifra de bloco.
 A forma mais natural, e insegura, de fazer isso é chamada {\em Eletronic Code Book} (ECB).
 Neste {\em modo de operação} dividimos a mensagem $m$ em pedaços do tamanho do bloco ($m = m_0 || m_1 || \dots || m_l$ onde $|m_i| = n$), usamos a cifra de bloco $p_k$ para criptografar cada bloco e contatenos eles, ou seja, $c = p_k(m_0) \dots p_k(m_l)$.
-Este modo de operação não garante a segurança contra ataques {\em ciphertext only} porque blocos iguais são criptografados de maneira igual.
+Este modo de operação não garante a segurança contra ataques {\em ciphertext only} porque blocos iguais são criptografados de maneira igual (Figura \ref{fig:ecb-exemplo}).
 Considere o seguinte adversário $\mathcal{A}$ que derrota esta cifra:
 \begin{enumerate}
 \item $\mathcal{A}$ envia $m_0 = m||m$ e $m_1=m||m'$ para $\Pi$ de forma que $m \neq m'$ e $|m| = |m'| = n$ onde $n$ é o tamanho do bloco,
@@ -84,13 +84,24 @@ Considere o seguinte adversário $\mathcal{A}$ que derrota esta cifra:
 \item se $c$ for formado por dois blocos idênticos $\mathcal{A}$ devolve $0$, caso contrário devolve $1$.
 \end{enumerate}
 
-\begin{figure}[!htp]
-  \centering
-  \includegraphics[width=.5\textwidth]{imagens/ECB.png}
-  \caption{Modo ECB}
-\end{figure}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+\node (m0) at (0,0)  {$m_0$};
+\node (c0) at (0,-3)  {$c_0$};
+\node (m1) at (2,0) {$m_1$};
+\node (c1) at (2,-3) {$c_1$};
+\node at (4,0) {\dots};
+\node at (4,-3) {\dots};
+\node (ml) at (6,0) {$m_l$};
+\node (cl) at (6,-3) {$c_l$};
+\draw[->] (m0) -> node[left]{$p_k$} (c0);
+\draw[->] (m1) -> node[left]{$p_k$} (c1);
+\draw[->] (ml) -> node[left]{$p_k$} (cl);
+\end{tikzpicture}
+\end{center}
 
 \begin{figure}[!htp]
+  \label{fig:ecb-exemplo}
   \centering
   \includegraphics[width=.3\textwidth]{imagens/Tux.jpg}
   \includegraphics[width=.3\textwidth]{imagens/Tux_ecb.jpg}
@@ -102,7 +113,7 @@ Queremos um sistema que seja seguro contra CPA.
 
 Pela definição de segurança contra CPA que apresentamos, o adversário possui acesso a um oráculo que ele pode consultar para verificar como uma mensagem seria criptografada.
 Essa definição força o algoritmo $E$ de criptografia a ser não determinístico.
-Caso contrário, o adversário poderia derrotar o sistema simplesmente enviando duas mensagens que cuja cifra ele consultou.
+Caso contrário, o adversário poderia derrotar o sistema simplesmente enviando duas mensagens cuja cifra ele consultou.
 
 Para garantir o não determinismo do sistema incluiremos um bloco aleatório no começo da mensagem chamado de {\em vetor inicial}.
 Como no caso da cifra de fluxo, o vetor inicial não é um segredo, mas garante que toda mensagem será criptografada de maneira diferente.
@@ -126,11 +137,33 @@ Para descriptografar precisamos aplicar $D(k,c) := m_0 \dots m_l$ da seguinte fo
   Se $p$ é uma PRP então o sistema $\Pi$ tal qual apresentado acima, modo CBC, é seguro contra CPA.
 \end{theorem}
 
-\begin{figure}[!htp]
-  \centering
-  \includegraphics[width=.5\textwidth]{imagens/CBC.png}
-  \caption{Modo CBC}
-\end{figure}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+  \node (IVm) at (0,0)  {$IV$};
+  \node (IVc) at (0,-3)  {$IV$};
+  \node (m1) at (2,0)  {$m_1$};
+  \node (xor1) at (2,-1)  {$\xor$};
+  \node (c1) at (2,-3)  {$c_1$};
+  \node (m2) at (4,0) {$m_2$};
+  \node (xor2) at (4,-1)  {$\xor$};
+  \node (c2) at (4,-3) {$c_2$};
+  \node at (6,0) {\dots};
+  \node at (6,-3) {\dots};
+  \node (ml) at (8,0) {$m_l$};
+  \node (xorl) at (8,-1)  {$\xor$};
+  \node (cl) at (8,-3) {$c_l$};
+  \draw[->] (IVm) -> (IVc);
+  \draw[->] (IVc) -> (xor1);
+  \draw[->] (m1) -> (xor1);
+  \draw[->] (xor1) -> node[right]{$p_k$} (c1);
+  \draw[->] (c1) -> (xor2);
+  \draw[->] (m2) -> (xor2);
+  \draw[->] (xor2) -> node[right]{$p_k$} (c2);
+  \draw[->] (7,-1) -> (xorl);
+  \draw[->] (ml) -> (xorl);
+  \draw[->] (xorl) -> node[right]{$p_k$} (cl);
+\end{tikzpicture}
+\end{center}
 
 
 A principal limitação do modo CBC é que os blocos precisam ser processados em sequência, ou seja, o algoritmo não é paralelizável.
@@ -149,11 +182,34 @@ O algoritmo $D(k,c)$ é exatamente a mesma coisa, como se poderia esperar:
   m_i & := & c_{i+1} \xor f_k(c_0 + i) \textrm{ para cada } i = 0, \dots, l-1
 \end{eqnarray*} 
 
-\begin{figure}[!htp]
-  \centering
-  \includegraphics[width=.5\textwidth]{imagens/Ctr.png}
-  \caption{Modo Contador}
-\end{figure}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+  \node (IVm) at (0,0)  {$IV$};
+  \node (IVc) at (0,-3)  {$IV$};
+  \node (IV1) at (2,0)  {$IV + 1$};
+  \node (xor1) at (2,-2)  {$\xor$};
+  \node (c1) at (2,-3)  {$c_1$};
+  \node (IV2) at (4,0) {$IV + 2$};
+  \node (xor2) at (4,-2)  {$\xor$};
+  \node (c2) at (4,-3) {$c_2$};
+  \node at (6,0) {\dots};
+  \node at (6,-3) {\dots};
+  \node (IVl) at (8,0) {$IV + l$};
+  \node (xorl) at (8,-2)  {$\xor$};
+  \node (cl) at (8,-3) {$c_l$};
+  \draw[->] (IVm) -> (IVc);
+  \draw[->] (1,-2) -> node[above]{$m_1$} (xor1);
+  \draw[->] (IV1) -> node[right]{$f_k$} (xor1);
+  \draw[->] (xor1) ->  (c1);
+  \draw[->] (3,-2) -> node[above]{$m_2$} (xor2);
+  \draw[->] (IV2) -> node[right]{$f_k$} (xor2);
+  \draw[->] (xor2) ->  (c2);
+  \draw[->] (7,-2) -> node[above]{$m_l$} (xorl);
+  \draw[->] (IVl) -> node[right]{$f_k$} (xorl);
+  \draw[->] (xorl) -> (cl);
+\end{tikzpicture}
+\end{center}
 
 A segurança do modo contador exige apenas uma função pseudoaleatória que não precisa ser inversível:
 
