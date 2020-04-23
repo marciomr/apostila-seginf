@@ -15,15 +15,32 @@ Ataques do tipo {\em chosen plaintext} (CPA) supõe que o adversário, além de 
 É evidente que um ataques do tipo {\em known plaintext} são casos particulares deste, mas existem situações em que devemos assumir esse poder maior por parte do adversário.
 
 Vamos formalizar segurança contra ataques CPA de forma análoga à segurança contra ataques {\em ciphertext only}.
-Considere o seguinte jogo.
+O modelo de ameaças é formalizado por meio do seguinte jogo:
 \begin{enumerate}
 \item O adversário $\mathcal{A}$ escolhe duas mensagens $m_0$ e $m_1$ com o mesmo tamanho ($|m_0| = |m_1|$) e envia para o sistema $\Pi$.
 \item O sistema gera uma chave $k$ usando o algoritmo $Gen$ e sorteia aleatoriamente uma das mensagens para criptografar ($\Pi$ sorteia $b \leftarrow \{0, 1\}$ e criptografa $m_b$).
-\item Durante todo o processo $\mathcal{A}$ possui acesso a um {\em oráculo} $E_k$ que ele pode usar para verificar como seria criptografadas qualquer mensagem $m$.
+\item Durante todo o processo (mesmo depois de receber a cifra) $\mathcal{A}$ pode consultar o sistema $\Pi$ sobre como uma série de mensagens $q_0, \dots, q_{n'-1}$ seriam criptografadas.
 \item A cifra produzida $E(k, m_b) = c$ e enviada de volta para o adversário.
 \item O adversário $\mathcal{A}$ produz um bit $b' \in \{0,1\}$.
 \end{enumerate}
 
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+\tikzset{
+  player/.style={draw,shape=rectangle,rounded corners,minimum width=5em,minimum height=9em}
+}
+\node[player] (system) {$\Pi$};
+\node[player] (adversary) at (10,0) {$\mathcal{A}$};
+\draw[->] (9,1.5) -> node[above]{$m_0, m_1 \in M : |m_0| = |m_1|$} (1,1.5);
+\draw[->] (9,0.5) -> node[above]{$q_0, \dots, q_{n'-1}$} (1,0.5);
+\draw[->] (1,-0.5) -> node[above]{$E(k, q_0) \dots E(k, q_{n'-1})$} (9,-0.5);
+\draw[->] (1,-1.5) -> node[above]{$E(k,m_b) = c$} (9,-1.5);
+\draw[->] (0,3) -> node{$b \leftarrow \{0,1\}$} (system);
+\draw[->] (adversary) -> node{$b' \in \{0,1\}$} (10,-3);
+\end{tikzpicture}
+\end{center}
+
+A garantia de segurança é idêntica a da cifra de fluxo.
 O desafio de $\mathcal{A}$ é acertar qual das duas mensagens foi encriptada.
 Chamamos o experimento de $PrivK^{cpa}_{\Pi, \mathcal{A}}$:
 \begin{displaymath}
