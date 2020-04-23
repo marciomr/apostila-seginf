@@ -109,14 +109,30 @@ Construimos o sistema, então, da seguinte forma:
       0 & \textrm{c.c.} &\\
     \end{array}
     \right.$
-\end{itemize}
+  \end{itemize}
 
-\begin{figure}[htbp]
-  \centering
-    \includegraphics[width=.5\textwidth]{imagens/CBC-MAC.png}
-  \caption{CBC-MAC}
-  \label{fig:cbc-mac}
-\end{figure}
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+  \node (m1) at (0,0)  {$m_1$};
+  \node (m2) at (2,0)  {$m_2$};
+  \node (xor2) at (2,-2)  {$\xor$};
+  \node (m3) at (4,0) {$m_3$};
+  \node (xor3) at (4,-2)  {$\xor$};
+  \node at (6,0) {\dots};
+  \node at (6,-2) {\dots};
+  \node (ml) at (8,0) {$m_l$};
+  \node (xorl) at (8,-2)  {$\xor$};
+  \node (t) at (10,-2)  {$t$};
+  \draw[-] (m1) -> (0,-2);
+  \draw[->] (0,-2) -> node[above]{$f_k$}(xor2);
+  \draw[->] (m2) -> (xor2);
+  \draw[->] (xor2) -> node[above]{$f_k$}(xor3);
+  \draw[->] (m3) -> (xor3);
+  \draw[->] (ml) ->  (xorl);
+  \draw[->] (7,-2) -> node[above]{$f_k$}(xorl);
+  \draw[->] (xorl) ->  (t);
+\end{tikzpicture}
+\end{center}
 
 
 \begin{theorem}
