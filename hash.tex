@@ -287,7 +287,20 @@ O salt impede o preprocessamento de um dicionário e $n$ deve ser grande o sufic
 \end{itemize}
 \end{exercicio}
 
-%\begin{exercicio}
-% arvores de Merkle
-%\end{exercicio}
+\begin{exercicio}
+  {\em Prova de trabalho} é uma medida para garantir que um determinado usuário tenha que executar uma certa quantidade de processamento durante a excecução de um protocolo.
+  Essa ideia é usada na mineração de bitcoins e para evitar spams.
+  No segundo caso, brevemente, a ideia é exigir uma quantidade mínima de processamento para um cliente que envie um email.
+  Essa quantidade é desprezível para quem manda algumas dezenas de emails por dia, mas é muito cara para quem deseja mandar milhões de spams.
+
+  Uma forma de prova de trabalho é entregar para o cliente a saída de um hash e pedir para que ele compute uma entrada que produza aquela saída.
+  Argumente que, se a função de hash escolhida é segura contra colisão, o melhor que o cliente pode fazer é gerar valores aleatórios de entrada até encontrar um cuja a saída coincida com o resultado esperado.
+\end{exercicio}
+
+\begin{exercicio}
+  Explique com suas palavras a definição de segurança de hashes.
+  Por que o SHA-1 não é mais considera segura?
+\end{exercicio}
+
+
 
