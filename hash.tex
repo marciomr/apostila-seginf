@@ -18,6 +18,19 @@ Definiremos resistência à colisão para um sistema $\Pi = \langle Gen, H \rang
 \item A devolve um par de mensagens $\langle x, x' \rangle$.
 \end{enumerate}
 
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+\tikzset{
+  player/.style={draw,shape=rectangle,rounded corners,minimum width=5em,minimum height=5em}
+}
+\node[player] (system) {$\Pi$};
+\node[player] (adversary) at (10,0) {$\mathcal{A}$};
+\draw[->] (1,0) -> node[above]{$s$} (9,0);
+\draw[->] (0,2) -> node{$Gen(1^n) := s$} (system);
+\draw[->] (adversary) -> node{$\langle x, x' \rangle$} (10,-2);
+\end{tikzpicture}
+\end{center}
+
 O desafio de $\mathcal{A}$ é achar uma {\em colisão}, ou seja, um par $\langle x, x' \rangle$ tal que $H_s(x) = H_s(x')$
 \begin{displaymath}
   HashCol_{\mathcal{A}, \Pi}(n) := \left\{
@@ -195,23 +208,23 @@ Formalmente definimos o sistema HMAC da seguinte forma:
 
 % argumentar sobre a importância das duas constantes e a relação com o sistema anterior
 
-\subsection{Fingerprints e Árvores de Merkle}
-\label{label}
+%\subsection{Fingerprints e Árvores de Merkle}
+%\label{label}
 
-Um hash seguro contra colisão pode ser usado para identificar um arquivo ou uma mensagem qualquer de maneira eficiente.
-Esse identificador costuma ser chamado de {\em fingerprint} ou impressão digital do arquivo.
-Fingerprints são utilizados em diversas aplicações como para identificação de malwares, para encontrar arquivos duplicados em um HD, para encontrar um arquivo em uma rede P2P (um {\em link magnético} nada mais é do que um fingerprint de um arquivo) e para verificar chaves (veremos isso no Capítulo \ref{cha:protocolos}).
+%Um hash seguro contra colisão pode ser usado para identificar um arquivo ou uma mensagem qualquer de maneira eficiente.
+%Esse identificador costuma ser chamado de {\em fingerprint} ou impressão digital do arquivo.
+%Fingerprints são utilizados em diversas aplicações como para identificação de malwares, para encontrar arquivos duplicados em um HD, para encontrar um arquivo em uma rede P2P (um {\em link magnético} nada mais é do que um fingerprint de um arquivo) e para verificar chaves (veremos isso no Capítulo \ref{cha:protocolos}).
 
-Considere agora a situação em que temos uma série de $n$ arquivos em um servidor e gostaríamos de identificá-los localmente para verificar se o arquivo recuperado não foi corrompido.
-Uma solução simples seria guardar localmente um fingerprint de cada um dos arquivos.
-Essa solução requer o armazenamento e gerenciamento de $n$ fingerprints.
-Uma solução mais eficiente é usar uma {\em árvore de Merkle}.
-Uma árvore de Merkle é uma árvore binária em que as folhas são os arquivos e cada nó é o hash dos seus dois filhos.
-Assim podemos armazenar localmente apenas o valor da raiz da árvore.
-Toda vez que recuperarmos um arquivo o servidor deve enviar uma prova de que o arquivo não foi corrompido.
-Essa prova consiste dos valores da árvore de Merkle no caminho da raíz até a folha (note que são necessários $lg(n)$ valores).
-Com isso locamente conseguimos recuperar o valor da raíz e comparar com o que armazenamos localmente.
-Veremos no Capítulo \ref{cha:protocolos} como as árvores de Merkle são usadas nos protocolos de criptomoeadas.
+%Considere agora a situação em que temos uma série de $n$ arquivos em um servidor e gostaríamos de identificá-los localmente para verificar se o arquivo recuperado não foi corrompido.
+%Uma solução simples seria guardar localmente um fingerprint de cada um dos arquivos.
+%Essa solução requer o armazenamento e gerenciamento de $n$ fingerprints.
+%Uma solução mais eficiente é usar uma {\em árvore de Merkle}.
+%Uma árvore de Merkle é uma árvore binária em que as folhas são os arquivos e cada nó é o hash dos seus dois filhos.
+%Assim podemos armazenar localmente apenas o valor da raiz da árvore.
+%Toda vez que recuperarmos um arquivo o servidor deve enviar uma prova de que o arquivo não foi corrompido.
+%Essa prova consiste dos valores da árvore de Merkle no caminho da raíz até a folha (note que são necessários $lg(n)$ valores).
+%Com isso locamente conseguimos recuperar o valor da raíz e comparar com o que armazenamos localmente.
+%Veremos no Capítulo \ref{cha:protocolos} como as árvores de Merkle são usadas nos protocolos de criptomoeadas.
 
 \subsection{Funções de Derivação de Chaves}
 \label{sec:kdf}
