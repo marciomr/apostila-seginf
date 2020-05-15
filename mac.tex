@@ -90,7 +90,7 @@ Chamamos o experimento de $MacForge_{\mathcal{A}, \Pi}$:
 
 Um sistema de autenticação de mensagem $\Pi = \langle Gen, Mac, Ver \rangle$ é {\em seguro contra falsificação} se para todo adversário eficiente $\mathcal{A}$ existe uma função desprezível $\varepsilon$ tal que:
 \begin{displaymath}
-  Pr[MacForge_{\Pi, \mathcal{A}}(n) = 1] \leq \varepsilon(n)
+  Pr[MacForge_{\Pi, \mathcal{A}}(n) = 1] \leq \frac{1}{2} + \varepsilon(n)
 \end{displaymath}
 
 O modelo de ataque considerado garante que um adversário não seja capaz de gerar código para uma mensagem nova, isto é, uma mensagem que não foi consultada.
@@ -112,7 +112,7 @@ Temos então que:
   t_0 & := & 0^n \\
   t_i & := & f_k(t_{i-1} \xor m_i) \textrm{ para i } = 1, \dots, l 
   \end{eqnarray*}
- Além disso, $|encode(m)_i| = n$ e $f_k: \{0,1\}^n \to \{0,1\}^n$ é uma função pseudoaleatória.
+ Além disso, $|m_i| = n$ e $f_k: \{0,1\}^n \to \{0,1\}^n$ é uma função pseudoaleatória.
 \item $Ver(k, m, t) :=  \left\{
     \begin{array}{lcl}
       1 & \textrm{se} & t = Mac(k,m)\\
@@ -261,7 +261,7 @@ Existem várias formas de combinar esses sistemas:
 Se nossa esquema de criptografia $\Pi_E = \langle Gen_E, E, D\rangle$ for seguro contra CPA e nosso sistema de autenticação $\Pi_M = \langle Gen_M, Mac, Ver \rangle$ for fortemente seguro contra falsificação, podemos demonstrar que o paradigma {\em encrypt then mac} é um {\em sistema autenticado de criptografia}, ou seja, é seguro contra CCA e contra falsificação.
 Formalmente construimos o sistema $\langle Gen, E, D \rangle$ da seguinte forma:
 \begin{itemize}
-\item $Gen(1^n) := k = \langle k_E, k_M \rangle$ em que $Gen_E := k_E$ e $Gen_M := k_M$.
+\item $Gen(1^n) := k = \langle k_E, k_M \rangle$ em que $Gen_E(1^n) := k_E$ e $Gen_M(1^n) := k_M$.
 \item $E(k,m) := \langle c, t \rangle$ em que $E(k_E, m) := c$ e $Mac(k_M, c) := t$.
 \item $D(k,c) := \left\{
     \begin{array}{lcl}
