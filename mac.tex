@@ -16,9 +16,9 @@ O banco envia um mensagem cobrando uma dívida do cliente com um terceiro e o cl
 Um erro muito frequênte é assumir que os sistemas de criptografia que vimos até aqui são suficientes para garantir a integridade de uma mensagem.
 Não apenas os sistemas não oferecem nenhuma garantia quanto a isso, como alguns deles são {\em maleáveis}, ou seja, sua cifra é fácil de ser alterada para produzir o efeito desejado pelo adversário.
 Para ilustrar isso considere o caso em que utilizamos uma cifra de fluxo para encriptar uma mensagem $m$ e suponha que o adversário conheça uma parte do texto, por exemplo o cabeçalho $m_0$.
-Ou seja, $m = m_0m_r$ em que $m_0$ é o cabeçalho e $m_r$ é o resto da mensagem.
-Assim temos que $E(k, m) = c_0c_r$ em que, por definição, $c_0 = m_0 \xor G(k)_0$ e $G(k)_0$ são os primeiros bits de $G(k)$.
-Como o adversário conhece $m_0$ ele pode alterar $c = c_0c_r$ por $c' = (c_0 \xor m_0 \xor m')c_r$ onde $m'$ é a mensagem que ele quer inserir no cabeçalho.
+Ou seja, $m = m_0||m_r$ em que $m_0$ é o cabeçalho e $m_r$ é o resto da mensagem.
+Assim temos que $E(k, m) = c_0||c_r$ em que, por definição, $c_0 = m_0 \xor G(k)_0$ e $G(k)_0$ são os primeiros bits de $G(k)$.
+Como o adversário conhece $m_0$ ele pode alterar $c = c_0||c_r$ por $c' = (c_0 \xor m_0 \xor m')c_r$ onde $m'$ é a mensagem que ele quer inserir no cabeçalho.
 Quando a nova cifra for descriptografada ela produzirá a seguinte mensagem:
 
 \begin{eqnarray*}
@@ -110,7 +110,7 @@ Temos então que:
 \item $Mac(k, m) := t_l$ em que:
   \begin{eqnarray*}
   t_0 & := & 0^n \\
-  t_i & := & f_k(t_{i-1} \xor m_i) \textrm{ para i } = 1, \dots, l 
+  t_i & := & f_k(t_{i-1} \xor m_i) \textrm{ para i } = 1, \dots, l
   \end{eqnarray*}
  Além disso, $|m_i| = n$ e $f_k: \{0,1\}^n \to \{0,1\}^n$ é uma função pseudoaleatória.
 \item $Ver(k, m, t) :=  \left\{
@@ -251,7 +251,7 @@ Por fim, chamaremos um sistema $\Pi$ de {\em sistema autenticado de criptografia
 
 
 Um sistema autenticado de criptografia é uma combinação de um esquema de criptografia com um sistema de autenticação.
-Existem várias formas de combinar esses sistemas: 
+Existem várias formas de combinar esses sistemas:
 \begin{itemize}
 \item {\em mac then encrypt}: produzimos um código de autenticação, juntamos esse código com a mensagem e criptografamos tudo.
 \item {\em encrypt and mac}: enviamos separadamente a cifra e um código de autenticação da mensagem.
@@ -284,7 +284,7 @@ Isso não é apenas um detalhe, o uso da mesma chave de criptografia e autentica
 
 Agora considere um MAC que usa $p^{-1}$ para produzir o código:
 \begin{displaymath}
-  Mac(k,c) = p_k^{-1}(c).  
+  Mac(k,c) = p_k^{-1}(c).
 \end{displaymath}
 Também é possível mostrar que esse MAC é seguro contra falsificação.
 Porém, quando aplicamos o pardigma {\em encrypt then mac} nesses sistemas temos que:
@@ -313,7 +313,7 @@ Outra possível solução para o terceiro problema é manter duas chaves indepen
 Tanto o contador $ctr_{AB}$ quanto o bit de direção $b_{AB}$ devem ser concatenados a mensagem antes de criptografá-la.
 No Capítulo \ref{cha:protocolos} veremos protocolos completos de segurança e voltaremos nesses detalhes.
 
-Aqui encerramos os sistemas de criptografias que se baseiam no modelo simétrico. 
+Aqui encerramos os sistemas de criptografias que se baseiam no modelo simétrico.
 Seguindo a abordagem moderna explicitamos as suposições necessária para provar a segurança de diversos sistemas de criptografia e autenticação.
 O apêndice \ref{cha:owf} busca encontrar a suposição mínima que precisamos fazer para conseguir construir os sistemas que vimos até aqui, a saber, a existência de {\em funções de mão única}.
 Além de servir como um bom resumo do que vimos até aqui, o apêndice procure justificar o porquê precisamos partir de determinadas suposições e não simplesmente provamos essas propriedades para cada sistema.
@@ -340,5 +340,5 @@ Além de servir como um bom resumo do que vimos até aqui, o apêndice procure j
   \item Alice enviar $E(k, m)$ para Bob que descriptografa usando a chave $k$
   \item Alice gera um checksum $H(m)$ da mensagem e envia $H(m)||m$ para Bob que pode verificar o checksum antes de ler a mensagem
   \end{enumerate}
-  Algum desses cenários garante que a mensagem lida por Bob é idêntica a mensagem que foi enviada por Alice? Por que? Caso nenhum dos cenários garanta isso, descreva como poderíamos fazê-lo. 
+  Algum desses cenários garante que a mensagem lida por Bob é idêntica a mensagem que foi enviada por Alice? Por que? Caso nenhum dos cenários garanta isso, descreva como poderíamos fazê-lo.
 \end{exercicio}
