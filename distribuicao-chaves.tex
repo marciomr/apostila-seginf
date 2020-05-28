@@ -2,7 +2,7 @@
 \label{cha:distribuicao-chaves}
 
 Os sistemas criptográficos que vimos até aqui, simétricos, assumem que as partes compartilham um dado sigiloso, uma chave.
-Discutimos como gerar chaves, mas não entramos tratamos ainda de um problema central da criptograia: como distribuir as chaves.
+Discutimos como gerar chaves, mas não tratamos ainda de um problema central da criptograia: como distribuir as chaves.
 Nesta seção veremos dois modelos bastantes distintos, o primeiro pressupõe a existência de uma autoridade central capaz de assumir a tarefa, na segunda partimos para o paradigma da criptografia assimétrica que será mais extensamente discutida nos próximos dois capítulos.
 
 \section{Centro de Distribuição de Chaves}
@@ -57,7 +57,7 @@ Um {\em grupo} é uma estrutura algébrica $\mathbb{G} = \langle G, \circ \rangl
 \item[] {\bf (fecho)} Se $f, g \in G$ então $f \circ g \in G$.
 \item[] {\bf (identidade)} Existe um elemento $1 \in G$ tal que $1 \circ f = f \circ 1 = f$ para todo $f \in G$.
 \item[] {\bf (inverso)} Para todo $g \in G$ existe $h \in G$ tal que $g \circ h = 1$ (é possível mostrar que $h$ é único para cada $g$ e, portanto, o denotaremos $g^{-1}$).
-\item[] {\bf (associatividade)} Para todo $f,g,h \in G$ temos que $(f \circ g) \circ h = f \circ (g \circ h)$. 
+\item[] {\bf (associatividade)} Para todo $f,g,h \in G$ temos que $(f \circ g) \circ h = f \circ (g \circ h)$.
 \end{itemize}
 
 Um grupo é dito {\em finito} se $G$ é finito, neste caso, $|G|$ é a {\em ordem} do grupo.
@@ -65,7 +65,7 @@ Um grupo é {\em abeliano} se satisfaz o seguinte:
 \begin{itemize}
 \item[] {\bf (comutatividade)} Para todo $f, g \in G$ temos que $f \circ g = g \circ f$.
 \end{itemize}
- 
+
 Diversas estruturas familiares como $\langle \mathbb{Z}, + \rangle$ e $\langle \mathbb{Q}, \cdot \rangle$ são grupos abelianos, mas não são finitos.
 No próximo capítulo demonstraremos que certas estruturas são grupos finitos.
 Por ora vamos apenas apresentar um grupo finito como exemplo sem uma demonstração para esse fato:
@@ -95,7 +95,7 @@ Nos será útil expressar a operação de {\em exponenciação} de um elemento d
   Note que se $g \circ g_i = g \circ g_j$ então $g_i = g_j$ (basta multiplicar ambos os lados por $g^{-1}$).
   Assim temos que $\{(g \circ g_1), \dots, (g \circ g_m)\} = G$, porque todos os elementos do conjunto da esquerda são elementos de $G$ e são distintos.
   O seja:
-  
+
   \begin{eqnarray*}
     g_1 \circ \dots \circ g_m & = & (g \circ g_1) \circ \dots \circ (g \circ g_m)\\
                               & = & g^m \circ (g_1 \circ \dots \circ g_m)
@@ -121,10 +121,10 @@ Dizemos que $x$ é o {\em logaritmo} de $h$ na base $g$.
 \begin{example}
 Considere o grupo $\langle \mathbb{Z}_7^\star, \cdot \rangle$:
 \begin{itemize}
-\item $\langle 2 \rangle = \{1, 2, 4\}$. A ordem de $2$ é $3$ e, portanto, $2$ não é um gerador de $\mathbb{Z}_7$. 
-Além disso, neste grupo $log_2(1) = 0$, $log_2(2) = 1$ e $log_2(4) = 2$. 
+\item $\langle 2 \rangle = \{1, 2, 4\}$. A ordem de $2$ é $3$ e, portanto, $2$ não é um gerador de $\mathbb{Z}_7$.
+Além disso, neste grupo $log_2(1) = 0$, $log_2(2) = 1$ e $log_2(4) = 2$.
 \item $\langle 3 \rangle = \{1, 3, 2, 6, 4, 5\}$. A ordem de $3$ é $6$, portanto $3$ é um gerador de $\mathbb{Z}_7$ e o grupo é cíclico.
-Além disso, neste grupo $log_3(1) = 0$, $log_3(2) = 2$ e $log_3(3) = 1$, $log_3(4)= 4$, $log_3(5) = 5$ e $log_3(6) = 3$. 
+Além disso, neste grupo $log_3(1) = 0$, $log_3(2) = 2$ e $log_3(3) = 1$, $log_3(4)= 4$, $log_3(5) = 5$ e $log_3(6) = 3$.
 \end{itemize}
 \end{example}
 
@@ -156,7 +156,7 @@ Essa constatação dá origem ao seguinte algoritmo:
 \Procname{$\proc{Exp}(g, m)$}
 \li \Comment Recebe $g \in \mathbb{G}$ e $m \in \mathbb{N}$
 \li \Comment Devolve $g^m$
-\li \If $m = 0 $ 
+\li \If $m = 0 $
 \li \Then \Return $1$
 \End
 \li \Return $\proc{Exp}(g, m-1) \circ g$
@@ -174,10 +174,10 @@ Não é difícil mostrar que $T(m) = O(m)$.
 
 Podemos, porém, fazer bem melhor do que isso usando o seguinte invariante:
 \begin{displaymath}
-  g^m = \left\{ 
+  g^m = \left\{
     \begin{array}{lcl}
       g^{\lfloor \frac{m}{2} \rfloor} \circ  g^{\lfloor \frac{m}{2} \rfloor} & \textrm{se} & m \textrm{ é par}\\
-      g^{\lfloor \frac{m}{2} \rfloor} \circ  g^{\lfloor \frac{m}{2} \rfloor} \circ g & \textrm{se} & m \textrm{ é ímpar}\\  
+      g^{\lfloor \frac{m}{2} \rfloor} \circ  g^{\lfloor \frac{m}{2} \rfloor} \circ g & \textrm{se} & m \textrm{ é ímpar}\\
     \end{array}
     \right.
 \end{displaymath}
@@ -187,7 +187,7 @@ Esse invariante produz o seguinte algoritmo:
 \Procname{$\proc{FastExp}(g, m)$}
 \li \Comment Recebe $g \in \mathbb{G}$ e $m \in \mathbb{N}$
 \li \Comment Devolve $g^m$
-\li \If $m = 0 $ 
+\li \If $m = 0 $
 \li \Then \Return $1$
 \End
 \li $x \gets \proc{FastExp}(g, \lfloor \frac{m}{2} \rfloor)$
@@ -225,7 +225,7 @@ Já o problema do logaritmo pode ser difícil.
 O {\em problema do logaritmo discreto} pode ser descrito pelo seguinte jogo:
 \begin{enumerate}
 \item O sistema recebe o parâmetro de segurança $1^n$ e usa $\mathcal{G}$ para gerar um grupo cíclico $\mathbb{G} = \langle G, \circ \rangle$ com gerador $g$ e ordem $n$
-\item O sistema escolhe $h \leftarrow G$ e manda para o adversário $\mathbb{G}$, $g$ e $h$. 
+\item O sistema escolhe $h \leftarrow G$ e manda para o adversário $\mathbb{G}$, $g$ e $h$.
 \item O adversário produz $x \in \mathbb{Z}_n$
 \end{enumerate}
 
@@ -264,17 +264,27 @@ O protocolo de Diffie-Hellman permite às partes compartilharem uma chave secret
 Uma limitação do protocolo, porém, é que ele não garante que as partes saibam se a chave que receberam foi de fato enviada por quem eles imaginam que as enviou.
 No Capítulo \ref{cha:assinaturas-digitais} voltaremos a este problema chamado de {\em ataque Man In The Middle}.
 
-
-%\section{Exercícios}
+\section{Exercícios}
 %\label{sec:exercicios}
 
-%\begin{exercicio}
-%  Mostre que se $n|a$ e $n|b$ então para quaisquer $r$ e $s$ temos que $n|(a \cdot r + b \cdot s)$.
-%\end{exercicio}
+\begin{exercicio}
+  Mostre que se $n|a$ e $n|b$ então para quaisquer $r$ e $s$ temos que $n|(a \cdot r + b \cdot s)$.
+\end{exercicio}
 
+\begin{exercicio}
+\label{ex:grupo}
+  Considere a estrutura $\langle \mathbb{Z}_{12}, \cdot \rangle$ em que a multiplicação é calculada módulo 12.
+Mostre que $6$ não possui inverso nesta estrutura e, portanto, ela não é um grupo.
+\end{exercicio}
 
-%\begin{exercicio}
-%\label{ex:grupo}
-%  Considere a estrutura $\langle \mathbb{Z}_{12}, \cdot \rangle$ em que a multiplicação é calculada módulo 12.
-%Mostre que $6$ não possui inverso nesta estrutura e, portanto, ela não é um grupo.
-%\end{exercicio}
+\begin{exercicio}
+  Considere as estruturas $\langle \mathbb{Z}_n, + \rangle$ formadas pelo conjunto $\mathbb{Z}_n := \{0, \dots, n-1\}$ e a operação de soma ($+$) módulo $n$.
+  Mostre essa estrutura é um grupo cíclico para qualquer valor de $n \geq 1$ e que o número $1$ é sempre um gerador nesses grupos. (Dica: Você precisa mostrar que a operação satisfaz fecho, associatividade, possui elemento neutro e inverso. Depois você deve mostrar que o elemento $1$ gera todos os elementos do grupo.)
+
+  Por que o grupo $\langle \mathbb{Z}_n, +\rangle$ não é um bom candidato para ser usado no protocolo de Diffie-Hellmann.
+\end{exercicio}
+
+\begin{exercicio}
+  Descreva um ataque força-bruta contra o protocolo de Diffie-Hellman.
+  Em termos assintóticos em relação ao tamanho da entrada, qual é o consumo de tempo deste ataque?
+\end{exercicio}
