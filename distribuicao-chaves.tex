@@ -70,14 +70,18 @@ No próximo capítulo demonstraremos que certas estruturas são grupos finitos.
 Por ora vamos apenas apresentar um grupo finito como exemplo sem uma demonstração para esse fato:
 \begin{example}
   A estrutura $\langle \mathbb{Z}_p^\star, \cdot \rangle$ em que $p$ é primo, $\mathbb{Z}_p^\star = \{1, 2, \dots, p - 1 \}$ e a operação de multiplicação é calculada módulo $p$ é um grupo.
-\begin{itemize}
-\item $1^{-1} \equiv 1\ mod\ 7$
-\item $2^{-1} \equiv 4\ mod\ 7$
-\item $3^{-1} \equiv 5\ mod\ 7$
-\item $4^{-1} \equiv 2\ mod\ 7$
-\item $5^{-1} \equiv 3\ mod\ 7$
-\item $6^{-1} \equiv 6\ mod\ 7$
-\end{itemize}
+  \begin{multicols}{2}
+    \begin{itemize}
+      \item[] $1^{-1} \equiv 1\ mod\ 7$
+      \item[] $2^{-1} \equiv 4\ mod\ 7$
+      \item[] $3^{-1} \equiv 5\ mod\ 7$
+    \end{itemize}
+    \begin{itemize}
+      \item[] $4^{-1} \equiv 2\ mod\ 7$
+      \item[] $5^{-1} \equiv 3\ mod\ 7$
+      \item[] $6^{-1} \equiv 6\ mod\ 7$
+    \end{itemize}
+  \end{multicols}
 \end{example}
 
 Nos será útil expressar a operação de {\em exponenciação} de um elemento do grupo $g \in G$ em relação a um inteiro positivo $m$:
