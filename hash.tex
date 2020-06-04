@@ -53,7 +53,7 @@ Na prática usamos funções sem chave e tratamos como resistentes a colisão qu
 Note que a resistência à colisão é uma propriedade mais forte do que outras propriedades desejáveis em funções de hash:
 \begin{itemize}
 \item {\em resistência contra colisões em alvos específicos}: dado $s$ e $x$ nenhum adversário eficiente é capaz de encontrar $x'$ tal que $H_s(x) = H_s(x')$ com probabilidade considerável.
-\item {\em resistência contra preimagem}: dados $s$ e $y$ aleatório, nenhum adversário eficiente é capaz de encontrar $x$ tal que $h_s(x) = y$ com probabilidade considerável. 
+\item {\em resistência contra preimagem}: dados $s$ e $y$ aleatório, nenhum adversário eficiente é capaz de encontrar $x$ tal que $h_s(x) = y$ com probabilidade considerável.
 \end{itemize}
 
 Toda a função de hash está sujeita a ataques do tipo força bruta.
@@ -79,11 +79,10 @@ Ela fez um trabalho {\em incrível/excelente}.
 
 As palavras em itálico podem umas substituir as outras sem mudar significativamente o espírito da mensagem que pode ser escrita de 288 formas distintas.
 Se nosso conjunto precisa ser $2^{32}$ basta escrever um texto com pelo menos 32 palavras em que cada uma possua um sinônimo.
- 
 \section{Construções}
 \label{sec:construcoes}
 
-A maioria das funções de hash seguem uma construção chamada {\em Merkle-Damgard} que assume a existância de uma {\em função de compressão} resistente à colisão para mensagens de tamanho fixo e a extende para mensagens de tamanho arbitrário \cite{Merkle89,Damgard89}.
+A maioria das funções de hash seguem uma construção chamada {\em Merkle-Damg\aa rd} que assume a existância de uma {\em função de compressão} resistente à colisão para mensagens de tamanho fixo e a extende para mensagens de tamanho arbitrário \cite{Merkle89,Damgard89}.
 Seja $\langle Gen, h \rangle$ um sistema de hash que comprime o tamanho de uma mensagem pela metade $h_s:\{0,1\}^{2n} \to \{0,1\}^n$.
 Construimos $\langle Gen, H \rangle$ da seguinte maneira:
 \begin{itemize}
@@ -116,7 +115,7 @@ Construimos $\langle Gen, H \rangle$ da seguinte maneira:
 \end{center}
 
 
-\begin{theorem}[Merkle-Damgard]
+\begin{theorem}[Merkle-Damg\aa rd]
   Se $\langle Gen, h \rangle$ é resistente a colisão então $\langle Gen, H \rangle$ da forma como definido acima também é resistente a colisão.
 \end{theorem}
 
@@ -129,8 +128,8 @@ O {\em Secure Hash Algorithm} (SHA-1) é um algoritmo da família MD4 que recebe
 Antes de processar a mensagem é inserido um {\em pad} que consiste em uma sequência $10 \dots 0l$ em que $l = |x|$ é o número de bits da mensagem e $|x10 \dots 0l|$ é um múltiplo de 512.
 Essa codificação de $x$ é então dividida em blocos $x_0, \dots, x_n$ tais que $|x_i| = 512$.
 
-A função de hash $h$ que alimenta a construção de Merkle-Damgard consiste de 80 rodadas.
-Um {\em message schedule} é responsavel por gerar 80 strings $W_0, \dots, W_{79}$ de 32 bits cada a partir do bloco $x_i$ sendo processado. 
+A função de hash $h$ que alimenta a construção de Merkle-Damg\aa evrd consiste de 80 rodadas.
+Um {\em message schedule} é responsavel por gerar 80 strings $W_0, \dots, W_{79}$ de 32 bits cada a partir do bloco $x_i$ sendo processado.
 Começamos com valores iniciais fixos $A =$ {\tt 67452301}, $B =$ {\tt EFCDAB89}, $C =$ {\tt 98BADCFE}, $D =$ {\tt 10325476}, $E =$ {\tt C3D2E1F0} e alteramos esses valores em cada rodada da seguinte maneira:
 
 \begin{displaymath}
@@ -141,9 +140,9 @@ A cada 20 rodadas mudamos o valor da constante $K_t$ e da função $f_t$ de form
 Apenas para matar a curiosidade seguem suas definições:
 \begin{enumerate}
 \item $K_t :=$ {\tt 5A827999} e $f_t(B,C,D) := (B \land C) \lor (B \land D)$ para $t = 0, \dots, 19$
-\item $K_t :=$ {\tt 6ED9EBA1} e $f_t(B,C,D) := B \xor C \xor D$ para $t = 20, \dots, 39$ 
+\item $K_t :=$ {\tt 6ED9EBA1} e $f_t(B,C,D) := B \xor C \xor D$ para $t = 20, \dots, 39$
 \item $K_t :=$ {\tt 8F1BBCDC} e $f_t(B,C,D) := (B \land C) \lor (B \land D) \lor (C \land D)$ para $t = 40, \dots, 59$
-\item $K_t :=$ {\tt CA62C1D6} e $f_t(B,C,D) := B \xor C \xor D$ para $t = 60, \dots, 79$ 
+\item $K_t :=$ {\tt CA62C1D6} e $f_t(B,C,D) := B \xor C \xor D$ para $t = 60, \dots, 79$
 \end{enumerate}
 
 Em fevereiro de 2017 um grupo de pesquisadores da Google e de uma faculdade holandesa anunciaram um ataque prático contra o SHA-1 capaz de encontrar colisões\footnote{https://security.googleblog.com/2017/02/announcing-first-sha1-collision.html}.
@@ -156,7 +155,7 @@ A orientação hoje é utilizar sistemas de hash mais seguros como o SHA-256 e o
 \label{sec:aplicacoes}
 
 Funções de hash são amplamente utilizadas em protocolos de segurança.
-Nesta seção veremos quatro aplicações bastante distintas desses sistemas: um sistema de autenticação bastante popular chamado HMAC, identificação de arquivos e outros tipos de mensagens simples e estruturadas  ({\em fingerprints} e {\em árvore de Merkle}) e derivação de subchaves a partir de outras chaves e a partir de uma senha.
+Nesta seção veremos quatro aplicações bastante distintas desses sistemas: um sistema de autenticação bastante popular chamado HMAC e derivação de subchaves a partir de outras chaves e a partir de uma senha.
 
 \subsection{HMAC}
 \label{sec:hmac}
@@ -175,12 +174,12 @@ O sistema {\em Hash-and-MAC} $\Pi = \langle Gen, Mac, Ver \rangle$ para mensagen
       1 & \textrm{se} & Mac(k,m) = t\\
       0 & \textrm{c.c.} &\\
     \end{array}
-    \right.$ 
+    \right.$
 \end{itemize}
 
 
 \begin{theorem}
-  Se $\Pi_M$ é um sistema de autenticação seguro contra falsificação e $\Pi_H$ é um sistema de hash resistente a colisão então a construção $\Pi$ acima é seguro contra falsificação. 
+  Se $\Pi_M$ é um sistema de autenticação seguro contra falsificação e $\Pi_H$ é um sistema de hash resistente a colisão então a construção $\Pi$ acima é seguro contra falsificação.
 \end{theorem}
 
 \begin{proof}
@@ -197,7 +196,7 @@ O popular sistema de autenticação HMAC se inspira no esquema apresentado acima
 Formalmente definimos o sistema HMAC da seguinte forma:
 \begin{itemize}
 \item $Gen(1^n) := k \leftarrow \{0,1\}^n$
-\item $Mac(k, m) := H_s((k \xor \textrm{\tt opad}) || H_s(k \xor \textrm{\tt ipad})m)$
+\item $Mac(k, m) := H_s((k \xor \textrm{\tt opad}) || H_s(k \xor \textrm{\tt ipad}) || m)$
 \item $Ver(k, m, t) := \left\{
     \begin{array}{lcl}
       1 & \textrm{se} & Mac(k,m) = t\\
@@ -234,7 +233,7 @@ Isso pode ser útil seja porque o {\em key material} não está suficientemente 
 
 Formalmente, uma função de derivação de chaves recebe com entrada o {\em key material} $\delta$, o tamanho $l$ da chave a ser produzida e opcionalmente um valor $r$ chamado de {\em salt} e um valor contextual $c$.
 Um KDF seguro deve produzir a partir desses valores uma sequência {\em pseudoaleatória} de tamanho $l$.
-Tipicamente um KDF consiste de duas etapas: 
+Tipicamente um KDF consiste de duas etapas:
 \begin{enumerate}
 \item {\em extração}: recebe o {\em key material} e opcionalmente uma chave pública ({\em salt}) e produz uma sequência pseudoaleatória de bits de tamanho fixo
 \item {\em expansão}: expande o que foi produzido na fase de extração para uma sequência de bits de tamanho $l$.
@@ -283,7 +282,7 @@ O salt impede o preprocessamento de um dicionário e $n$ deve ser grande o sufic
       1 & \textrm{se} & Mac(k,m) = t\\
       0 & \textrm{c.c.} &\\
     \end{array}
-    \right.$ 
+    \right.$
 \end{itemize}
 \end{exercicio}
 
@@ -301,6 +300,3 @@ O salt impede o preprocessamento de um dicionário e $n$ deve ser grande o sufic
   Explique com suas palavras a definição de segurança de hashes.
   Por que o SHA-1 não é mais considera segura?
 \end{exercicio}
-
-
-
