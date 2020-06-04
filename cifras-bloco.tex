@@ -32,8 +32,8 @@ O modelo de ameaças é formalizado por meio do seguinte jogo:
 \node[player] (system) {$\Pi$};
 \node[player] (adversary) at (10,0) {$\mathcal{A}$};
 \draw[->] (9,1.5) -> node[above]{$m_0, m_1 \in M : |m_0| = |m_1|$} (1,1.5);
-\draw[->] (9,0.5) -> node[above]{$q_0, \dots, q_{n'-1}$} (1,0.5);
-\draw[->] (1,-0.5) -> node[above]{$E(k, q_0) \dots E(k, q_{n'-1})$} (9,-0.5);
+\draw[->] (9,0.5) -> node[above]{$q_0, \dots, q_{n'-1} \in M$} (1,0.5);
+\draw[->] (1,-0.5) -> node[above]{$E(k, q_0), \dots, E(k, q_{n'-1})$} (9,-0.5);
 \draw[->] (1,-1.5) -> node[above]{$E(k,m_b) = c$} (9,-1.5);
 \draw[->] (0,3) -> node{$b \leftarrow \{0,1\}$} (system);
 \draw[->] (adversary) -> node{$b' \in \{0,1\}$} (10,-3);
