@@ -1,9 +1,9 @@
 \chapter{Distribuição de Chaves}
 \label{cha:distribuicao-chaves}
 
-Os sistemas criptográficos que vimos até aqui, simétricos, assumem que as partes compartilham um dado sigiloso, uma chave.
+Todos os sistemas criptográficos que vimos até aqui são simétricos, ou seja, eles assumem que as partes compartilham um dado sigiloso que chamamos de {\em chave}.
 Discutimos como gerar chaves, mas não tratamos ainda de um problema central da criptograia: como distribuir as chaves.
-Nesta seção veremos dois modelos bastantes distintos, o primeiro pressupõe a existência de uma autoridade central capaz de assumir a tarefa, na segunda partimos para o paradigma da criptografia assimétrica que será mais extensamente discutida nos próximos dois capítulos.
+Nesta seção veremos dois modelos bastantes distintos, o primeiro pressupõe a existência de uma autoridade central capaz de assumir a tarefa, o segundo inaugura um novo paradigma de critpografia chamado {\em criptografia assimétrica} que será mais extensamente discutido nos próximos dois capítulos.
 
 \section{Centro de Distribuição de Chaves}
 \label{sec:kdc}
@@ -36,19 +36,18 @@ Quando Alice quer se comunicar com Bob os seguintes passos são seguidos:
 
 Depois da conversa Alice deve descartar a chave efêmera e eventualmente pedir uma nova para o administrador quando precisar voltar a se comunicar com Bob.
 
-Uma implementação bastante popular do modelo KDC é o protocolo Kerberos.
-Uma apresentação compreensível do protocolo está disponível no livro de Paar e Pelzl \cite{Paar09}\footnote{Ou em uma aula gravada e disponível em: https://www.youtube.com/watch?v=iaH8UG2yMg4}.
+Uma implementação bastante popular do modelo KDC é o protocolo Kerberos\footnote{Uma apresentação compreensível do protocolo está disponível no livro de Paar e Pelzl \cite{Paar09} ou em uma aula gravada e disponível em: https://www.youtube.com/watch?v=iaH8UG2yMg4}.
 
 Além de pressupor a existência de um administrador confiável que gerencie todas as chaves permanentes, os modelo baseados em KDC possuem o que chamamos de {\em ponto único de falha}.
 Se o servidor do administrador sair do ar, por exemplo, todas as comunicações seguras ficarão impedidas.
-Ou seja, mesmo em um ambiente fechado e com hierarquia estabelecida esse modelo não é ideal, em um ambiente aberto ele é totalmente inadequado.
+Ou seja, mesmo em um ambiente fechado e com hierarquia estabelecida, esse modelo não é ideal, em um ambiente aberto ele é totalmente inadequado.
 
 \section{Protocolo de Diffie-Hellman}
 \label{sec:diffie-hellman}
 
 Em um ambiente aberto não é realista imaginar que as partes podem encontrar o administrador de antemão.
 Surpreendentemente existem formas de trocar chaves que podem ser feitas diretamente pelas partes por meio de um canal inseguro.
-O esquema que mostraremos nesta seção, protocolo de Diffie-Hellman, inaugura o paradigma revolucionário da {\em criptografia assimétrica} que veremos nos próximos capítulos \cite{Diffie76}.
+O esquema que mostraremos nesta seção é conhecido como {\em protocolo de Diffie-Hellman} e inaugura o paradigma revolucionário da {\em criptografia assimétrica} que veremos nos próximos capítulos \cite{Diffie76}.
 Informalmente, o protocolo funciona da seguinte forma: Alice envia um dado público para Bob e vice-versa, ao fim do processo ambas as partes são capazes de gerar um mesmo valor que pode ser usado em um KDF para gerar uma chave, porém, para um observador (Eva) que só teve acesso aos dados públicos, isso não é possível.
 Para explicar o protocolo precisamos definir o que são grupos, geradores e grupos cíclicos e precisamos apresentar o {\em problema do logaritmo discreto} cuja dificuldade é condição necessária -- apesar de insuficiente -- para a segurança do protocolo.
 
@@ -109,8 +108,8 @@ Se $\mathbb{G} = \langle G, \circ \rangle$ é um grupo finito e $g \in G$ então
   \langle g \rangle := \{g^0, g^1, \dots \}
 \end{displaymath}
 
-A {\em ordem} de um elemento $g \in G$ é o menor $i$ tal que $g^i = e$.
-Pelo teorema anterior temos que $i \leq |G|$ e, portanto, $\langle g \rangle$ é sempre finito.
+A {\em ordem} de um elemento $g \in G$ é o menor $i$ tal que $g^i = 1$.
+Pelo teorema anterior temos que $i \leq |G|$ e, portanto, se $G$ é finito, $\langle g \rangle$ é sempre finito.
 Um grupo é chamado de {\em cíclico} se existe um elemento $g$, chamado de {\em gerador} cuja ordem é $|G|$.
 Ou seja, em um grupo cíclico temos que $\langle g \rangle = G$ para algum $g$.
 
@@ -144,10 +143,10 @@ Caso esse observador seja capaz de calcular o $log_g(g^x) = x$ então ele seria 
 O ataque força bruta neste caso seria testar todos os valores possíveis de $x$ até encontar o correto.
 Este ataque é linear no valor de $x$, mas é exponencial no tamanho de $x$ (note que para escrever o número $x$ em notação binária usamos espaço proporcional a $lg(x)$).
 
-Porém, quando Bob calcula $(g^{y})^x$ ele pode usar um algoritmo muito mais eficiente.
+Porém, quando Bob calcula $(g^{y})^x$ ele pode usar um algoritmo muito mais eficiente, um que é linear no tamanho de $x$.
 A maneira ingênua de calcular a exponenciação se baseia no seguinte invariante:
 \begin{displaymath}
-  g^m = g \circ g^{m-1}
+  g^m = g^{m-1} \circ g
 \end{displaymath}
 Com isso reduzimos o problema a um problema um pouco mais simples e paramos quando $m = 0$, pois neste caso $g^0 = 1$.
 Essa constatação dá origem ao seguinte algoritmo:
@@ -166,13 +165,14 @@ Essa constatação dá origem ao seguinte algoritmo:
 Podemos estimar o tempo de $\proc{Exp}$ resolvendo a seguinte recorrência:
 
 \begin{eqnarray*}
-  T(m) & = & T(m - 1) + O(1)\\
-  T(1) & = & O(1)
+  T(m) & = & T(m - 1) + \Theta(1)\\
+  T(1) & = & \Theta(1)
 \end{eqnarray*}
 
-Não é difícil mostrar que $T(m) = O(m)$.
+Não é difícil mostrar que $T(m) = \Theta(m)$.
+Ou seja, esse algoritmo é linear em relação a $m$ e exponencial em relação ao tamanho de $m$.
 
-Podemos, porém, fazer bem melhor do que isso usando o seguinte invariante:
+Podemos fazer bem melhor do que isso usando o seguinte invariante:
 \begin{displaymath}
   g^m = \left\{
     \begin{array}{lcl}
@@ -201,13 +201,12 @@ Esse invariante produz o seguinte algoritmo:
 Estimamos o tempo de $\proc{FastExp}$ resolvendo a seguinte recorrência:
 
 \begin{eqnarray*}
-  T(m) & = & T(\lfloor \frac{m}{2} \rfloor) + O(1)\\
-  T(1) & = & O(1)
+  T(m) & = & T(\lfloor \frac{m}{2} \rfloor) + \Theta(1)\\
+  T(1) & = & \Theta(1)
 \end{eqnarray*}
 
-Vimos no curso de Introdução à Análise de Algoritmos que $T(m) = O(lg(m))$.
+Vimos no curso de Introdução à Análise de Algoritmos que $T(m) = \Theta(lg(m))$.
 Em outras palavras, o problema da exponenciação pode ser resolvido lineramente no tamanho da entrada.
-Já o problema do logaritmo pode ser difícil.
 
 \begin{example}
   Simularemos a execução de $\proc{FastExp}(2, 10)$ em $\langle \mathbb{Q}, \cdot \rangle$.
@@ -248,20 +247,18 @@ Dizemos que o {\em problema do logaritmo discreto é difícil} se para todo adve
 A dificuldade do problema do logaritmo discreto é condição necessária, porém insuficiente, para a segurança do protocolo de Diffie-Hellman.
 Algumas estruturas matemáticas são adequadas para produzir grupos cíclicos cujo problema do logaritmo discreto é considerado difícil.
 Duas muito usadas na prática são os {\em resíduos quadráticos de grupos de tamanho primo} e as {\em curvas elípticas} (Apêndice \ref{cha:ciclicos}).
-A apresentação dessas estruturas foge ao escopo dessas notas.
-
 
 Caso o problema do logaritmo discreto não seja difícil, Eva seria capaz de produzir $x$ e $y$ a partir de $g^x$ e $g^y$ e descobrir o valor de $g^{xy}$.
 Se o sistema for seguro, porém, o melhor que Eva pode fazer é tentar todos os valores de $\mathbb{Z}_n$ até encontrar $x$ ou $y$.
 Escolhendo grupos de ordem suficientemente grande, essa tarefa é computacionalmente inviável.
 Uma vez que as partes possuem o mesmo valor secreto, elas podem utilizá-lo para alimentar um KDF e gerar chaves para um sistema de criptografia simétrico.
 
-No modelo assumimos que o grupo e o gerador são criados sempre que as partes decidem se comunicar.
+No modelo, assumimos que o grupo e o gerador são criados sempre que as partes decidem se comunicar.
 Na prática o mais comum é que esses parâmetros sejam definidos pelo protocolo e reutilizados em todas as comunicações.
 Isso não deve afetar de nenhuma forma na segurança do sistema.
 
 O protocolo de Diffie-Hellman permite às partes compartilharem uma chave secreta sem a necessidade de se encontrarem pessoalmente, ou de confiarem em alguma autoridade que as encontrou separadamente.
-Uma limitação do protocolo, porém, é que ele não garante que as partes saibam se a chave que receberam foi de fato enviada por quem eles imaginam que as enviou.
+Note que o protocolo não garante que as partes saibam se a chave que receberam foi de fato enviada por quem eles imaginam que as enviou.
 No Capítulo \ref{cha:assinaturas-digitais} voltaremos a este problema chamado de {\em ataque Man In The Middle}.
 
 \section{Exercícios}
