@@ -101,7 +101,7 @@ Construiremos uma PRF $f_k: \{0,1\}^n \to \{0,1\}^n$ da seguinte maneira:
 \end{displaymath}
 
 \begin{theorem}[Yao]
-  Se $G$ é um PRG com fator de expansão $l(n) = 2n$ então a construção acima é um PRF.  
+  Se $G$ é um PRG com fator de expansão $l(n) = 2n$ então a construção acima é um PRF.
 \end{theorem}
 
 \begin{figure}[htbp]
@@ -156,7 +156,7 @@ Vamos construir $\mathcal{A}'$ um adversário para $\Pi$ da seguinte forma:
 \item Roda $\mathcal{A}(c||m_0)$ para obter $k'$, $m'$ e $r'$.
 Se $f(k', m', r') = c ||m_0$ devolve $0$, se não devolve $1$.
 \end{enumerate}
- 
+
 Note que se $E(k,m_0) = c$ então $c||m_0$ tem distribuição identica a $f(k, m_0, r)$.
 Portanto, temos que $\mathcal{A}'$ perde o jogo com probabilidade $Pr[Inv_{\mathcal{A}, f}(n) = 1]$.
 Por outro lado se $E(k, m_1) = c$ então $c$ é independente de $m_0$ e portanto a probabilidade de $D(k, c) = m_0 $ é $\frac{2^n}{2^{2n}} = 2^{-n}$.
@@ -198,14 +198,14 @@ A definiçao de função de mão única estabelece que $Inv_f(n) \notin P$.
 Portanto, se existe uma função de mão única temos que $P \neq NP$.
 A relação entre os problemas polinomais $P$ e os problemas para os quais existe um oráculo polinomial $NP$ é o problema em aberto mais importante na ciência da computação e um dos mais importantes em aberto na matemática.
 
-\section{Exercícios}
-\label{sec:exercicios}
+%\section{Exercícios}
+%\label{sec:exercicios}
 
-\begin{exercicio}
-  Mostre que $f(x,y) = x \cdot y$ sem as restrições de que $x$ e $y$ sejam primos e do mesmo tamanho não é uma função de mão única.
-\end{exercicio}
+%\begin{exercicio}
+%  Mostre que $f(x,y) = x \cdot y$ sem as restrições de que $x$ e $y$ sejam primos e do mesmo tamanho não é uma função de mão única.
+%\end{exercicio}
 
 
-\begin{exercicio}
-  Mostre um grupo cíclico com gerador $g$ (ver Capítulo \ref{cha:distribuicao-chaves}) em que $f_g(x) = g^x$ não é uma função de mão única.
-\end{exercicio}
+%\begin{exercicio}
+%  Mostre um grupo cíclico com gerador $g$ (ver Capítulo \ref{cha:distribuicao-chaves}) em que $f_g(x) = g^x$ não é uma função de mão única.
+%\end{exercicio}
