@@ -62,7 +62,7 @@ O sistema parte do modelo de criptografia assimétrica e é definido como $\Pi= 
 
 A correção do sistema segue abaixo:
 \begin{displaymath}
-  D(sk, E(pk, m)) =  \frac{h^y \cdot m}{(g^y)^x} = \frac{(g^x)^y \cdot m}{g^{y \cdot x}} = m 
+  D(sk, E(pk, m)) =  \frac{h^y \cdot m}{(g^y)^x} = \frac{(g^x)^y \cdot m}{g^{y \cdot x}} = m
 \end{displaymath}
 
 Como no caso do protocolo de Diffie-Hellman, normalmente os valores $\mathbb{G}$ e $g$ são definidos pelo protocolo e reutilizados por todos os usuários.
@@ -86,7 +86,7 @@ O inteiro $q$ é chamado {\em quociente da divisão} e $r$ o {\em resto}.
 Além disso, usaremos diversas vezes o seguinte resultado:
 
 \begin{proposition}
-Se $n|a$ e $n|b$ então $n|(ax + by)$.  
+Se $n|a$ e $n|b$ então $n|(ax + by)$.
 \end{proposition}
 \begin{proof}
 Por definição existem $n'$ e $n''$ tais que $nn' = a$ e $nn'' = b$.
@@ -95,7 +95,7 @@ Segue que $n(n'x + n''y) = ax + by$ e portanto $n|(ax + by)$.
 
 Com esses resultados podemos mostrar a chamada {\em Identidade de Bezout}:
 
-\begin{proposition}
+\begin{proposition}[Identidade de Bezout]
   Para quaisquer $a,b \in \mathbb{Z}$ existem $X, Y \in \mathbb{Z}$ tais que $Xa + Yb = mdc(a,b)$.
 \end{proposition}
 \begin{proof}
@@ -107,7 +107,7 @@ Com esses resultados podemos mostrar a chamada {\em Identidade de Bezout}:
   \end{displaymath}
   Se $r \neq 0$ então como $r < d$ isso contradiria o fato de que $d$ é o menor inteiro positivo em $I$, logo, $r = 0$ e, portanto $d|c$.
   Ou seja, para qualquer $c \in I$ temos que $d|c$.
-  
+
   Como $a, b \in I$ temos que $d|a$ e $d|b$.
   Agora assuma por absurdo que existe $d' > d$ tal que $d'|a$ e $d'|b$.
   Neste caso, pela propriedade acima teríamos que $d'|(Xa + Yb)$, ou seja, $d'|d$, mas isso é impossível porque $d' > d$.
@@ -126,9 +126,9 @@ Um número $a$ possui inverso em $\langle \mathbb{Z}_n, \cdot \rangle$ se e some
   Neste caso $aX \equiv 1\ (mod\ n)$, ou seja, $X$ é o inverso de $a$ em $\langle \mathbb{Z}_n, \cdot \rangle$.
 
 Agora considere que $mdc(a, n) = b \neq 1$ e suponha por absurdo que $X$ é o
-inverso de $a$ em $\langle \mathbb{Z}_n , \cdot \rangle$. 
+inverso de $a$ em $\langle \mathbb{Z}_n , \cdot \rangle$.
 Então temos que $1 \equiv Xa\ (mod\ n)$, ou equivalentemente, $Xa - 1 \equiv 0\ (mod\ n)$ e, portanto, $n|(Xa - 1)$.
-Portanto, existe $n'$ tal que $nn' = Xa - 1$ e então $1 = Xa - n \cdot n'$. 
+Portanto, existe $n'$ tal que $nn' = Xa - 1$ e então $1 = Xa - n \cdot n'$.
 Como $b \in D(a,n)$ então $b|(Xa - nn')$, ou seja, $b|1$, mas isso é impossível se $b \neq 1$.
 \end{proof}
 
@@ -137,11 +137,11 @@ Será útil para isso apresentar uma versão extendida do algoritmo de Euclides 
 \begin{codebox}
 \Procname{$\proc{AEE}(a, b)$}
 \li \Comment Recebe $a, b \in \mathbb{Z}$ com $a > b$
-\li \Comment Devolve $t$, $X$ e $Y$ tais que $t = mdc(a,b) = Xa + Yb$  
+\li \Comment Devolve $t$, $X$ e $Y$ tais que $t = mdc(a,b) = Xa + Yb$
 \li \If $b|a$
-\li     \Then 
+\li     \Then
         \Return $b, 0, 1$
-\Comment $a = bq + r$
+\li \Comment $a = bq + r$
 \li \Else $t, X, Y \gets \proc{AEE}(b, r)$
 \li     \Return $t, Y, X - Y \cdot q$
 \End
@@ -154,7 +154,7 @@ Para mostrar a correção do algoritmo primeiro considere a seguinte proposiçã
 \end{proposition}
 
 \begin{proof}
-  Por definição temos que $r = a - qb$ e, portanto, $x|a$ e $x|b$ sse $x|r$. 
+  Por definição temos que $r = a - qb$ e, portanto, $x|a$ e $x|b$ sse $x|r$.
 Além disso, $x|b$ e $x|r$ sse $x|a$, pois $a = bq + r$.
 Concluímos que $x|a$ e $x|b$ sse $x|b$ e $x|r$.
 \end{proof}
@@ -162,7 +162,7 @@ Concluímos que $x|a$ e $x|b$ sse $x|b$ e $x|r$.
 \begin{corollary}
 Se $a = bq + r$ então:
 \begin{displaymath}
-  mdc(a,b) = mdc(b, r)  
+  mdc(a,b) = mdc(b, r)
 \end{displaymath}
 \end{corollary}
 
@@ -175,12 +175,12 @@ Agora note que se o algoritmo for correto na linha 5 temos que $Xb + Yr$ e o val
                  & = & Xb + Yr
 \end{eqnarray*}
 
-Ou seja, o valor $Xa + Yb$ é um invariante. 
+Ou seja, o valor $Xa + Yb$ é um invariante.
 
 Na base temos que $b|a$ e, portanto, $mdc(a,b) = b$.
 Além disso, $X = 0$ e $Y = 1$, logo $Xa + Yb = b = mdc(a,b)$.
 Concluímos que o algoritmo é correto.
- 
+
 \begin{example}
     Simularemos a execução de $\proc{AEE}(42, 22)$:
     \begin{displaymath}
@@ -206,7 +206,7 @@ Definimos enfim $\mathbb{Z}_n^\star$ como os elementos em $\mathbb{Z}_n$ que pos
 Note que se $mdc(a,n) = 1$ então o Algoritmo Extendido de Euclides devolve $X$ e $Y$ tais que $Xa + Yn = 1$.
 Se fizermos essa conta em $\mathbb{Z}_n$ temos que $Xa \equiv 1\ (mod\ n)$.
 Ou seja, para os elementos $a \in \mathbb{Z}_n^\star$ o AEE nos dá uma forma de computar o inverso.
- 
+
 Não é difícil mostrar que $\langle \mathbb{Z}_n^\star, \cdot \rangle$ é um grupo visto que todos os elementos possuem inverso por definição (Exercício \ref{ex:euler}).
 A {\em função de Euler} atribui a cada $n$ o tamanho de $\mathbb{Z}_n^\star$:
 
@@ -217,14 +217,14 @@ A {\em função de Euler} atribui a cada $n$ o tamanho de $\mathbb{Z}_n^\star$:
 No caso em que $n$ é o produto de dois número primos calcular a função de Euler é relativamente simples:
 
 \begin{proposition}
-Sejam $p$ e $q$ números primos:  
+Sejam $p$ e $q$ números primos:
 \begin{displaymath}
   \phi(pq) = (p - 1)(q - 1)
 \end{displaymath}
 \end{proposition}
 \begin{proof}
 Seja $a \in \mathbb{Z}_n$ e $mdc(a, n) \neq 1$ então $p|a$ ou $q|a$ (se ambos dividissem então $n|a$, mas como $a \in \mathbb{Z}_n$ então $a < n$).
-Os elementos de $\mathbb{Z}_n$ divisíveis por $p$ são $p, 2p, \dots , (q - 1) \cdot p$ e os elementos divisíveis por $q$ são $q, 2q, \dots , (p - 1) \cdot q$. 
+Os elementos de $\mathbb{Z}_n$ divisíveis por $p$ são $p, 2p, \dots , (q - 1) \cdot p$ e os elementos divisíveis por $q$ são $q, 2q, \dots , (p - 1) \cdot q$.
 Assim, o total de elementos que não são divizíveis por nenhum dos dois é:
 \begin{displaymath}
   \phi(n) = n - 1 - (p - 1) - (q - 1) = p \cdot q - p - q + 1 = (p - 1)(q - 1)
@@ -239,7 +239,7 @@ A geração de chaves no sistema RSA segue os seguintes passos:
 \item Calcula $N = pq$ e $\phi(N) := (p - 1)(q - 1)$
 \item Escolhe $e > 1$ de forma que $mdc(e, \phi(N)) = 1$
 \item Computa $d = [e^{-1}\ mod\ \phi(N)]$
-\item Devolve $N$, $e$ e $d$ 
+\item Devolve $N$, $e$ e $d$
 \end{enumerate}
 
 Na prática podemos fixar a escolha de $e$ e computar $d$ de acordo.
@@ -256,13 +256,13 @@ Em sua versão crua, o sistema de RSA é definido pela seguinte tripla de algori
 \item $Gen(1^n) = \langle sk, pk \rangle$. Conforme descrito acima temos:
 \begin{itemize}
 \item $sk = \langle N, d \rangle$
-\item $pk = \langle N, e \rangle$ 
+\item $pk = \langle N, e \rangle$
 \end{itemize}
 \item $E(pk, m) = [m^e\ mod\ N]$ para $m \in \mathbb{Z}_n^\star$
 \item $D(sk, c) = [c^d\ mod\ N]$
 \end{itemize}
 
-Como $\langle \mathbb{Z}_n^\star, \cdot \rangle$ é um grupo, segue do Teorema \ref{} que para qualquer $a$ temos que:
+Como $\langle \mathbb{Z}_n^\star, \cdot \rangle$ é um grupo, segue do Teorema \ref{theo:gen-euler} que para qualquer $a$ temos que:
 \begin{displaymath}
   a^{\phi(n)} \equiv 1\ (mod\ n)
 \end{displaymath}
@@ -293,7 +293,7 @@ Seja $x \in \mathbb{Z}_n^\star$, $e > 0$ tal que $mdc(e, \phi(n)) = 1$ e $d \equ
 
 Esses são os resultados necessários para mostrar a corretude do sistema RSA:
 \begin{displaymath}
-D(sk, E(pk, m)) = [(m^e)^d\ mod\ N] = [m^{ed}\ mod\ N] = [m\ mod\ N] = m  
+D(sk, E(pk, m)) = [(m^e)^d\ mod\ N] = [m^{ed}\ mod\ N] = [m\ mod\ N] = m
 \end{displaymath}
 
 Notem que uma condição necessária, porém não suficiente, para a segurança dos sistemas RSA é a dificuldade do {\em problema da fatoração} que pode ser descrito formalmente da seguinte forma:
@@ -328,7 +328,7 @@ Um {\em mencanismo de encapsulamento de chave} (KEM) é um sistema $\Pi = \langl
 \item $Encaps$ recebe a chave pública $pk$ e o parâmetro de segurânça $1^n$ e produz uma cifra $c$ e uma chave $k \in \{0,1\}^{l(n)}$
 \item $Decaps$ recebe a chave secreta $sk$ e a cifra $c$ e produz uma chave.
 \end{itemize}
- 
+
 Um sistema KEM em que $Encaps(pk, 1^n) = \langle c, k \rangle$ é {\em correto} se:
 \begin{displaymath}
   Decaps(sk, c) =  k
@@ -339,7 +339,7 @@ Se $\Pi_K = \langle Gen_K, Encaps, Decaps \rangle$ é um KEM seguro contra CPA, 
 
 \begin{itemize}
 \item $Gen(1^n) := Gen_k(1^n) = \langle sk, pk \rangle$
-\item $E(pk, m) := \langle c_k, c \rangle$ em que: 
+\item $E(pk, m) := \langle c_k, c \rangle$ em que:
 \begin{itemize}
 \item $Encaps(pk, 1^n) = \langle c_k, k \rangle$ e
 \item $E'(k, m) = c$
@@ -363,11 +363,10 @@ O Apêndice \ref{cha:sistemas-hibridos} apresenta dois sistemas híbridos: um ba
 
 \begin{exercicio}
   \label{ex:euler}
-  Mostre que para qualquer $n \in \mathbb{Z}$ a estrutra $\langle \mathbb{Z_n}^\star, \cdot \rangle$ é um grupo.
+  Mostre que para qualquer $n \in \mathbb{Z}$ a estrutra $\langle \mathbb{Z}_n^\star, \cdot \rangle$ é um grupo.
 \end{exercicio}
 
 
 %\begin{exercicio}
   % sobre a distribuição dos primos
 %\end{exercicio}
-
