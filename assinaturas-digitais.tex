@@ -5,7 +5,27 @@ No capítulo anterior vimos que é possível construir um sistema de criptografi
 Os esquemas da criptografia assimétrica pressupõe a geração de um par de chaves, uma pública e outra secreta.
 As assinaturas digitais, que veremos neste capítulo, seriam o equivalente àos códigos de autenticação de mensagem que vimos no Capítulo \ref{cha:mac} no contexto da criptografia assimétrica.
 
-% diagrama do modelo
+\begin{center}
+\begin{tikzpicture}[node distance=2cm,auto,>=latex]
+\node (alice) at (0, 2){Alice};
+\node (bob) at (10, 2) {Bob};
+\node (eva) at (5, 2) {Eva};
+
+\node (m1) at (0,1) {$m$};
+\node (pk1) at (0,-2) {$pk$};
+\node (Sign)  at (2,0) {$Sign(sk,m) = t$};
+\node (Ver)  at (8,0) {$Ver(pk, m, t)$};
+\node (sk) at (0,-1) {$sk$};
+\node (pk2) at (10,-2) {$pk$};
+
+\path[->] (eva) edge (5,1);
+\draw[->] (m1) -> (Sign);
+\draw[->] (sk) -> (Sign);
+\draw[->] (pk2) -> (Ver);
+\draw[->] (pk1) -> (pk2);
+\draw[->] (Sign) -> node[above]{$m, t$} (Ver);
+\end{tikzpicture}
+\end{center}
 
 Um {\em sistema de assinatura digital} consiste de três algoritmos:
 \begin{itemize}
