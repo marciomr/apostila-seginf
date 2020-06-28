@@ -1,17 +1,19 @@
-\chapter{Assinaturas Digitais}
+\chapter{Assinaturas Digitais e PKI}
 \label{cha:assinaturas-digitais}
 
 No capítulo anterior vimos que é possível construir um sistema de criptografia em que as partes não precisam trocar um segredo de antemão.
 Os esquemas da criptografia assimétrica pressupõe a geração de um par de chaves, uma pública e outra secreta.
 As assinaturas digitais, que veremos neste capítulo, seriam o equivalente àos códigos de autenticação de mensagem que vimos no Capítulo \ref{cha:mac} no contexto da criptografia assimétrica.
 
+% diagrama do modelo
+
 Um {\em sistema de assinatura digital} consiste de três algoritmos:
 \begin{itemize}
-\item $Gen$ recebe o parâmetro de segurança $1^n$ e produz um par de chaves $\langle sk, pk \rangle$. 
+\item $Gen$ recebe o parâmetro de segurança $1^n$ e produz um par de chaves $\langle sk, pk \rangle$.
 A primeira deve ser mantida em sigilo e a segunda pode ser publicada.
 \item $Sign$ recebe a chave secreta $sk$ e uma mensagem $m$ e produz uma assinatura $t$.
 \item $Ver$ recebe a chave pública $pk$, uma mensagem $m$ e uma assinatura $t$ e verifica se essa assinatura é válida para mensagem $m$ e de fato da pessoa que possui a chave secreta.
-Em caso positivo o algritmo deve devoler $1$ e em caso negativo $0$. 
+Em caso positivo o algritmo deve devoler $1$ e em caso negativo $0$.
 \end{itemize}
 
 Note que no meio digital, para cada mensagem direferente uma mesma pessoa produz assinaturas diferentes.
@@ -19,7 +21,7 @@ Um sistema de assinatura digital é {\em correto} se:
 \begin{displaymath}
   Ver(pk, m, Sign(sk, m)) = 1
 \end{displaymath}
- 
+
 Um sistema como esse é {\em seguro contra falsificação} se qualquer adversário eficiente, mesmo com acesso a um oráculo que lhe entregue assinaturas para mensagens diferentes de $m$, não é capaz de produzir uma assinatura válida para $m$ com probabilidade considerável.
 
 Da mesma forma que os sistemas de criptografia assimétrica, produzir uma assinatura digital para uma mensagem muito grande pode ser um processo lento.
@@ -39,8 +41,8 @@ O esquema todo segue:
 \begin{itemize}
 \item $Gen(1^n) := \langle sk, pk \rangle$ em que:
 \begin{itemize}
-\item $sk := \langle N, e \rangle$ e
-\item $pk := \langle N, d \rangle$
+\item $sk := \langle N, d \rangle$ e
+\item $pk := \langle N, e \rangle$
 \end{itemize}
 \item $Sign(sk, m) := [H(m)^d\ mod\ N]$
 \item $Ver(pk, m, t) := \left\{
@@ -71,17 +73,17 @@ A ideia é confiar a alguma autoridade a identificação das chaves públicas.
 A autoridade $A$ teria então a responsabilidade de verificar se a entidade portadora da identidade $Id_B$ é de fato a o pessoa que possui a chave secreta correspondente à chave pública $pk_B$.
 Neste caso a autoridade $A$ pode emitir um {\em certificado} $cert_{A \to B}$ que nada mais é do que uma assinatura de $A$ conectando $Id_B$ a $pk_B$:
 \begin{displaymath}
-  cert_{A \to B} := Sign(Id_B, pk_B)
+  cert_{A \to B} := Sign(sk_A, Id_B || pk_B)
 \end{displaymath}
 
 Existem diversos modelos de {\em infraestrutura de chaves públicas} (PKI):
 \begin{itemize}
-\item {\em autoridade certificadora única:} Neste cenário assumimos que todos possuem a chave pública da autoridade certificadora $A$ que foi obtida de maneira segura. 
+\item {\em autoridade certificadora única:} Neste cenário assumimos que todos possuem a chave pública da autoridade certificadora $A$ que foi obtida de maneira segura.
 Sempre que algum novo ator $B$ precisar publicar sua chave pública ele deve se apresentar à essa autoridade e comprovar sua identidade para obter o certificado $cert_{A \to B}$
 \item {\em múltiplas autoridades certificadoras:} Neste cenário existem várias autoridades certificadoras e assumimos que todos possuem chaves públicas de algumas ou todas elas.
 Quando um novo ator precisar publicar sua chave ele pode procurar uma ou mais autoridades para gerar o certificado que será válido para aqueles que confiarem na autoridade certificadora que o emitiu.
 Neste cenário a comunicação é tão segura quanto a menos confiável das autoridades incluídas na lista das partes.
-\item {\em delegação de autoridade:} Neste cenário as autoridades certificadoras não apenas podem certificar a autenticidade de uma chave pública como podem também produzir um certificado especial $cert^*$ que dá o poder a outro de produzir certificados. 
+\item {\em delegação de autoridade:} Neste cenário as autoridades certificadoras não apenas podem certificar a autenticidade de uma chave pública como podem também produzir um certificado especial $cert^*$ que dá o poder a outro de produzir certificados.
 Assim digamos que $C$ consiga um certificado de $B$ sobra a autenticidade de sua chave $cert_{B \to C}$ e suponha que $B$ possui um certificado especial de $A$ que o autorize a produzir certificados em seu nome $cert^*_{A \to B}$.
 Assim alguém que possui a chave pública de $A$ pode verificar o certificado $cert^*_{A \to B}$ e usar a chave pública assinada de $B$ para verificar $cert_{B \to C}$.
 \item {\em rede de confiança:} Neste cenário, todas as partes atuam como autoridades certificadoras e podem assinar certificados para qualquer chave que elas verificaram.
@@ -94,9 +96,9 @@ Em alguns modelos o portador pode comprovar sua identidade com a autoridade que 
 
 Veja o apêndice \ref{cha:dsa} para outros exemplos de assinatura digital e esquemas de identificação.
 
-%\section{Exercícios}
+\section{Exercícios}
 %\label{sec:exercicios}
 
-
-
-
+\begin{exercicio}
+  Explique com suas palavras o que é uma autoridade certificadora e qual sua importância para garantir a segurança na comunicação.
+\end{exercicio}
